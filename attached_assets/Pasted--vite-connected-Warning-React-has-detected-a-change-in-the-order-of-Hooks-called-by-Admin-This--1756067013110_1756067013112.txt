@@ -1,0 +1,38 @@
+[vite] connected.
+Warning: React has detected a change in the order of Hooks called by Admin. This will lead to bugs and errors if not fixed. For more information, read the Rules of Hooks: https://reactjs.org/link/rules-of-hooks
+
+   Previous render            Next render
+   ------------------------------------------------------
+1. useContext                 useContext
+2. useSyncExternalStore       useSyncExternalStore
+3. useRef                     useRef
+4. useInsertionEffect         useInsertionEffect
+5. useState                   useState
+6. useEffect                  useEffect
+7. undefined                  useContext
+   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+    at Admin (https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/src/pages/admin.tsx:28:27)
+    at Route (https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=b5f2b3e3:323:16)
+    at Switch (https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=b5f2b3e3:379:17)
+    at Router
+    at Provider (https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-7SUNRGEF.js?v=b5f2b3e3:38:15)
+    at TooltipProvider (https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=b5f2b3e3:59:5)
+    at QueryClientProvider (https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=b5f2b3e3:2805:3)
+    at App
+Rendered more hooks than during the previous render.
+Rendered more hooks than during the previous render.
+The above error occurred in the <Admin> component:
+
+    at Admin (https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/src/pages/admin.tsx:28:27)
+    at Route (https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=b5f2b3e3:323:16)
+    at Switch (https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=b5f2b3e3:379:17)
+    at Router
+    at Provider (https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-7SUNRGEF.js?v=b5f2b3e3:38:15)
+    at TooltipProvider (https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=b5f2b3e3:59:5)
+    at QueryClientProvider (https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=b5f2b3e3:2805:3)
+    at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+Rendered more hooks than during the previous render.
