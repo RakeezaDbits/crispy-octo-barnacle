@@ -21,8 +21,8 @@ export default function HeroSection() {
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
           <div className="max-w-3xl">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6" data-testid="text-hero-title">
-              Protect Your Home's <span className="text-yellow-400">Assets & Title</span>
+            <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-normal leading-tight mb-6 tracking-wide" data-testid="text-hero-title">
+              PROTECT YOUR HOME'S <span className="text-yellow-400">ASSETS & TITLE</span>
             </h1>
             <p className="text-xl sm:text-2xl text-gray-200 mb-8 leading-relaxed" data-testid="text-hero-subtitle">
               Professional home security audit and title protection services. Safeguard your most valuable investment with our comprehensive assessment and monitoring solutions.

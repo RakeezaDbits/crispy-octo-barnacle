@@ -10,9 +10,13 @@ export default function Navigation() {
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
             <div className="flex-shrink-0">
-              <Link href="/" className="flex items-center space-x-2" data-testid="link-home">
-                <Shield className="text-primary-700 text-2xl h-8 w-8" />
-                <span className="font-bold text-xl text-primary-900">SecureHome Audit</span>
+              <Link href="/" className="flex items-center space-x-3" data-testid="link-home">
+                <img 
+                  src="/@assets/logo_1756065815534.png" 
+                  alt="Alpha Security Bureau Logo" 
+                  className="h-12 w-auto"
+                />
+                <span className="font-heading text-2xl text-primary-900 tracking-wide">ALPHA SECURITY BUREAU</span>
               </Link>
             </div>
           </div>

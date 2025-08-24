@@ -12,6 +12,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle, CreditCard, X, Calendar, Clock, MapPin, DollarSign } from "lucide-react";
 import { insertAppointmentSchema, type InsertAppointment } from "@shared/schema";
+import { z } from "zod";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { initializeSquare } from "@/lib/square";
@@ -36,7 +37,7 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
 
   const form = useForm<FormData>({
     resolver: zodResolver(insertAppointmentSchema.extend({
-      readinessCheck: insertAppointmentSchema.shape.fullName.refine(() => true),
+      readinessCheck: z.boolean().refine((val: boolean) => val === true, "You must confirm readiness for the audit"),
     })),
     defaultValues: {
       fullName: "",
@@ -132,7 +133,7 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
           amount: 50,
         });
       } else {
-        throw new Error(result.errors?.[0]?.message || 'Payment tokenization failed');
+        throw new Error('Payment tokenization failed');
       }
     } catch (error) {
       toast({

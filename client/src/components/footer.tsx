@@ -7,9 +7,13 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid md:grid-cols-4 gap-8">
           <div className="md:col-span-2">
-            <Link href="/" className="flex items-center space-x-2 mb-6" data-testid="link-footer-home">
-              <Shield className="text-yellow-400 h-8 w-8" />
-              <span className="font-bold text-xl">SecureHome Audit</span>
+            <Link href="/" className="flex items-center space-x-3 mb-6" data-testid="link-footer-home">
+              <img 
+                src="/@assets/logo_1756065815534.png" 
+                alt="Alpha Security Bureau Logo" 
+                className="h-10 w-auto"
+              />
+              <span className="font-heading text-xl tracking-wide">ALPHA SECURITY BUREAU</span>
             </Link>
             <p className="text-gray-300 mb-6 leading-relaxed" data-testid="text-footer-description">
               Professional home security audits and title protection services. Protecting your most valuable investment with comprehensive documentation and monitoring solutions.

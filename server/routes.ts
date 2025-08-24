@@ -4,6 +4,7 @@ import { storage } from "./storage";
 import { insertAppointmentSchema } from "@shared/schema";
 import { emailService } from "./services/emailService";
 import { squareService } from "./services/squareService";
+import { docuSignService } from "./services/docusignService";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Create appointment
@@ -12,11 +13,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const validatedData = insertAppointmentSchema.parse(req.body);
       const appointment = await storage.createAppointment(validatedData);
       
-      // Send confirmation email
+      // Send confirmation email and DocuSign agreement
       try {
         await emailService.sendConfirmationEmail(appointment);
+        await docuSignService.sendDocuSignAgreement(appointment);
+        
+        // Update appointment status to include DocuSign sent
+        await storage.updateAppointment(appointment.id, {
+          docusignStatus: "sent"
+        });
       } catch (emailError) {
-        console.error("Failed to send confirmation email:", emailError);
+        console.error("Failed to send confirmation email or DocuSign:", emailError);
         // Don't fail the appointment creation if email fails
       }
 
