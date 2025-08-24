@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertAppointmentSchema } from "@shared/schema";
+import { insertAppointmentSchema, insertUserSchema } from "@shared/schema";
 import { emailService } from "./services/emailService";
 import { squareService } from "./services/squareService";
 import { docuSignService } from "./services/docusignService";
@@ -106,6 +106,121 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Customer appointments endpoint - get appointments by email
+  app.get("/api/customer/appointments", async (req, res) => {
+    try {
+      const { email } = req.query;
+      if (!email) {
+        return res.status(400).json({ error: "Email parameter is required" });
+      }
+      
+      const appointments = await storage.getAppointmentsByEmail(email as string);
+      res.json(appointments);
+    } catch (error) {
+      console.error("Failed to get customer appointments:", error);
+      res.status(500).json({ error: "Failed to get appointments" });
+    }
+  });
+
+  // Service packages endpoint
+  app.get("/api/service-packages", async (req, res) => {
+    try {
+      let packages = await storage.getServicePackages();
+      
+      // If no packages exist, create default ones
+      if (packages.length === 0) {
+        const defaultPackages = [
+          {
+            name: "Basic Security Audit",
+            description: "Essential home security assessment covering entry points, locks, and basic vulnerabilities.",
+            price: "50.00",
+            features: ["Entry point assessment", "Lock evaluation", "Basic security recommendations", "Written report"],
+            duration: 60,
+            priority: 1
+          },
+          {
+            name: "Comprehensive Security & Title Protection",
+            description: "Complete security audit plus title monitoring and protection services for maximum peace of mind.",
+            price: "150.00",
+            features: [
+              "Complete security audit", 
+              "Title deed verification", 
+              "Property ownership monitoring", 
+              "Legal document review",
+              "6-month monitoring service",
+              "Detailed report with action plan"
+            ],
+            duration: 120,
+            priority: 2
+          },
+          {
+            name: "Premium Executive Protection Package",
+            description: "Advanced security assessment with ongoing monitoring, emergency response planning, and VIP consultation.",
+            price: "300.00",
+            features: [
+              "Advanced threat assessment",
+              "Emergency response planning", 
+              "Smart home security integration",
+              "24/7 monitoring setup",
+              "Personal security consultation",
+              "Quarterly follow-up assessments",
+              "Priority emergency response"
+            ],
+            duration: 180,
+            priority: 3
+          }
+        ];
+
+        for (const pkg of defaultPackages) {
+          await storage.createServicePackage(pkg);
+        }
+        
+        packages = await storage.getServicePackages();
+      }
+      
+      res.json(packages);
+    } catch (error) {
+      console.error("Failed to get service packages:", error);
+      res.status(500).json({ error: "Failed to get service packages" });
+    }
+  });
+
+  // Admin authentication route
+  app.post("/api/admin/login", async (req, res) => {
+    try {
+      const { username, password } = req.body;
+      
+      // Demo authentication - in production, use proper password hashing
+      if (username === "admin" && password === "admin123") {
+        const token = generateAuthToken(1, username);
+        res.json({ token, message: "Login successful" });
+      } else {
+        res.status(401).json({ error: "Invalid credentials" });
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      res.status(500).json({ error: "Login failed" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
+}
+
+// Generate authentication token
+function generateAuthToken(userId: number, username: string): string {
+  const header = { alg: "HS256", typ: "JWT" };
+  const payload = {
+    userId,
+    username,
+    role: "admin",
+    iat: Math.floor(Date.now() / 1000),
+    exp: Math.floor(Date.now() / 1000) + (24 * 60 * 60) // 24 hours
+  };
+  
+  const headerB64 = btoa(JSON.stringify(header));
+  const payloadB64 = btoa(JSON.stringify(payload));
+  const signature = btoa(`secret_${userId}_${payload.exp}`);
+  
+  return `${headerB64}.${payloadB64}.${signature}`;
 }

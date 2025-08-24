@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle, CreditCard, X, Calendar, Clock, MapPin, DollarSign } from "lucide-react";
-import { insertAppointmentSchema, type InsertAppointment } from "@shared/schema";
+import { insertAppointmentSchema, type InsertAppointment, type ServicePackage } from "@shared/schema";
 import { z } from "zod";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -24,6 +24,7 @@ interface BookingModalProps {
 
 type FormData = InsertAppointment & {
   readinessCheck: boolean;
+  servicePackageId: number;
 };
 
 export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
@@ -32,8 +33,14 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
   const [confirmedAppointment, setConfirmedAppointment] = useState<any>(null);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const [squareReady, setSquareReady] = useState(false);
+  const [selectedPackage, setSelectedPackage] = useState<ServicePackage | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Fetch service packages
+  const { data: servicePackages, isLoading: packagesLoading } = useQuery<ServicePackage[]>({
+    queryKey: ["/api/service-packages"],
+  });
 
   const form = useForm<FormData>({
     resolver: zodResolver(insertAppointmentSchema.extend({
@@ -110,8 +117,44 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
     createAppointmentMutation.mutate(appointmentData);
   };
 
+  const [cardInstance, setCardInstance] = useState<any>(null);
+
+  useEffect(() => {
+    if (currentStep === 2 && !cardInstance) {
+      const initializeCard = async () => {
+        try {
+          const payments = await initializeSquare();
+          const card = await payments.card();
+          await card.attach('#card-container');
+          setCardInstance(card);
+          setSquareReady(true);
+        } catch (error) {
+          console.error('Failed to initialize card:', error);
+          toast({
+            title: "Payment System Error",
+            description: "Failed to load payment form. Please refresh and try again.",
+            variant: "destructive",
+          });
+        }
+      };
+      
+      initializeCard();
+    }
+
+    return () => {
+      if (cardInstance) {
+        try {
+          cardInstance.destroy();
+        } catch (error) {
+          console.error('Error destroying card instance:', error);
+        }
+        setCardInstance(null);
+      }
+    };
+  }, [currentStep, cardInstance, toast]);
+
   const handlePayment = async () => {
-    if (!squareReady) {
+    if (!cardInstance) {
       toast({
         title: "Payment System Loading",
         description: "Please wait for the payment system to load.",
@@ -122,11 +165,7 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
 
     setIsProcessingPayment(true);
     try {
-      const square = await initializeSquare();
-      const card = square.card();
-      await card.attach('#card-container');
-
-      const result = await card.tokenize();
+      const result = await cardInstance.tokenize();
       if (result.status === 'OK') {
         await processPaymentMutation.mutateAsync({
           sourceId: result.token!,

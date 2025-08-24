@@ -2,11 +2,36 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Link } from "wouter";
-import { ArrowLeft, Calendar, DollarSign, Users, CheckCircle } from "lucide-react";
+import { Link, useLocation } from "wouter";
+import { ArrowLeft, Calendar, DollarSign, Users, CheckCircle, LogOut, Shield } from "lucide-react";
+import { useEffect, useState } from "react";
+import { isAdminAuthenticated, logout } from "@/lib/auth";
 import type { Appointment } from "@shared/schema";
 
 export default function Admin() {
+  const [, setLocation] = useLocation();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const authenticated = isAdminAuthenticated();
+    if (!authenticated) {
+      setLocation("/admin/login");
+      return;
+    }
+    setIsAuthenticated(true);
+  }, [setLocation]);
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-yellow-600 flex items-center justify-center">
+        <div className="text-center text-white">
+          <Shield className="h-16 w-16 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold mb-2">Authentication Required</h2>
+          <p>Redirecting to login...</p>
+        </div>
+      </div>
+    );
+  }
   const { data: appointments, isLoading } = useQuery<Appointment[]>({
     queryKey: ["/api/appointments"],
   });
@@ -39,16 +64,34 @@ export default function Admin() {
     <div className="min-h-screen bg-gray-50 p-4">
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-            <p className="text-gray-600 mt-2">Manage appointments and bookings</p>
+          <div className="flex items-center space-x-4">
+            <img 
+              src="/@assets/logo_1756065815534.png" 
+              alt="Alpha Security Bureau Logo" 
+              className="h-12 w-auto"
+            />
+            <div>
+              <h1 className="font-heading text-3xl text-primary-900 tracking-wide">ADMIN DASHBOARD</h1>
+              <p className="text-gray-600 mt-2">Advanced Security Operations Center</p>
+            </div>
           </div>
-          <Link href="/">
-            <Button variant="outline" data-testid="button-back-home">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Home
+          <div className="flex items-center space-x-4">
+            <Link href="/">
+              <Button variant="outline" data-testid="button-back-home">
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Home
+              </Button>
+            </Link>
+            <Button 
+              variant="outline" 
+              onClick={logout}
+              className="text-red-600 border-red-600 hover:bg-red-50"
+              data-testid="button-logout"
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              Logout
             </Button>
-          </Link>
+          </div>
         </div>
 
         {/* Stats Cards */}

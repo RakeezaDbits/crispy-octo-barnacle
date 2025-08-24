@@ -25,6 +25,9 @@ export default function Navigation() {
             <a href="#services" className="text-gray-600 hover:text-primary-700 transition-colors" data-testid="link-services">
               Services
             </a>
+            <Link href="/dashboard" className="text-gray-600 hover:text-primary-700 transition-colors" data-testid="link-dashboard">
+              Track Appointment
+            </Link>
             <a href="#about" className="text-gray-600 hover:text-primary-700 transition-colors" data-testid="link-about">
               About
             </a>
@@ -49,6 +52,7 @@ export default function Navigation() {
             <SheetContent side="right">
               <div className="flex flex-col space-y-4 mt-8">
                 <a href="#services" className="text-lg font-medium">Services</a>
+                <Link href="/dashboard" className="text-lg font-medium">Track Appointment</Link>
                 <a href="#about" className="text-lg font-medium">About</a>
                 <a href="#contact" className="text-lg font-medium">Contact</a>
                 <Link href="/admin" className="text-lg font-medium">Admin</Link>

@@ -4,35 +4,81 @@ interface SquareWindow extends Window {
 
 declare const window: SquareWindow;
 
+// Load Square Web Payments SDK
+function loadSquareScript(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    if (window.Square) {
+      resolve();
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = 'https://web.squarecdn.com/v1/square.js';
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error('Failed to load Square SDK'));
+    document.head.appendChild(script);
+  });
+}
+
 export async function initializeSquare() {
-  // Mock Square payment form for development
-  console.log('Initializing mock Square payment form...');
-  
+  try {
+    await loadSquareScript();
+    
+    if (!window.Square) {
+      throw new Error('Square SDK failed to initialize');
+    }
+
+    const payments = window.Square.payments(
+      import.meta.env.VITE_SQUARE_APPLICATION_ID || 'sandbox-sq0idb-your-app-id',
+      import.meta.env.VITE_SQUARE_LOCATION_ID || 'sandbox-location'
+    );
+
+    return payments;
+  } catch (error) {
+    console.error('Square initialization error:', error);
+    // Fallback to mock for development
+    return createMockSquarePayments();
+  }
+}
+
+function createMockSquarePayments() {
   return {
-    card: () => ({
-      attach: async (selector: string) => {
-        const container = document.querySelector(selector);
-        if (container) {
-          container.innerHTML = `
-            <div style="padding: 20px; border: 2px dashed #e5e7eb; border-radius: 8px; text-align: center; color: #6b7280;">
-              <div style="margin-bottom: 16px;">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="margin: 0 auto;">
-                  <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-                  <line x1="1" y1="10" x2="23" y2="10"></line>
-                </svg>
+    card: async () => {
+      return {
+        attach: async (selector: string) => {
+          const container = document.querySelector(selector);
+          if (container) {
+            container.innerHTML = `
+              <div style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; background: white;">
+                <div style="margin-bottom: 16px;">
+                  <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #374151;">Card Number</label>
+                  <input type="text" placeholder="1234 1234 1234 1234" style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 16px;" />
+                </div>
+                <div style="display: flex; gap: 16px;">
+                  <div style="flex: 1;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #374151;">Expiry</label>
+                    <input type="text" placeholder="MM/YY" style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 16px;" />
+                  </div>
+                  <div style="flex: 1;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #374151;">CVV</label>
+                    <input type="text" placeholder="123" style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 16px;" />
+                  </div>
+                </div>
+                <div style="margin-top: 12px; padding: 12px; background: #f3f4f6; border-radius: 6px; font-size: 14px; color: #6b7280;">
+                  <strong>Demo Mode:</strong> Use any card details for testing
+                </div>
               </div>
-              <h4 style="margin: 0 0 8px 0; font-weight: 500;">Mock Payment Form</h4>
-              <p style="margin: 0; font-size: 14px;">Demo mode - click Complete Booking to continue</p>
-            </div>
-          `;
-        }
-      },
-      tokenize: async () => {
-        return {
-          status: 'OK',
-          token: `sq_mock_token_${Date.now()}`,
-        };
-      }
-    })
+            `;
+          }
+        },
+        tokenize: async () => {
+          return {
+            status: 'OK',
+            token: `sq_demo_token_${Date.now()}`,
+          };
+        },
+        destroy: () => {},
+      };
+    }
   };
 }
