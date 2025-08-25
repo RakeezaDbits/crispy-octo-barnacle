@@ -16,11 +16,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Send confirmation email and DocuSign agreement
       try {
         await emailService.sendConfirmationEmail(appointment);
-        await docuSignService.sendDocuSignAgreement(appointment);
+        const docuSignResult = await docuSignService.sendDocuSignAgreement(appointment);
         
-        // Update appointment status to include DocuSign sent
+        // Update appointment status to include DocuSign sent with envelope ID
         await storage.updateAppointment(appointment.id, {
-          docusignStatus: "sent"
+          docusignStatus: `sent:${docuSignResult.envelopeId}`
         });
       } catch (emailError) {
         console.error("Failed to send confirmation email or DocuSign:", emailError);
@@ -182,6 +182,72 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Failed to get service packages:", error);
       res.status(500).json({ error: "Failed to get service packages" });
+    }
+  });
+
+  // DocuSign webhook endpoint
+  app.post("/api/docusign/webhook", async (req, res) => {
+    try {
+      const { event, data } = req.body;
+      
+      if (event === 'envelope-completed' || event === 'envelope-signed') {
+        const envelopeId = data?.envelopeId;
+        const status = event === 'envelope-completed' ? 'completed' : 'signed';
+        
+        if (envelopeId) {
+          // Find appointment by envelope ID and update DocuSign status
+          const appointments = await storage.getAllAppointments();
+          const appointment = appointments.find(apt => 
+            apt.docusignStatus && apt.docusignStatus.includes(envelopeId)
+          );
+          
+          if (appointment) {
+            await storage.updateAppointment(appointment.id, {
+              docusignStatus: status
+            });
+            console.log(`Updated appointment ${appointment.id} DocuSign status to ${status}`);
+          }
+        }
+      }
+      
+      res.json({ received: true });
+    } catch (error) {
+      console.error("DocuSign webhook error:", error);
+      res.status(500).json({ error: "Webhook processing failed" });
+    }
+  });
+
+  // Send reminder emails (can be called manually or via cron)
+  app.post("/api/send-reminders", async (req, res) => {
+    try {
+      const appointments = await storage.getAllAppointments();
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      
+      // Find appointments scheduled for tomorrow
+      const appointmentsForTomorrow = appointments.filter(appointment => {
+        const appointmentDate = new Date(appointment.preferredDate);
+        return appointmentDate.toDateString() === tomorrow.toDateString() &&
+               appointment.status === 'confirmed';
+      });
+      
+      let emailsSent = 0;
+      for (const appointment of appointmentsForTomorrow) {
+        try {
+          await emailService.sendReminderEmail(appointment);
+          emailsSent++;
+          console.log(`Reminder email sent to ${appointment.email}`);
+        } catch (error) {
+          console.error(`Failed to send reminder to ${appointment.email}:`, error);
+        }
+      }
+      
+      res.json({ 
+        message: `Processed ${appointmentsForTomorrow.length} appointments, sent ${emailsSent} reminders` 
+      });
+    } catch (error) {
+      console.error("Failed to send reminder emails:", error);
+      res.status(500).json({ error: "Failed to send reminder emails" });
     }
   });
 
