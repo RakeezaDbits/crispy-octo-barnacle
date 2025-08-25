@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
@@ -137,10 +137,11 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
           });
         }
       };
-      
+
       initializeCard();
     }
 
+    // Cleanup function to destroy the card instance
     return () => {
       if (cardInstance) {
         try {
@@ -148,10 +149,10 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
         } catch (error) {
           console.error('Error destroying card instance:', error);
         }
-        setCardInstance(null);
+        setCardInstance(null); // Clear the instance from state
       }
     };
-  }, [currentStep, cardInstance, toast]);
+  }, [currentStep, cardInstance, toast]); // Re-run effect if currentStep or cardInstance changes
 
   const handlePayment = async () => {
     if (!cardInstance) {
@@ -194,8 +195,15 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
   };
 
   const handleClose = () => {
-    onClose();
-    setTimeout(resetModal, 300);
+    // Use setTimeout to ensure DOM cleanup happens after React's reconciliation
+    setTimeout(() => {
+      setCurrentStep(1);
+      setAppointmentId("");
+      setConfirmedAppointment(null);
+      setSquareReady(false);
+      form.reset();
+      onClose();
+    }, 0);
   };
 
   const getMinDate = () => {
@@ -211,36 +219,34 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
   };
 
   // Initialize Square payment form when step 2 is reached
-  useState(() => {
+  useEffect(() => {
     if (currentStep === 2 && !squareReady) {
       initializeSquare().then(() => {
         setSquareReady(true);
       }).catch(console.error);
     }
-  });
+  }, [currentStep, squareReady]); // Depend on currentStep and squareReady
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" data-testid="modal-booking">
+      <DialogContent
+        ref={dialogRef}
+        className="sm:max-w-2xl max-h-[90vh] overflow-y-auto"
+        aria-describedby="booking-dialog-description"
+      >
         <DialogHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <DialogTitle className="text-2xl font-bold text-gray-900" data-testid="text-modal-title">
-                Schedule Your Free Audit
-              </DialogTitle>
-              <p className="text-gray-600 mt-1">Professional home security assessment</p>
-            </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleClose}
-              className="h-6 w-6 p-0"
-              data-testid="button-close-modal"
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
+          <DialogTitle className="flex items-center gap-2">
+            <Calendar className="h-5 w-5 text-primary-600" />
+            {currentStep === 1 && 'Schedule Your Audit'}
+            {currentStep === 2 && 'Payment Information'}
+            {currentStep === 3 && 'Booking Confirmed'}
+          </DialogTitle>
         </DialogHeader>
+        <div id="booking-dialog-description" className="sr-only">
+          {currentStep === 1 && 'Fill out your information to schedule an audit'}
+          {currentStep === 2 && 'Complete your payment to confirm the booking'}
+          {currentStep === 3 && 'Your audit has been successfully booked'}
+        </div>
 
         {/* Progress Steps */}
         <div className="px-6 py-4 bg-gray-50 -mx-6 -mt-2">
@@ -386,8 +392,8 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
               </Label>
             </div>
 
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               className="w-full bg-primary-600 hover:bg-primary-700"
               disabled={createAppointmentMutation.isPending}
               data-testid="button-proceed-payment"
@@ -413,8 +419,8 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
 
             <div>
               <Label className="text-sm font-medium text-gray-700 mb-2 block">Payment Information</Label>
-              <div 
-                id="card-container" 
+              <div
+                id="card-container"
                 className="border border-gray-300 rounded-lg p-4 min-h-[200px]"
                 data-testid="square-card-container"
               >
@@ -487,7 +493,7 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
                       Time:
                     </span>
                     <span className="font-medium" data-testid="text-confirmed-time">
-                      {confirmedAppointment.preferredTime ? 
+                      {confirmedAppointment.preferredTime ?
                         (confirmedAppointment.preferredTime === 'morning' ? 'Morning (9 AM - 12 PM)' :
                          confirmedAppointment.preferredTime === 'afternoon' ? 'Afternoon (12 PM - 5 PM)' :
                          confirmedAppointment.preferredTime === 'evening' ? 'Evening (5 PM - 7 PM)' :
@@ -554,7 +560,7 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
                 </p>
                 <div className="flex items-center justify-between">
                   <span className="text-primary-900 font-semibold">$50/month</span>
-                  <Button 
+                  <Button
                     size="sm"
                     className="bg-primary-600 hover:bg-primary-700"
                     data-testid="button-add-protection"
