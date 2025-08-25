@@ -10,7 +10,7 @@ class SquareService {
     return {
       id: `sq_payment_${Date.now()}`,
       status: "COMPLETED",
-      amount: BigInt(Math.round(amount * 100)),
+      amount: Math.round(amount * 100), // Convert to cents as regular number
       currency: "USD",
     };
   }
