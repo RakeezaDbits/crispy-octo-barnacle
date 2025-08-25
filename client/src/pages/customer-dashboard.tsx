@@ -14,6 +14,16 @@ export default function CustomerDashboard() {
   const [searchAttempted, setSearchAttempted] = useState(false);
   const { toast } = useToast();
 
+  // Auto-populate email from URL parameters
+  useState(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const emailFromUrl = urlParams.get('email');
+    if (emailFromUrl) {
+      setCustomerEmail(emailFromUrl);
+      setSearchAttempted(true);
+    }
+  });
+
   const { data: appointments, isLoading, refetch } = useQuery<Appointment[]>({
     queryKey: ["/api/customer/appointments", customerEmail],
     enabled: !!customerEmail && searchAttempted,
