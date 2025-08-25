@@ -21,8 +21,19 @@ function loadSquareScript(): Promise<void> {
 }
 
 export async function initializeSquare() {
+  // Always use mock payments in development environment
+  if (import.meta.env.DEV) {
+    console.log("Development mode detected - using mock Square payments");
+    return createMockSquarePayments();
+  }
+
   try {
-    await loadSquareScript();
+    // Add timeout to prevent hanging
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error("Square SDK load timeout")), 5000);
+    });
+
+    await Promise.race([loadSquareScript(), timeoutPromise]);
 
     if (!window.Square) {
       throw new Error("Square SDK failed to initialize");
@@ -36,8 +47,7 @@ export async function initializeSquare() {
 
     return payments;
   } catch (error) {
-    console.log("Using mock Square payments for development");
-    // Always use mock for development
+    console.log("Square SDK failed, using mock payments:", error instanceof Error ? error.message : String(error));
     return createMockSquarePayments();
   }
 }

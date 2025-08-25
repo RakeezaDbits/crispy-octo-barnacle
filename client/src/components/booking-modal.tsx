@@ -223,7 +223,7 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
                 console.log("Using mock payment form");
               }
             }
-          }, 500); // Increased wait time for modal animation
+          }, 100); // Reduced wait time for faster loading
         } catch (error) {
           console.error("Failed to initialize Square:", error);
           if (mounted && !isCleaningUpRef.current) {
