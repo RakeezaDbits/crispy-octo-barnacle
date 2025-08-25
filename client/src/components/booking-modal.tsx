@@ -39,7 +39,7 @@ import {
 import { z } from "zod";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { initializeSquare } from "@/lib/square";
+import { SquarePaymentForm } from "@/components/square-payment-form";
 
 interface BookingModalProps {
   isOpen: boolean;
@@ -56,15 +56,12 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
   const [appointmentId, setAppointmentId] = useState<string>("");
   const [confirmedAppointment, setConfirmedAppointment] = useState<any>(null);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
-  const [squareReady, setSquareReady] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState<ServicePackage | null>(
     null,
   );
-  const [cardInstance, setCardInstance] = useState<any>(null);
 
   // Use refs for cleanup tracking
   const isCleaningUpRef = useRef(false);
-  const cardContainerRef = useRef<HTMLDivElement>(null);
 
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -157,99 +154,13 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
   // Cleanup function
   const cleanupCard = useCallback(() => {
     if (isCleaningUpRef.current) return;
-
     isCleaningUpRef.current = true;
-
-    if (cardInstance) {
-      try {
-        cardInstance.destroy();
-      } catch (error) {
-        // Silently ignore cleanup errors
-      }
-    }
-
-    setCardInstance(null);
-    setSquareReady(false);
-
     // Reset cleanup flag after a brief delay
     setTimeout(() => {
       isCleaningUpRef.current = false;
     }, 100);
-  }, [cardInstance]);
+  }, []);
 
-  // Initialize Square when reaching step 2
-  useEffect(() => {
-    let mounted = true;
-    let initializationTimer: NodeJS.Timeout;
-
-    if (currentStep === 2 && !cardInstance && !isCleaningUpRef.current) {
-      const initializeCard = async () => {
-        try {
-          console.log("Initializing Square payment form...");
-          const payments = await initializeSquare();
-          const card = await payments.card();
-
-          // Wait for DOM to be ready and modal animation to complete
-          initializationTimer = setTimeout(async () => {
-            if (!mounted || isCleaningUpRef.current) {
-              console.log(
-                "Component unmounted during initialization, cleaning up...",
-              );
-              return;
-            }
-
-            try {
-              console.log("Attaching card to container...");
-              await card.attach("#card-container");
-
-              if (mounted && !isCleaningUpRef.current) {
-                setCardInstance(card);
-                setSquareReady(true);
-                console.log("Square payment form ready!");
-              } else {
-                // Clean up if component unmounted during attachment
-                try {
-                  card.destroy();
-                } catch (error) {
-                  // Ignore cleanup errors
-                }
-              }
-            } catch (attachError) {
-              console.error("Failed to attach card:", attachError);
-              // Still set as ready for mock payments
-              if (mounted && !isCleaningUpRef.current) {
-                setCardInstance(card);
-                setSquareReady(true);
-                console.log("Using mock payment form");
-              }
-            }
-          }, 100); // Reduced wait time for faster loading
-        } catch (error) {
-          console.error("Failed to initialize Square:", error);
-          if (mounted && !isCleaningUpRef.current) {
-            toast({
-              title: "Payment System Error",
-              description:
-                "Payment system temporarily unavailable. Please try again.",
-              variant: "destructive",
-            });
-          }
-        }
-      };
-
-      initializeCard();
-    }
-
-    return () => {
-      mounted = false;
-      if (initializationTimer) {
-        clearTimeout(initializationTimer);
-      }
-      if (currentStep !== 2) {
-        cleanupCard();
-      }
-    };
-  }, [currentStep, cardInstance, cleanupCard, toast]);
 
   // Cleanup on unmount or modal close
   useEffect(() => {
@@ -273,27 +184,13 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
     createAppointmentMutation.mutate(appointmentData);
   };
 
-  const handlePayment = async () => {
-    if (!cardInstance || !squareReady) {
-      toast({
-        title: "Payment System Loading",
-        description: "Please wait for the payment system to load.",
-        variant: "destructive",
-      });
-      return;
-    }
-
+  const handlePaymentSuccess = async (paymentRequest: any) => {
     setIsProcessingPayment(true);
     try {
-      const result = await cardInstance.tokenize();
-      if (result.status === "OK") {
-        await processPaymentMutation.mutateAsync({
-          sourceId: result.token!,
-          amount: 50,
-        });
-      } else {
-        throw new Error("Payment tokenization failed");
-      }
+      await processPaymentMutation.mutateAsync({
+        sourceId: paymentRequest.nonce,
+        amount: paymentRequest.amount,
+      });
     } catch (error) {
       toast({
         title: "Payment Error",
@@ -304,6 +201,14 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
     } finally {
       setIsProcessingPayment(false);
     }
+  };
+
+  const handlePaymentError = (error: string) => {
+    toast({
+      title: "Payment Error",
+      description: error,
+      variant: "destructive",
+    });
   };
 
   const resetModal = useCallback(() => {
@@ -556,47 +461,13 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
         {/* Step 2: Payment */}
         {currentStep === 2 && (
           <div className="space-y-6">
-            <Card className="bg-gray-50">
-              <CardContent className="p-6">
-                <h4
-                  className="font-semibold text-gray-900 mb-2"
-                  data-testid="text-service-fee"
-                >
-                  Service Fee
-                </h4>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Professional Home Audit</span>
-                  <span
-                    className="font-bold text-xl text-gray-900"
-                    data-testid="text-amount"
-                  >
-                    $50.00
-                  </span>
-                </div>
-                <p className="text-sm text-gray-500 mt-2">
-                  One-time audit fee • Includes comprehensive documentation
-                </p>
-              </CardContent>
-            </Card>
-
-            <div>
-              <Label className="text-sm font-medium text-gray-700 mb-2 block">
-                Payment Information
-              </Label>
-              <div
-                id="card-container"
-                ref={cardContainerRef}
-                className="border border-gray-300 rounded-lg p-4 min-h-[200px]"
-                data-testid="square-card-container"
-              >
-                {!squareReady && (
-                  <div className="flex items-center justify-center h-full text-gray-500">
-                    <CreditCard className="h-8 w-8 mr-3" />
-                    <span>Loading secure payment form...</span>
-                  </div>
-                )}
-              </div>
-            </div>
+            <SquarePaymentForm
+              appointmentId={appointmentId}
+              amount={50}
+              onPaymentSuccess={handlePaymentSuccess}
+              onPaymentError={handlePaymentError}
+              disabled={isProcessingPayment || processPaymentMutation.isPending}
+            />
 
             <div className="flex space-x-4">
               <Button
@@ -609,20 +480,6 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
                 data-testid="button-back-step1"
               >
                 Back
-              </Button>
-              <Button
-                onClick={handlePayment}
-                disabled={
-                  !squareReady ||
-                  isProcessingPayment ||
-                  processPaymentMutation.isPending
-                }
-                className="flex-1 bg-success-500 hover:bg-success-600"
-                data-testid="button-complete-booking"
-              >
-                {isProcessingPayment || processPaymentMutation.isPending
-                  ? "Processing..."
-                  : "Complete Booking"}
               </Button>
             </div>
           </div>

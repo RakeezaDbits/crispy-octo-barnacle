@@ -1,8 +1,8 @@
-interface SquareWindow extends Window {
+interface SquareWindow {
   Square?: any;
 }
 
-declare const window: SquareWindow;
+declare const window: Window & SquareWindow;
 
 // Load Square Web Payments SDK
 function loadSquareScript(): Promise<void> {
