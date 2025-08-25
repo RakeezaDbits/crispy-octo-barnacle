@@ -1,0 +1,781 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureHome Audit - Professional Asset & Title Protection</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a'
+                        },
+                        success: {
+                            500: '#10b981',
+                            600: '#059669'
+                        }
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="font-sans bg-gray-50 text-gray-900">
+    <!-- Navigation -->
+    <!-- @COMPONENT: Navigation [logo, menu items, contact info] -->
+    <nav class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-shield-alt text-primary-700 text-2xl"></i>
+                            <span class="font-bold text-xl text-primary-900" data-bind="company.name">SecureHome Audit</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#services" class="text-gray-600 hover:text-primary-700 transition-colors">Services</a>
+                    <a href="#about" class="text-gray-600 hover:text-primary-700 transition-colors">About</a>
+                    <a href="#contact" class="text-gray-600 hover:text-primary-700 transition-colors">Contact</a>
+                    <span class="text-primary-700 font-semibold">
+                        <i class="fas fa-phone mr-2"></i>
+                        <span data-bind="company.phone">(555) 123-4567</span>
+                    </span>
+                </div>
+                <button class="md:hidden">
+                    <i class="fas fa-bars text-gray-600"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+    <!-- @END_COMPONENT: Navigation -->
+
+    <!-- Hero Section -->
+    <!-- @COMPONENT: HeroSection [headline, subheadline, CTA, background image] -->
+    <section class="relative bg-gradient-to-br from-primary-900 via-primary-800 to-primary-700 text-white">
+        <!-- Modern home exterior with security features visible -->
+        <div class="absolute inset-0 bg-black opacity-40"></div>
+        <div class="absolute inset-0" style="background-image: url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1920&h=1080'); background-size: cover; background-position: center;"></div>
+        
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
+            <div class="max-w-3xl">
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6">
+                    Protect Your Home's <span class="text-yellow-400">Assets & Title</span>
+                </h1>
+                <p class="text-xl sm:text-2xl text-gray-200 mb-8 leading-relaxed">
+                    Professional home security audit and title protection services. Safeguard your most valuable investment with our comprehensive assessment and monitoring solutions.
+                </p>
+                
+                <!-- Trust Indicators -->
+                <div class="flex flex-wrap items-center gap-6 mb-12">
+                    <div class="flex items-center text-gray-200">
+                        <i class="fas fa-certificate text-yellow-400 mr-2"></i>
+                        <span class="text-sm font-medium">Licensed & Insured</span>
+                    </div>
+                    <div class="flex items-center text-gray-200">
+                        <i class="fas fa-clock text-yellow-400 mr-2"></i>
+                        <span class="text-sm font-medium">24/7 Monitoring</span>
+                    </div>
+                    <div class="flex items-center text-gray-200">
+                        <i class="fas fa-users text-yellow-400 mr-2"></i>
+                        <span class="text-sm font-medium">5000+ Homes Protected</span>
+                    </div>
+                </div>
+
+                <button id="scheduleCTA" data-event="click:openBookingForm" class="bg-success-500 hover:bg-success-600 text-white font-semibold px-8 py-4 rounded-lg text-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
+                    <i class="fas fa-calendar-check mr-3"></i>
+                    Schedule Your Free Audit Now
+                </button>
+                
+                <p class="text-sm text-gray-300 mt-4">
+                    <i class="fas fa-check-circle text-success-500 mr-2"></i>
+                    No commitment required • Free consultation • Same-week availability
+                </p>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: HeroSection -->
+
+    <!-- Benefits Section -->
+    <!-- @COMPONENT: BenefitsSection [feature cards with icons and descriptions] -->
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+                    Comprehensive Home Protection
+                </h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Our expert team provides thorough asset documentation and title monitoring to protect your home investment
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- @MAP: benefits.map(benefit => ( -->
+                <div class="text-center p-8 rounded-xl bg-gray-50 hover:bg-primary-50 transition-colors duration-300">
+                    <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-search text-primary-700 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Professional Asset Audit</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Comprehensive documentation of all valuable items in your home with detailed photography and descriptions
+                    </p>
+                </div>
+
+                <div class="text-center p-8 rounded-xl bg-gray-50 hover:bg-primary-50 transition-colors duration-300">
+                    <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-file-contract text-primary-700 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Title Protection</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        24/7 monitoring of your property title to detect any unauthorized changes or fraudulent activity
+                    </p>
+                </div>
+
+                <div class="text-center p-8 rounded-xl bg-gray-50 hover:bg-primary-50 transition-colors duration-300">
+                    <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-shield-alt text-primary-700 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Insurance Support</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Complete documentation package ready for insurance claims with proper valuation and proof of ownership
+                    </p>
+                </div>
+                <!-- @END_MAP )) -->
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: BenefitsSection -->
+
+    <!-- Booking Form Modal -->
+    <!-- @COMPONENT: BookingModal [multi-step form with payment integration] -->
+    <!-- @STATE: isModalOpen:boolean = false, currentStep:number = 1, formData:object = {} -->
+    <div id="bookingModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between p-6 border-b border-gray-200">
+                <div>
+                    <h3 class="text-2xl font-bold text-gray-900">Schedule Your Free Audit</h3>
+                    <p class="text-gray-600 mt-1">Professional home security assessment</p>
+                </div>
+                <button id="closeModal" class="text-gray-400 hover:text-gray-600 transition-colors">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Progress Steps -->
+            <div class="px-6 py-4 bg-gray-50">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 bg-primary-600 text-white rounded-full flex items-center justify-center text-sm font-semibold">1</div>
+                        <span class="ml-2 text-sm font-medium text-primary-600">Contact Info</span>
+                    </div>
+                    <div class="h-px bg-gray-300 flex-1 mx-4"></div>
+                    <div class="flex items-center">
+                        <div id="step2Circle" class="w-8 h-8 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center text-sm font-semibold">2</div>
+                        <span id="step2Text" class="ml-2 text-sm font-medium text-gray-600">Payment</span>
+                    </div>
+                    <div class="h-px bg-gray-300 flex-1 mx-4"></div>
+                    <div class="flex items-center">
+                        <div id="step3Circle" class="w-8 h-8 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center text-sm font-semibold">3</div>
+                        <span id="step3Text" class="ml-2 text-sm font-medium text-gray-600">Confirmation</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Content -->
+            <div class="p-6">
+                <!-- Step 1: Contact Information -->
+                <div id="step1Content" class="space-y-6">
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Full Name *</label>
+                            <input type="text" id="fullName" data-bind="form.fullName" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors" placeholder="John Smith" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Email Address *</label>
+                            <input type="email" id="email" data-bind="form.email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors" placeholder="john@example.com" required>
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number *</label>
+                            <input type="tel" id="phone" data-bind="form.phone" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors" placeholder="(555) 123-4567" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Preferred Date *</label>
+                            <input type="date" id="preferredDate" data-bind="form.preferredDate" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors" required>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Home Address *</label>
+                        <input type="text" id="address" data-bind="form.address" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors" placeholder="123 Main Street, City, State 12345" required>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Preferred Time</label>
+                        <select id="preferredTime" data-bind="form.preferredTime" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors">
+                            <option value="">Select preferred time</option>
+                            <option value="morning">Morning (9 AM - 12 PM)</option>
+                            <option value="afternoon">Afternoon (12 PM - 5 PM)</option>
+                            <option value="evening">Evening (5 PM - 7 PM)</option>
+                        </select>
+                    </div>
+
+                    <div class="flex items-start">
+                        <input type="checkbox" id="readinessCheck" class="mt-1 h-4 w-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500">
+                        <label for="readinessCheck" class="ml-3 text-sm text-gray-700">
+                            I confirm that I will have all valuable items, receipts, and warranty papers ready for the audit appointment
+                        </label>
+                    </div>
+
+                    <button id="proceedToPayment" data-event="click:goToStep2" class="w-full bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+                        Proceed to Payment
+                    </button>
+                </div>
+
+                <!-- Step 2: Payment -->
+                <div id="step2Content" class="space-y-6 hidden">
+                    <div class="bg-gray-50 rounded-lg p-6 mb-6">
+                        <h4 class="font-semibold text-gray-900 mb-2">Service Fee</h4>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Professional Home Audit</span>
+                            <span class="font-bold text-xl text-gray-900">$50.00</span>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-2">One-time audit fee • Includes comprehensive documentation</p>
+                    </div>
+
+                    <!-- Square Payment Form -->
+                    <!-- @FUNCTIONALITY: Integrate Square Payment API using provided sandbox credentials -->
+                    <div id="card-container" class="border border-gray-300 rounded-lg p-4">
+                        <!-- Square payment form will be inserted here -->
+                        <div class="text-center py-8 text-gray-500">
+                            <i class="fas fa-credit-card text-3xl mb-4"></i>
+                            <p>Secure payment processing powered by Square</p>
+                            <!-- TODO: Implement Square payment form using SQUARE_APPLICATION_ID sandbox credentials -->
+                        </div>
+                    </div>
+
+                    <div class="flex space-x-4">
+                        <button id="backToStep1" data-event="click:goToStep1" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 px-6 rounded-lg transition-colors">
+                            Back
+                        </button>
+                        <button id="processPayment" data-event="click:processPayment" class="flex-1 bg-success-500 hover:bg-success-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+                            Complete Booking
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Confirmation -->
+                <div id="step3Content" class="space-y-6 hidden">
+                    <div class="text-center py-8">
+                        <div class="w-16 h-16 bg-success-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-check text-success-600 text-2xl"></i>
+                        </div>
+                        <h4 class="text-2xl font-bold text-gray-900 mb-2">Booking Confirmed!</h4>
+                        <p class="text-gray-600">Your audit has been scheduled successfully</p>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg p-6">
+                        <h5 class="font-semibold text-gray-900 mb-4">Appointment Details</h5>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Date:</span>
+                                <span id="confirmedDate" data-bind="booking.confirmedDate" class="font-medium">March 15, 2024</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Time:</span>
+                                <span id="confirmedTime" data-bind="booking.confirmedTime" class="font-medium">Morning (9 AM - 12 PM)</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Address:</span>
+                                <span id="confirmedAddress" data-bind="booking.confirmedAddress" class="font-medium">123 Main Street</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Preparation Checklist -->
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+                        <h5 class="font-semibold text-yellow-800 mb-4">
+                            <i class="fas fa-clipboard-list mr-2"></i>
+                            Preparation Checklist
+                        </h5>
+                        <ul class="space-y-2 text-sm text-yellow-700">
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-yellow-600 mr-2"></i>
+                                Gather all receipts for valuable items
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-yellow-600 mr-2"></i>
+                                Collect warranty papers and documentation
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-yellow-600 mr-2"></i>
+                                Ensure access to all rooms and storage areas
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-yellow-600 mr-2"></i>
+                                Have jewelry and small valuables readily available
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Optional Upsell -->
+                    <div class="border border-primary-200 rounded-lg p-6 bg-primary-50">
+                        <h5 class="font-semibold text-primary-900 mb-2">
+                            <i class="fas fa-shield-alt text-primary-600 mr-2"></i>
+                            Add Title Protection Service
+                        </h5>
+                        <p class="text-primary-700 text-sm mb-4">
+                            Monitor your property title 24/7 for unauthorized changes or fraud attempts
+                        </p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-primary-900 font-semibold">$50/month</span>
+                            <button data-event="click:addTitleProtection" class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                                Add Protection
+                            </button>
+                        </div>
+                    </div>
+
+                    <button id="closeConfirmation" data-event="click:closeModal" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 px-6 rounded-lg transition-colors">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: BookingModal -->
+
+    <!-- Process Section -->
+    <!-- @COMPONENT: ProcessSection [step-by-step process visualization] -->
+    <section class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+                    Simple 3-Step Process
+                </h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Professional home protection made easy with our streamlined process
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="relative">
+                    <div class="text-center">
+                        <div class="w-20 h-20 bg-primary-600 text-white rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold">
+                            1
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-4">Schedule Online</h3>
+                        <p class="text-gray-600 leading-relaxed">
+                            Book your free audit appointment through our simple online form. Choose a convenient time within the next 7 days.
+                        </p>
+                    </div>
+                    <div class="hidden md:block absolute top-10 left-full w-8 h-px bg-primary-300 transform translate-x-1/2"></div>
+                </div>
+
+                <div class="relative">
+                    <div class="text-center">
+                        <div class="w-20 h-20 bg-primary-600 text-white rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold">
+                            2
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-4">Professional Audit</h3>
+                        <p class="text-gray-600 leading-relaxed">
+                            Our certified officer visits your home to conduct a comprehensive audit and documentation of your valuable assets.
+                        </p>
+                    </div>
+                    <div class="hidden md:block absolute top-10 left-full w-8 h-px bg-primary-300 transform translate-x-1/2"></div>
+                </div>
+
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-primary-600 text-white rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold">
+                        3
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Complete Protection</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Receive your comprehensive report and optional ongoing title monitoring for complete peace of mind.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: ProcessSection -->
+
+    <!-- Testimonials Section -->
+    <!-- @COMPONENT: TestimonialsSection [customer reviews and ratings] -->
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+                    Trusted by Homeowners
+                </h2>
+                <p class="text-xl text-gray-600">See what our customers say about our service</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- @MAP: testimonials.map(testimonial => ( -->
+                <div class="bg-gray-50 rounded-xl p-8">
+                    <div class="flex items-center mb-4">
+                        <div class="flex text-yellow-400">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 mb-6 leading-relaxed">
+                        "Professional service from start to finish. The audit was thorough and the documentation was exactly what I needed for my insurance."
+                    </p>
+                    <div class="flex items-center">
+                        <!-- Professional headshot of satisfied customer -->
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=150&h=150&face" alt="Customer testimonial" class="w-12 h-12 rounded-full mr-4">
+                        <div>
+                            <p class="font-semibold text-gray-900" data-bind="testimonial.name">Michael Johnson</p>
+                            <p class="text-sm text-gray-600" data-bind="testimonial.location">Denver, CO</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 rounded-xl p-8">
+                    <div class="flex items-center mb-4">
+                        <div class="flex text-yellow-400">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 mb-6 leading-relaxed">
+                        "The title monitoring caught an issue that could have been very costly. Excellent service and peace of mind."
+                    </p>
+                    <div class="flex items-center">
+                        <!-- Professional headshot of satisfied customer -->
+                        <img src="https://pixabay.com/get/gea0aa9a3c9d5e1e4134dfdbaba81c9304df90c72658ca550dc970bda5d138274b537b558c665bf6bbc701fdc863b4980efe35a31f4c790713ab2d3a59151c889_1280.jpg" alt="Customer testimonial" class="w-12 h-12 rounded-full mr-4">
+                        <div>
+                            <p class="font-semibold text-gray-900" data-bind="testimonial.name">Sarah Williams</p>
+                            <p class="text-sm text-gray-600" data-bind="testimonial.location">Austin, TX</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 rounded-xl p-8">
+                    <div class="flex items-center mb-4">
+                        <div class="flex text-yellow-400">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 mb-6 leading-relaxed">
+                        "Quick, professional, and thorough. The online booking was easy and the follow-up communication was excellent."
+                    </p>
+                    <div class="flex items-center">
+                        <!-- Professional headshot of satisfied customer -->
+                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=150&h=150&face" alt="Customer testimonial" class="w-12 h-12 rounded-full mr-4">
+                        <div>
+                            <p class="font-semibold text-gray-900" data-bind="testimonial.name">David Chen</p>
+                            <p class="text-sm text-gray-600" data-bind="testimonial.location">Seattle, WA</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- @END_MAP )) -->
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: TestimonialsSection -->
+
+    <!-- Footer -->
+    <!-- @COMPONENT: Footer [company info, links, contact details] -->
+    <footer class="bg-primary-900 text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div class="md:col-span-2">
+                    <div class="flex items-center space-x-2 mb-6">
+                        <i class="fas fa-shield-alt text-yellow-400 text-2xl"></i>
+                        <span class="font-bold text-xl" data-bind="company.name">SecureHome Audit</span>
+                    </div>
+                    <p class="text-gray-300 mb-6 leading-relaxed">
+                        Professional home security audits and title protection services. Protecting your most valuable investment with comprehensive documentation and monitoring solutions.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-300 hover:text-yellow-400 transition-colors">
+                            <i class="fab fa-facebook-f text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-300 hover:text-yellow-400 transition-colors">
+                            <i class="fab fa-twitter text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-300 hover:text-yellow-400 transition-colors">
+                            <i class="fab fa-linkedin-in text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold text-lg mb-6">Services</h4>
+                    <ul class="space-y-3 text-gray-300">
+                        <li><a href="#" class="hover:text-yellow-400 transition-colors">Asset Audit</a></li>
+                        <li><a href="#" class="hover:text-yellow-400 transition-colors">Title Protection</a></li>
+                        <li><a href="#" class="hover:text-yellow-400 transition-colors">Insurance Support</a></li>
+                        <li><a href="#" class="hover:text-yellow-400 transition-colors">24/7 Monitoring</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold text-lg mb-6">Contact</h4>
+                    <ul class="space-y-3 text-gray-300">
+                        <li class="flex items-center">
+                            <i class="fas fa-phone mr-3"></i>
+                            <span data-bind="company.phone">(555) 123-4567</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-envelope mr-3"></i>
+                            <span data-bind="company.email">info@securehome.com</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-map-marker-alt mr-3 mt-1"></i>
+                            <span data-bind="company.address">123 Business Ave<br>Suite 100<br>City, State 12345</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-primary-800 mt-12 pt-8">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <p class="text-gray-300 text-sm mb-4 md:mb-0">
+                        &copy; 2024 SecureHome Audit. All rights reserved.
+                    </p>
+                    <div class="flex space-x-6 text-sm text-gray-300">
+                        <a href="#" class="hover:text-yellow-400 transition-colors">Privacy Policy</a>
+                        <a href="#" class="hover:text-yellow-400 transition-colors">Terms of Service</a>
+                        <a href="#" class="hover:text-yellow-400 transition-colors">Cookie Policy</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- @END_COMPONENT: Footer -->
+
+    <script>
+        (function() {
+            // Modal functionality
+            const modal = document.getElementById('bookingModal');
+            const scheduleCTA = document.getElementById('scheduleCTA');
+            const closeModal = document.getElementById('closeModal');
+            const closeConfirmation = document.getElementById('closeConfirmation');
+
+            // Step navigation elements
+            const step1Content = document.getElementById('step1Content');
+            const step2Content = document.getElementById('step2Content');
+            const step3Content = document.getElementById('step3Content');
+            const proceedToPayment = document.getElementById('proceedToPayment');
+            const backToStep1 = document.getElementById('backToStep1');
+            const processPayment = document.getElementById('processPayment');
+
+            // Progress indicators
+            const step2Circle = document.getElementById('step2Circle');
+            const step2Text = document.getElementById('step2Text');
+            const step3Circle = document.getElementById('step3Circle');
+            const step3Text = document.getElementById('step3Text');
+
+            let currentStep = 1;
+
+            // Open modal
+            scheduleCTA.addEventListener('click', function() {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                // Set minimum date to tomorrow
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                document.getElementById('preferredDate').min = tomorrow.toISOString().split('T')[0];
+                
+                // Set maximum date to 7 days from now
+                const maxDate = new Date();
+                maxDate.setDate(maxDate.getDate() + 7);
+                document.getElementById('preferredDate').max = maxDate.toISOString().split('T')[0];
+            });
+
+            // Close modal
+            function closeModalHandler() {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                resetForm();
+            }
+
+            closeModal.addEventListener('click', closeModalHandler);
+            closeConfirmation.addEventListener('click', closeModalHandler);
+
+            // Close modal on backdrop click
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeModalHandler();
+                }
+            });
+
+            // Step navigation
+            proceedToPayment.addEventListener('click', function() {
+                if (validateStep1()) {
+                    goToStep(2);
+                }
+            });
+
+            backToStep1.addEventListener('click', function() {
+                goToStep(1);
+            });
+
+            processPayment.addEventListener('click', function() {
+                // TODO: Implement Square payment processing using provided sandbox credentials
+                // SQUARE_APPLICATION_ID=sandbox-sq0idb-wmwGKpr076ccNbqJgzjomQ
+                // SQUARE_ACCESS_TOKEN=EAAAl_EA6QxH6Li7Hgh9JFtk_wlZ2TZwpntF-F1xHBwmsJH5a-pjmYx_1cFvYSUQ
+                // For now, simulate successful payment
+                setTimeout(function() {
+                    populateConfirmationData();
+                    goToStep(3);
+                    // TODO: Trigger DocuSign email integration
+                    // TODO: Send confirmation email using provided Gmail credentials
+                    // TODO: Save appointment to database with status 'Pending'
+                }, 1000);
+            });
+
+            function goToStep(step) {
+                // Hide all steps
+                step1Content.classList.add('hidden');
+                step2Content.classList.add('hidden');
+                step3Content.classList.add('hidden');
+
+                // Update progress indicators
+                updateProgressIndicators(step);
+
+                // Show current step
+                currentStep = step;
+                switch(step) {
+                    case 1:
+                        step1Content.classList.remove('hidden');
+                        break;
+                    case 2:
+                        step2Content.classList.remove('hidden');
+                        break;
+                    case 3:
+                        step3Content.classList.remove('hidden');
+                        break;
+                }
+            }
+
+            function updateProgressIndicators(step) {
+                // Reset all indicators
+                [step2Circle, step3Circle].forEach(circle => {
+                    circle.classList.remove('bg-primary-600', 'text-white');
+                    circle.classList.add('bg-gray-300', 'text-gray-600');
+                });
+                [step2Text, step3Text].forEach(text => {
+                    text.classList.remove('text-primary-600');
+                    text.classList.add('text-gray-600');
+                });
+
+                // Update based on current step
+                if (step >= 2) {
+                    step2Circle.classList.remove('bg-gray-300', 'text-gray-600');
+                    step2Circle.classList.add('bg-primary-600', 'text-white');
+                    step2Text.classList.remove('text-gray-600');
+                    step2Text.classList.add('text-primary-600');
+                }
+                if (step >= 3) {
+                    step3Circle.classList.remove('bg-gray-300', 'text-gray-600');
+                    step3Circle.classList.add('bg-primary-600', 'text-white');
+                    step3Text.classList.remove('text-gray-600');
+                    step3Text.classList.add('text-primary-600');
+                }
+            }
+
+            function validateStep1() {
+                const fullName = document.getElementById('fullName').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const phone = document.getElementById('phone').value.trim();
+                const address = document.getElementById('address').value.trim();
+                const preferredDate = document.getElementById('preferredDate').value;
+                const readinessCheck = document.getElementById('readinessCheck').checked;
+
+                if (!fullName || !email || !phone || !address || !preferredDate) {
+                    alert('Please fill in all required fields.');
+                    return false;
+                }
+
+                if (!readinessCheck) {
+                    alert('Please confirm that you will have all necessary items ready for the audit.');
+                    return false;
+                }
+
+                // Basic email validation
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    alert('Please enter a valid email address.');
+                    return false;
+                }
+
+                return true;
+            }
+
+            function populateConfirmationData() {
+                const fullName = document.getElementById('fullName').value;
+                const preferredDate = document.getElementById('preferredDate').value;
+                const preferredTime = document.getElementById('preferredTime').value || 'To be confirmed';
+                const address = document.getElementById('address').value;
+
+                // Format date
+                const dateObj = new Date(preferredDate);
+                const formattedDate = dateObj.toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                });
+
+                document.getElementById('confirmedDate').textContent = formattedDate;
+                document.getElementById('confirmedTime').textContent = preferredTime;
+                document.getElementById('confirmedAddress').textContent = address;
+            }
+
+            function resetForm() {
+                document.getElementById('fullName').value = '';
+                document.getElementById('email').value = '';
+                document.getElementById('phone').value = '';
+                document.getElementById('address').value = '';
+                document.getElementById('preferredDate').value = '';
+                document.getElementById('preferredTime').value = '';
+                document.getElementById('readinessCheck').checked = false;
+                goToStep(1);
+            }
+
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        })();
+    </script>
+</body>
+</html>
