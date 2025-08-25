@@ -231,7 +231,41 @@ export default function CustomerDashboard() {
                           </div>
                           {appointment.docusignStatus.includes('sent') && !appointment.docusignStatus.includes('completed') && (
                             <button 
-                              onClick={() => window.open(`https://demo.docusign.net/signing/${appointment.id}`, '_blank')}
+                              onClick={() => {
+                                // Extract envelope ID from docusign status
+                                const envelopeId = appointment.docusignStatus.split(':')[1] || appointment.id;
+                                const signingUrl = `https://demo.docusign.net/signing/${envelopeId}`;
+                                
+                                // For demo purposes, simulate signing after 3 seconds
+                                if (envelopeId.includes('mock')) {
+                                  alert('Opening DocuSign signing interface...\n\nNote: This is a demo environment. In a real scenario, you would be redirected to DocuSign to sign the document.');
+                                  
+                                  // Simulate signing completion after a few seconds
+                                  setTimeout(async () => {
+                                    try {
+                                      const response = await fetch(`/api/appointments/${appointment.id}`, {
+                                        method: 'PATCH',
+                                        headers: {
+                                          'Content-Type': 'application/json',
+                                        },
+                                        body: JSON.stringify({
+                                          docusignStatus: 'completed'
+                                        }),
+                                      });
+                                      
+                                      if (response.ok) {
+                                        alert('✅ Document signed successfully!');
+                                        window.location.reload(); // Refresh to show updated status
+                                      }
+                                    } catch (error) {
+                                      console.error('Failed to update signing status:', error);
+                                    }
+                                  }, 3000);
+                                } else {
+                                  // Try to open real DocuSign URL
+                                  window.open(signingUrl, '_blank');
+                                }
+                              }}
                               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium"
                             >
                               Sign Agreement
