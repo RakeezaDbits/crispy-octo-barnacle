@@ -1,0 +1,83 @@
+The above error occurred in the <div> component:
+
+    at div
+    at div
+    at div
+    at div
+    at div
+    at https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-BOL2CCOG.js?v=b5f2b3e3:42:13
+    at https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-USOVV45I.js?v=b5f2b3e3:59:7
+    at https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-EVLBUYTV.js?v=b5f2b3e3:79:13
+    at https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-EVLBUYTV.js?v=b5f2b3e3:56:13
+    at https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-BOL2CCOG.js?v=b5f2b3e3:42:13
+    at https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-V6YWVKQP.js?v=b5f2b3e3:29:5
+    at https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=b5f2b3e3:233:13
+    at https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=b5f2b3e3:156:58
+    at Presence (https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-FY7XUFXW.js?v=b5f2b3e3:24:11)
+    at https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=b5f2b3e3:147:64
+    at https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-EVLBUYTV.js?v=b5f2b3e3:79:13
+    at https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-EVLBUYTV.js?v=b5f2b3e3:56:13
+    at https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-BOL2CCOG.js?v=b5f2b3e3:42:13
+    at https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-USOVV45I.js?v=b5f2b3e3:258:22
+    at Presence (https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-FY7XUFXW.js?v=b5f2b3e3:24:11)
+    at Provider (https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-7SUNRGEF.js?v=b5f2b3e3:38:15)
+    at DialogPortal (https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=b5f2b3e3:109:11)
+    at _c3 (https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/src/components/ui/dialog.tsx:52:12)
+    at Provider (https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-7SUNRGEF.js?v=b5f2b3e3:38:15)
+    at Dialog (https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=b5f2b3e3:50:5)
+    at BookingModal (https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/src/components/booking-modal.tsx?t=1756142427982:36:40)
+    at captureCommitPhaseError (https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-RPCDYKBN.js?v=b5f2b3e3:19577:33)
+    at div
+    at Home
+    at Route (https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=b5f2b3e3:323:16)
+    at Switch (https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=b5f2b3e3:379:17)
+    at Router
+    at ErrorBoundary (https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/src/components/error-boundary.tsx:7:5)
+    at Provider (https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-7SUNRGEF.js?v=b5f2b3e3:38:15)
+    at TooltipProvider (https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=b5f2b3e3:59:5)
+    at QueryClientProvider…
+
+at div
+at div
+at div
+at div
+at div
+at https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-BOL2CCOG.js?v=b5f2b3e3:42:13
+at https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-USOVV45I.js?v=b5f2b3e3:59:7
+at https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-EVLBUYTV.js?v=b5f2b3e3:79:13
+at https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-EVLBUYTV.js?v=b5f2b3e3:56:13
+at https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-BOL2CCOG.js?v=b5f2b3e3:42:13
+at https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-V6YWVKQP.js?v=b5f2b3e3:29:5
+at https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=b5f2b3e3:233:13
+at https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=b5f2b3e3:156:58
+at Presence (https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-FY7XUFXW.js?v=b5f2b3e3:24:11)
+at https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=b5f2b3e3:147:64
+at https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-EVLBUYTV.js?v=b5f2b3e3:79:13
+at https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-EVLBUYTV.js?v=b5f2b3e3:56:13
+at https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-BOL2CCOG.js?v=b5f2b3e3:42:13
+at https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-USOVV45I.js?v=b5f2b3e3:258:22
+at Presence (https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-FY7XUFXW.js?v=b5f2b3e3:24:11)
+at Provider (https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-7SUNRGEF.js?v=b5f2b3e3:38:15)
+at DialogPortal (https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=b5f2b3e3:109:11)
+at _c3 (https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/src/components/ui/dialog.tsx:52:12)
+at Provider (https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-7SUNRGEF.js?v=b5f2b3e3:38:15)
+at Dialog (https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=b5f2b3e3:50:5)
+at BookingModal (https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/src/components/booking-modal.tsx?t=1756142427982:36:40)
+at captureCommitPhaseError (https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-RPCDYKBN.js?v=b5f2b3e3:19577:33)
+at div
+at Home
+at Route (https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=b5f2b3e3:323:16)
+at Switch (https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=b5f2b3e3:379:17)
+at Router
+at ErrorBoundary (https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/src/components/error-boundary.tsx:7:5)
+at Provider (https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-7SUNRGEF.js?v=b5f2b3e3:38:15)
+at TooltipProvider (https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=b5f2b3e3:59:5)
+at QueryClientProvider…
+at t.value (https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:17465)
+at new t (https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:12630)
+at t.value (https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:32766)
+at https://48380aed-d612-4ab4-b084-7f083eea7103-00-plonldiehrdl.spock.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:34400
+Error caught by boundary: 
+DOMException {}
+ 
+Object {componentStack: "↵    at div↵    at div↵    at div↵    at div↵    at div↵    at…"}

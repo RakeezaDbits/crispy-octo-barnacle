@@ -12,10 +12,10 @@ function loadSquareScript(): Promise<void> {
       return;
     }
 
-    const script = document.createElement('script');
-    script.src = 'https://web.squarecdn.com/v1/square.js';
+    const script = document.createElement("script");
+    script.src = "https://web.squarecdn.com/v1/square.js";
     script.onload = () => resolve();
-    script.onerror = () => reject(new Error('Failed to load Square SDK'));
+    script.onerror = () => reject(new Error("Failed to load Square SDK"));
     document.head.appendChild(script);
   });
 }
@@ -23,19 +23,20 @@ function loadSquareScript(): Promise<void> {
 export async function initializeSquare() {
   try {
     await loadSquareScript();
-    
+
     if (!window.Square) {
-      throw new Error('Square SDK failed to initialize');
+      throw new Error("Square SDK failed to initialize");
     }
 
     const payments = window.Square.payments(
-      import.meta.env.VITE_SQUARE_APPLICATION_ID || 'sandbox-sq0idb-your-app-id',
-      import.meta.env.VITE_SQUARE_LOCATION_ID || 'sandbox-location'
+      import.meta.env.VITE_SQUARE_APPLICATION_ID ||
+        "sandbox-sq0idb-your-app-id",
+      import.meta.env.VITE_SQUARE_LOCATION_ID || "sandbox-location",
     );
 
     return payments;
   } catch (error) {
-    console.error('Square initialization error:', error);
+    console.error("Square initialization error:", error);
     // Fallback to mock for development
     return createMockSquarePayments();
   }
@@ -46,18 +47,28 @@ function createMockSquarePayments() {
     card: async () => {
       let isAttached = false;
       let container: Element | null = null;
-      
+      let mockElement: Element | null = null;
+
       return {
         attach: async (selector: string) => {
+          // Find the container
           container = document.querySelector(selector);
-          if (container && !isAttached) {
-            // Clear any existing content
-            container.innerHTML = '';
-            
+          if (!container || isAttached) {
+            return;
+          }
+
+          try {
+            // Clear any existing content safely
+            while (container.firstChild) {
+              container.removeChild(container.firstChild);
+            }
+
             // Create a simple placeholder that indicates Square is ready
-            const placeholder = document.createElement('div');
-            placeholder.className = 'square-mock-ready';
-            placeholder.style.cssText = `
+            mockElement = document.createElement("div");
+            mockElement.className = "square-mock-ready";
+            mockElement.setAttribute(
+              "style",
+              `
               display: flex; 
               align-items: center; 
               justify-content: center; 
@@ -68,37 +79,46 @@ function createMockSquarePayments() {
               color: #6b7280;
               font-size: 14px;
               font-family: system-ui, -apple-system, sans-serif;
-            `;
-            placeholder.textContent = '💳 Mock Payment Form Ready';
-            
-            container.appendChild(placeholder);
+            `,
+            );
+            mockElement.textContent = "💳 Mock Payment Form Ready";
+
+            container.appendChild(mockElement);
             isAttached = true;
+          } catch (error) {
+            console.warn("Error attaching mock payment form:", error);
           }
         },
+
         tokenize: async () => {
           // Simulate a small delay
-          await new Promise(resolve => setTimeout(resolve, 500));
+          await new Promise((resolve) => setTimeout(resolve, 500));
           return {
-            status: 'OK',
+            status: "OK",
             token: `sq_demo_token_${Date.now()}`,
           };
         },
+
         destroy: () => {
           try {
-            // Check if container still exists in DOM
-            if (container && document.body.contains(container)) {
-              // Clear content safely
-              container.innerHTML = '';
+            // Only attempt cleanup if we have references and they're still valid
+            if (mockElement && container && container.contains(mockElement)) {
+              container.removeChild(mockElement);
+            } else if (container && document.body.contains(container)) {
+              // Fallback: clear all content safely
+              container.innerHTML = "";
             }
           } catch (error) {
-            // Silently ignore any DOM errors
+            // Silently ignore DOM manipulation errors during cleanup
+            console.warn("Error during Square cleanup:", error);
           } finally {
             // Always reset state
             isAttached = false;
             container = null;
+            mockElement = null;
           }
         },
       };
-    }
+    },
   };
 }
