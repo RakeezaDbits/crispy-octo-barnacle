@@ -350,12 +350,12 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
             {currentStep === 3 && "Booking Confirmed"}
           </DialogTitle>
         </DialogHeader>
-        <div id="booking-dialog-description" className="sr-only">
+        <DialogDescription id="booking-dialog-description" className="sr-only">
           {currentStep === 1 &&
             "Fill out your information to schedule an audit"}
           {currentStep === 2 && "Complete your payment to confirm the booking"}
           {currentStep === 3 && "Your audit has been successfully booked"}
-        </div>
+        </DialogDescription>
 
         {/* Progress Steps */}
         <div className="px-6 py-4 bg-gray-50 -mx-6 -mt-2">
