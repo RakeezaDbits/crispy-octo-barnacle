@@ -125,9 +125,12 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
         try {
           const payments = await initializeSquare();
           const card = await payments.card();
-          await card.attach('#card-container');
-          setCardInstance(card);
-          setSquareReady(true);
+          const container = document.querySelector('#card-container');
+          if (container) {
+            await card.attach('#card-container');
+            setCardInstance(card);
+            setSquareReady(true);
+          }
         } catch (error) {
           console.error('Failed to initialize card:', error);
           toast({
@@ -145,14 +148,18 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
     return () => {
       if (cardInstance) {
         try {
-          cardInstance.destroy();
+          // Check if the container still exists before destroying
+          const container = document.querySelector('#card-container');
+          if (container && cardInstance.destroy) {
+            cardInstance.destroy();
+          }
         } catch (error) {
           console.error('Error destroying card instance:', error);
         }
-        setCardInstance(null); // Clear the instance from state
+        setCardInstance(null);
       }
     };
-  }, [currentStep, cardInstance, toast]); // Re-run effect if currentStep or cardInstance changes
+  }, [currentStep, cardInstance, toast]);
 
   const handlePayment = async () => {
     if (!cardInstance) {
@@ -195,15 +202,26 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
   };
 
   const handleClose = () => {
-    // Use setTimeout to ensure DOM cleanup happens after React's reconciliation
-    setTimeout(() => {
-      setCurrentStep(1);
-      setAppointmentId("");
-      setConfirmedAppointment(null);
-      setSquareReady(false);
-      form.reset();
-      onClose();
-    }, 0);
+    // Cleanup card instance before closing
+    if (cardInstance) {
+      try {
+        const container = document.querySelector('#card-container');
+        if (container && cardInstance.destroy) {
+          cardInstance.destroy();
+        }
+      } catch (error) {
+        console.error('Error destroying card instance on close:', error);
+      }
+      setCardInstance(null);
+    }
+    
+    // Reset state
+    setCurrentStep(1);
+    setAppointmentId("");
+    setConfirmedAppointment(null);
+    setSquareReady(false);
+    form.reset();
+    onClose();
   };
 
   const getMinDate = () => {
@@ -218,14 +236,7 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
     return maxDate.toISOString().split('T')[0];
   };
 
-  // Initialize Square payment form when step 2 is reached
-  useEffect(() => {
-    if (currentStep === 2 && !squareReady) {
-      initializeSquare().then(() => {
-        setSquareReady(true);
-      }).catch(console.error);
-    }
-  }, [currentStep, squareReady]); // Depend on currentStep and squareReady
+  
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
