@@ -44,40 +44,60 @@ export async function initializeSquare() {
 function createMockSquarePayments() {
   return {
     card: async () => {
+      let isAttached = false;
+      let container: Element | null = null;
+      
       return {
         attach: async (selector: string) => {
-          const container = document.querySelector(selector);
-          if (container) {
-            container.innerHTML = `
-              <div style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; background: white;">
-                <div style="margin-bottom: 16px;">
-                  <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #374151;">Card Number</label>
-                  <input type="text" placeholder="1234 1234 1234 1234" style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 16px;" />
-                </div>
-                <div style="display: flex; gap: 16px;">
-                  <div style="flex: 1;">
-                    <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #374151;">Expiry</label>
-                    <input type="text" placeholder="MM/YY" style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 16px;" />
-                  </div>
-                  <div style="flex: 1;">
-                    <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #374151;">CVV</label>
-                    <input type="text" placeholder="123" style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 16px;" />
-                  </div>
-                </div>
-                <div style="margin-top: 12px; padding: 12px; background: #f3f4f6; border-radius: 6px; font-size: 14px; color: #6b7280;">
-                  <strong>Demo Mode:</strong> Use any card details for testing
-                </div>
-              </div>
+          container = document.querySelector(selector);
+          if (container && !isAttached) {
+            // Clear any existing content
+            container.innerHTML = '';
+            
+            // Create a simple placeholder that indicates Square is ready
+            const placeholder = document.createElement('div');
+            placeholder.className = 'square-mock-ready';
+            placeholder.style.cssText = `
+              display: flex; 
+              align-items: center; 
+              justify-content: center; 
+              height: 120px; 
+              border: 2px dashed #d1d5db; 
+              border-radius: 8px; 
+              background: #f9fafb;
+              color: #6b7280;
+              font-size: 14px;
+              font-family: system-ui, -apple-system, sans-serif;
             `;
+            placeholder.textContent = '💳 Mock Payment Form Ready';
+            
+            container.appendChild(placeholder);
+            isAttached = true;
           }
         },
         tokenize: async () => {
+          // Simulate a small delay
+          await new Promise(resolve => setTimeout(resolve, 500));
           return {
             status: 'OK',
             token: `sq_demo_token_${Date.now()}`,
           };
         },
-        destroy: () => {},
+        destroy: () => {
+          if (container && isAttached) {
+            try {
+              // Safely clear the container
+              const mockElement = container.querySelector('.square-mock-ready');
+              if (mockElement && mockElement.parentNode === container) {
+                container.removeChild(mockElement);
+              }
+            } catch (error) {
+              // Ignore cleanup errors
+            }
+            isAttached = false;
+            container = null;
+          }
+        },
       };
     }
   };

@@ -125,12 +125,9 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
         try {
           const payments = await initializeSquare();
           const card = await payments.card();
-          const container = document.querySelector('#card-container');
-          if (container) {
-            await card.attach('#card-container');
-            setCardInstance(card);
-            setSquareReady(true);
-          }
+          await card.attach('#card-container');
+          setCardInstance(card);
+          setSquareReady(true);
         } catch (error) {
           console.error('Failed to initialize card:', error);
           toast({
@@ -144,22 +141,19 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
       initializeCard();
     }
 
-    // Cleanup function to destroy the card instance
+    // Cleanup when component unmounts or step changes away from payment
     return () => {
-      if (cardInstance) {
+      if (cardInstance && currentStep !== 2) {
         try {
-          // Check if the container still exists before destroying
-          const container = document.querySelector('#card-container');
-          if (container && cardInstance.destroy) {
-            cardInstance.destroy();
-          }
+          cardInstance.destroy();
         } catch (error) {
-          console.error('Error destroying card instance:', error);
+          // Ignore cleanup errors
         }
         setCardInstance(null);
+        setSquareReady(false);
       }
     };
-  }, [currentStep, cardInstance, toast]);
+  }, [currentStep, toast]);
 
   const handlePayment = async () => {
     if (!cardInstance) {
@@ -202,24 +196,21 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
   };
 
   const handleClose = () => {
-    // Cleanup card instance before closing
+    // Cleanup card instance if it exists
     if (cardInstance) {
       try {
-        const container = document.querySelector('#card-container');
-        if (container && cardInstance.destroy) {
-          cardInstance.destroy();
-        }
+        cardInstance.destroy();
       } catch (error) {
-        console.error('Error destroying card instance on close:', error);
+        // Ignore cleanup errors on close
       }
-      setCardInstance(null);
     }
     
-    // Reset state
+    // Reset all state
     setCurrentStep(1);
     setAppointmentId("");
     setConfirmedAppointment(null);
     setSquareReady(false);
+    setCardInstance(null);
     form.reset();
     onClose();
   };
