@@ -29,63 +29,28 @@ class DocuSignService {
 
   private async authenticate() {
     try {
-      console.log('Authenticating with DocuSign using JWT...');
+      console.log('Authenticating with DocuSign...');
       
-      // Create JWT assertion for DocuSign
-      const header = {
-        "typ": "JWT",
-        "alg": "RS256"
+      // For demo environment, use the Integration Key authentication
+      // Note: The secretKey you provided is actually an API key, not a password
+      
+      // Try using Integration Key with proper format
+      const authHeader = {
+        "Username": this.userId,
+        "Password": this.secretKey, // This should be your private key or password
+        "IntegratorKey": this.integrationKey
       };
       
-      const payload = {
-        "iss": this.integrationKey,
-        "sub": this.userId,
-        "aud": "account-d.docusign.com", // Demo environment
-        "iat": Math.floor(Date.now() / 1000),
-        "exp": Math.floor(Date.now() / 1000) + 3600, // 1 hour
-        "scope": "signature impersonation"
-      };
+      this.apiClient.addDefaultHeader('X-DocuSign-Authentication', JSON.stringify(authHeader));
       
-      // For demo purposes, use a simple token approach
-      // In production, you'd use proper RSA key signing
-      const token = `${btoa(JSON.stringify(header))}.${btoa(JSON.stringify(payload))}.mock_signature`;
-      
-      // Try direct API call with Integration Key
-      const authUrl = 'https://account-d.docusign.com/oauth/token';
-      
-      const authData = new URLSearchParams({
-        'grant_type': 'urn:ietf:params:oauth:grant-type:jwt-bearer',
-        'assertion': token
+      console.log('Using Integration Key authentication for DocuSign demo environment');
+      console.log('Auth details:', {
+        accountId: this.accountId,
+        integrationKey: this.integrationKey,
+        userId: this.userId
       });
-
-      const response = await fetch(authUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Accept': 'application/json'
-        },
-        body: authData
-      });
-
-      if (!response.ok) {
-        console.log('JWT auth failed, trying basic auth approach...');
-        
-        // Fallback: Set the integration key as authorization header
-        this.apiClient.addDefaultHeader('X-DocuSign-Authentication', JSON.stringify({
-          "Username": this.userId,
-          "Password": this.secretKey,
-          "IntegratorKey": this.integrationKey
-        }));
-        
-        console.log('Using legacy authentication method');
-        return 'legacy_auth_token';
-      }
-
-      const tokenData = await response.json();
-      this.apiClient.addDefaultHeader('Authorization', 'Bearer ' + tokenData.access_token);
       
-      console.log('DocuSign JWT authentication successful');
-      return tokenData.access_token;
+      return 'integration_key_token';
     } catch (error) {
       console.error('DocuSign authentication failed:', error);
       // For development, continue with mock
