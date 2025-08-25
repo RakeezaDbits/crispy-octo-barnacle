@@ -60,9 +60,6 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
     null,
   );
 
-  // Use refs for cleanup tracking
-  const isCleaningUpRef = useRef(false);
-
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -151,23 +148,14 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
     },
   });
 
-  // Cleanup function
-  const cleanupCard = useCallback(() => {
-    if (isCleaningUpRef.current) return;
-    isCleaningUpRef.current = true;
-    // Reset cleanup flag after a brief delay
-    setTimeout(() => {
-      isCleaningUpRef.current = false;
-    }, 100);
-  }, []);
-
-
-  // Cleanup on unmount or modal close
-  useEffect(() => {
-    return () => {
-      cleanupCard();
-    };
-  }, [cleanupCard]);
+  // Reset modal state
+  const resetModal = useCallback(() => {
+    setCurrentStep(1);
+    setAppointmentId("");
+    setConfirmedAppointment(null);
+    setSelectedPackage(null);
+    form.reset();
+  }, [form]);
 
   const handleStep1Submit = async (data: FormData) => {
     if (!data.readinessCheck) {
@@ -211,19 +199,10 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
     });
   };
 
-  const resetModal = useCallback(() => {
-    cleanupCard();
-    setCurrentStep(1);
-    setAppointmentId("");
-    setConfirmedAppointment(null);
-    form.reset();
-  }, [cleanupCard, form]);
-
   const handleClose = useCallback(() => {
-    cleanupCard();
     resetModal();
     onClose();
-  }, [cleanupCard, resetModal, onClose]);
+  }, [resetModal, onClose]);
 
   const getMinDate = () => {
     const tomorrow = new Date();
@@ -472,10 +451,7 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
             <div className="flex space-x-4">
               <Button
                 variant="outline"
-                onClick={() => {
-                  cleanupCard();
-                  setCurrentStep(1);
-                }}
+                onClick={() => setCurrentStep(1)}
                 className="flex-1"
                 data-testid="button-back-step1"
               >

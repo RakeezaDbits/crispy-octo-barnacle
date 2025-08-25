@@ -21,27 +21,68 @@ declare global {
 export function SquarePaymentForm({ appointmentId, amount, onPaymentSuccess, onPaymentError, disabled }: SquarePaymentFormProps) {
   const [paymentForm, setPaymentForm] = useState<any>(null);
   const [cardButton, setCardButton] = useState<any>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
   const cardContainerRef = useRef<HTMLDivElement>(null);
+  const cardInstanceRef = useRef<any>(null);
   const { toast } = useToast();
 
   useEffect(() => {
-    if (!window.Square) {
-      // Load Square Web Payments SDK
-      const script = document.createElement('script');
-      script.src = 'https://sandbox.web.squarecdn.com/v1/square.js';
-      script.async = true;
-      script.onload = initializeSquare;
-      document.head.appendChild(script);
-    } else {
-      initializeSquare();
-    }
+    let isComponentMounted = true;
 
-    return () => {
-      if (paymentForm) {
-        paymentForm.destroy();
+    const loadSquareSDK = async () => {
+      if (!window.Square) {
+        // Load Square Web Payments SDK
+        const script = document.createElement('script');
+        script.src = 'https://sandbox.web.squarecdn.com/v1/square.js';
+        script.async = true;
+        
+        return new Promise((resolve, reject) => {
+          script.onload = resolve;
+          script.onerror = reject;
+          document.head.appendChild(script);
+        });
       }
     };
+
+    const initialize = async () => {
+      try {
+        await loadSquareSDK();
+        if (isComponentMounted) {
+          await initializeSquare();
+        }
+      } catch (error) {
+        if (isComponentMounted) {
+          console.error('Failed to load Square SDK:', error);
+          onPaymentError('Failed to load payment system');
+        }
+      }
+    };
+
+    initialize();
+
+    return () => {
+      isComponentMounted = false;
+      cleanup();
+    };
   }, []);
+
+  const cleanup = () => {
+    try {
+      if (cardInstanceRef.current && typeof cardInstanceRef.current.destroy === 'function') {
+        cardInstanceRef.current.destroy();
+      }
+      if (cardButton && typeof cardButton.destroy === 'function') {
+        cardButton.destroy();
+      }
+    } catch (error) {
+      console.error('Error during cleanup:', error);
+    } finally {
+      setPaymentForm(null);
+      setCardButton(null);
+      setIsInitialized(false);
+      cardInstanceRef.current = null;
+    }
+  };
 
   const initializeSquare = async () => {
     try {
@@ -55,6 +96,9 @@ export function SquarePaymentForm({ appointmentId, amount, onPaymentSuccess, onP
         console.error('Card container not found');
         return;
       }
+
+      // Clean up any existing instances
+      cleanup();
 
       const applicationId = import.meta.env.VITE_SQUARE_APPLICATION_ID || 'sandbox-sq0idb-wmwGKpr076ccNbqJgzjomQ';
       const locationId = import.meta.env.VITE_SQUARE_LOCATION_ID || 'LRK1DPQQ4VFYZ';
@@ -89,13 +133,17 @@ export function SquarePaymentForm({ appointmentId, amount, onPaymentSuccess, onP
 
       await card.attach(cardContainerRef.current);
 
+      // Store references for cleanup
+      cardInstanceRef.current = card;
       setPaymentForm(payments);
       setCardButton(card);
+      setIsInitialized(true);
 
       console.log('Square payment form initialized successfully');
     } catch (error) {
       console.error('Error initializing Square payment form:', error);
       onPaymentError('Failed to initialize payment form. Please check your Square credentials.');
+      setIsInitialized(false);
     }
   };
 
@@ -146,8 +194,8 @@ export function SquarePaymentForm({ appointmentId, amount, onPaymentSuccess, onP
           style={{ minHeight: '120px' }}
           data-testid="square-card-container"
         >
-          {!cardButton && (
-            <div className="text-center text-gray-500 dark:bg-gray-700 py-8">
+          {!isInitialized && (
+            <div className="text-center text-gray-500 dark:text-gray-400 py-8">
               Loading payment form...
             </div>
           )}
@@ -163,11 +211,11 @@ export function SquarePaymentForm({ appointmentId, amount, onPaymentSuccess, onP
 
         <Button
           onClick={handlePayment}
-          disabled={disabled || !cardButton}
+          disabled={disabled || !isInitialized}
           className="w-full bg-primary text-white hover:bg-blue-700"
           data-testid="button-pay"
         >
-          {disabled ? 'Processing...' : `Pay $${amount.toFixed(2)}`}
+          {disabled ? 'Processing...' : !isInitialized ? 'Loading...' : `Pay $${amount.toFixed(2)}`}
         </Button>
 
         <Card className="mt-4 bg-blue-50 border-blue-200 dark:bg-gray-900 dark:border-blue-700">
