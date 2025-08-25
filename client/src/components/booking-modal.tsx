@@ -120,21 +120,31 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
   const [cardInstance, setCardInstance] = useState<any>(null);
 
   useEffect(() => {
+    let isCancelled = false;
+
     if (currentStep === 2 && !cardInstance) {
       const initializeCard = async () => {
         try {
           const payments = await initializeSquare();
           const card = await payments.card();
           await card.attach('#card-container');
-          setCardInstance(card);
-          setSquareReady(true);
+          
+          if (!isCancelled) {
+            setCardInstance(card);
+            setSquareReady(true);
+          } else {
+            // If cancelled, cleanup immediately
+            card.destroy();
+          }
         } catch (error) {
           console.error('Failed to initialize card:', error);
-          toast({
-            title: "Payment System Error",
-            description: "Failed to load payment form. Please refresh and try again.",
-            variant: "destructive",
-          });
+          if (!isCancelled) {
+            toast({
+              title: "Payment System Error",
+              description: "Failed to load payment form. Please refresh and try again.",
+              variant: "destructive",
+            });
+          }
         }
       };
 
@@ -143,6 +153,7 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
 
     // Cleanup when component unmounts or step changes away from payment
     return () => {
+      isCancelled = true;
       if (cardInstance) {
         try {
           cardInstance.destroy();

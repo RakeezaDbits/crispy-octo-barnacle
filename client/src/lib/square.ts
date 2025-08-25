@@ -84,13 +84,16 @@ function createMockSquarePayments() {
           };
         },
         destroy: () => {
-          if (container && isAttached) {
-            try {
-              // Safely clear the container using innerHTML
+          try {
+            // Check if container still exists in DOM
+            if (container && document.body.contains(container)) {
+              // Clear content safely
               container.innerHTML = '';
-            } catch (error) {
-              // Ignore cleanup errors
             }
+          } catch (error) {
+            // Silently ignore any DOM errors
+          } finally {
+            // Always reset state
             isAttached = false;
             container = null;
           }
