@@ -230,7 +230,6 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent
-        ref={dialogRef}
         className="sm:max-w-2xl max-h-[90vh] overflow-y-auto"
         aria-describedby="booking-dialog-description"
       >
@@ -464,7 +463,7 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
               <h4 className="text-2xl font-bold text-gray-900 mb-2" data-testid="text-booking-confirmed">
                 Booking Confirmed!
               </h4>
-              <p className="text-gray-600">Your audit has been scheduled successfully</p>
+              <p className="text-gray-600">Your audit has been successfully scheduled</p>
             </div>
 
             <Card className="bg-gray-50">
