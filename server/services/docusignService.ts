@@ -97,9 +97,9 @@ class DocuSignService {
         
         // If the real API fails, create a more realistic mock that generates a proper signing URL
         const mockEnvelopeId = `mock_env_${Date.now()}_${appointment.id}`;
-        const mockSigningUrl = `https://demo.docusign.net/signing/${mockEnvelopeId}`;
+        const mockSigningUrl = `#mock-signing-${mockEnvelopeId}`;
         
-        console.log(`Using enhanced mock response with realistic URL: ${mockSigningUrl}`);
+        console.log(`Using enhanced mock response with mock URL: ${mockSigningUrl}`);
         
         return {
           status: 'sent',
@@ -115,10 +115,12 @@ class DocuSignService {
   }
 
   private createMockResponse(appointment: Appointment) {
+    // For demo purposes, create a local mock signing URL that works
+    const mockEnvelopeId = `mock_env_${Date.now()}_${appointment.id}`;
     return {
       status: 'sent',
-      envelopeId: `envelope_${Date.now()}`,
-      recipientUrl: `https://demo.docusign.net/signing/${appointment.id}`,
+      envelopeId: mockEnvelopeId,
+      recipientUrl: `#mock-signing-${mockEnvelopeId}`, // Use hash-based mock URL
     };
   }
 

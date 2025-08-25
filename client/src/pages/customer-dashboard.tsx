@@ -142,7 +142,7 @@ export default function CustomerDashboard() {
             <h2 className="text-2xl font-semibold text-gray-900">
               Your Appointments ({appointments.length})
             </h2>
-            
+
             <div className="grid gap-6">
               {appointments.map((appointment) => (
                 <Card key={appointment.id} className="overflow-hidden">
@@ -166,7 +166,7 @@ export default function CustomerDashboard() {
                       </div>
                     </div>
                   </CardHeader>
-                  
+
                   <CardContent className="p-6">
                     <div className="grid md:grid-cols-2 gap-6">
                       {/* Contact Information */}
@@ -232,39 +232,43 @@ export default function CustomerDashboard() {
                           {appointment.docusignStatus.includes('sent') && !appointment.docusignStatus.includes('completed') && (
                             <button 
                               onClick={async () => {
-                                // Extract envelope ID from docusign status
-                                const envelopeId = appointment.docusignStatus.split(':')[1] || appointment.id;
-                                
-                                // For demo purposes, simulate the signing process
-                                const confirmed = window.confirm(
-                                  'DocuSign Demo Signing Process\n\n' +
-                                  'In a real environment, this would open DocuSign for digital signing.\n' +
-                                  'For this demo, would you like to simulate signing the agreement?'
-                                );
-                                
-                                if (confirmed) {
-                                  try {
-                                    // Simulate signing completion
-                                    const response = await fetch(`/api/appointments/${appointment.id}`, {
-                                      method: 'PATCH',
-                                      headers: {
-                                        'Content-Type': 'application/json',
-                                      },
-                                      body: JSON.stringify({
-                                        docusignStatus: 'completed'
-                                      }),
-                                    });
-                                    
-                                    if (response.ok) {
-                                      alert('✅ Document signed successfully!\n\nYour service agreement has been completed.');
-                                      window.location.reload(); // Refresh to show updated status
-                                    } else {
-                                      throw new Error('Failed to update signing status');
+                                // Check if this is a mock URL (starts with #mock-signing-)
+                                const docusignInfo = appointment.docusignStatus.split(':');
+                                if (docusignInfo.length > 1 && docusignInfo[1].startsWith('mock_env_')) {
+                                  // For demo purposes, simulate the signing process
+                                  const confirmed = window.confirm(
+                                    'DocuSign Demo Signing Process\n\n' +
+                                    'In a real environment, this would open DocuSign for digital signing.\n' +
+                                    'For this demo, would you like to simulate signing the agreement?'
+                                  );
+
+                                  if (confirmed) {
+                                    try {
+                                      // Simulate signing completion
+                                      const response = await fetch(`/api/appointments/${appointment.id}`, {
+                                        method: 'PATCH',
+                                        headers: {
+                                          'Content-Type': 'application/json',
+                                        },
+                                        body: JSON.stringify({
+                                          docusignStatus: 'completed'
+                                        }),
+                                      });
+
+                                      if (response.ok) {
+                                        alert('✅ Document signed successfully!\n\nYour service agreement has been completed.');
+                                        window.location.reload(); // Refresh to show updated status
+                                      } else {
+                                        throw new Error('Failed to update signing status');
+                                      }
+                                    } catch (error) {
+                                      console.error('Failed to update signing status:', error);
+                                      alert('❌ Error updating signature status. Please contact support.');
                                     }
-                                  } catch (error) {
-                                    console.error('Failed to update signing status:', error);
-                                    alert('❌ Error updating signature status. Please contact support.');
                                   }
+                                } else {
+                                  // For real DocuSign URLs or other cases, show an info message
+                                  alert('📝 DocuSign Integration\n\nThis would normally open the DocuSign signing interface. For this demo, please use the demo signing button instead.');
                                 }
                               }}
                               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium"
