@@ -51,71 +51,145 @@ function createMockSquarePayments() {
 
       return {
         attach: async (selector: string) => {
+          console.log("Mock Square: Attempting to attach to", selector);
+
           // Find the container
           container = document.querySelector(selector);
-          if (!container || isAttached) {
+          if (!container) {
+            console.error("Mock Square: Container not found", selector);
+            throw new Error(`Container not found: ${selector}`);
+          }
+
+          if (isAttached) {
+            console.log("Mock Square: Already attached");
             return;
           }
 
           try {
             // Clear any existing content safely
-            while (container.firstChild) {
-              container.removeChild(container.firstChild);
-            }
+            container.innerHTML = "";
 
-            // Create a simple placeholder that indicates Square is ready
-            mockElement = document.createElement("div");
-            mockElement.className = "square-mock-ready";
-            mockElement.setAttribute(
-              "style",
-              `
+            // Create mock payment form elements
+            const formWrapper = document.createElement("div");
+            formWrapper.className = "square-mock-form";
+            formWrapper.style.cssText = `
+              padding: 16px;
+              background: white;
+              border-radius: 8px;
+              min-height: 160px;
+            `;
+
+            // Card number field
+            const cardNumberField = document.createElement("div");
+            cardNumberField.style.cssText = `
+              margin-bottom: 12px;
+            `;
+            cardNumberField.innerHTML = `
+              <label style="display: block; font-size: 12px; color: #666; margin-bottom: 4px;">Card Number</label>
+              <input type="text" placeholder="1234 5678 9012 3456" 
+                style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;" 
+                maxlength="19">
+            `;
+
+            // Expiry and CVV row
+            const expiryRow = document.createElement("div");
+            expiryRow.style.cssText = `
               display: flex; 
-              align-items: center; 
-              justify-content: center; 
-              height: 120px; 
-              border: 2px dashed #d1d5db; 
-              border-radius: 8px; 
-              background: #f9fafb;
-              color: #6b7280;
-              font-size: 14px;
-              font-family: system-ui, -apple-system, sans-serif;
-            `,
-            );
-            mockElement.textContent = "💳 Mock Payment Form Ready";
+              gap: 12px; 
+              margin-bottom: 12px;
+            `;
 
+            const expiryField = document.createElement("div");
+            expiryField.style.cssText = `flex: 1;`;
+            expiryField.innerHTML = `
+              <label style="display: block; font-size: 12px; color: #666; margin-bottom: 4px;">Expiry</label>
+              <input type="text" placeholder="MM/YY" 
+                style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;" 
+                maxlength="5">
+            `;
+
+            const cvvField = document.createElement("div");
+            cvvField.style.cssText = `flex: 1;`;
+            cvvField.innerHTML = `
+              <label style="display: block; font-size: 12px; color: #666; margin-bottom: 4px;">CVV</label>
+              <input type="text" placeholder="123" 
+                style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;" 
+                maxlength="4">
+            `;
+
+            expiryRow.appendChild(expiryField);
+            expiryRow.appendChild(cvvField);
+
+            // Postal code field
+            const postalField = document.createElement("div");
+            postalField.innerHTML = `
+              <label style="display: block; font-size: 12px; color: #666; margin-bottom: 4px;">Postal Code</label>
+              <input type="text" placeholder="12345" 
+                style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;" 
+                maxlength="10">
+            `;
+
+            // Add all fields to wrapper
+            formWrapper.appendChild(cardNumberField);
+            formWrapper.appendChild(expiryRow);
+            formWrapper.appendChild(postalField);
+
+            // Add powered by Square
+            const poweredBy = document.createElement("div");
+            poweredBy.style.cssText = `
+              text-align: center; 
+              margin-top: 12px; 
+              font-size: 11px; 
+              color: #999;
+            `;
+            poweredBy.textContent = "🔒 Powered by Square (Demo Mode)";
+            formWrapper.appendChild(poweredBy);
+
+            mockElement = formWrapper;
             container.appendChild(mockElement);
             isAttached = true;
+
+            console.log("Mock Square: Successfully attached payment form");
           } catch (error) {
-            console.warn("Error attaching mock payment form:", error);
+            console.error("Mock Square: Error attaching:", error);
+            throw error;
           }
         },
 
         tokenize: async () => {
-          // Simulate a small delay
-          await new Promise((resolve) => setTimeout(resolve, 500));
+          console.log("Mock Square: Tokenizing payment...");
+
+          // Simulate network delay
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+
+          const token = `sq_demo_token_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+          console.log("Mock Square: Generated token:", token);
+
           return {
             status: "OK",
-            token: `sq_demo_token_${Date.now()}`,
+            token: token,
           };
         },
 
         destroy: () => {
+          console.log("Mock Square: Destroying card instance...");
+
           try {
-            // Only attempt cleanup if we have references and they're still valid
             if (mockElement && container && container.contains(mockElement)) {
               container.removeChild(mockElement);
-            } else if (container && document.body.contains(container)) {
-              // Fallback: clear all content safely
+              console.log("Mock Square: Removed mock element");
+            } else if (container) {
               container.innerHTML = "";
+              console.log("Mock Square: Cleared container");
             }
           } catch (error) {
-            // Silently ignore DOM manipulation errors during cleanup
-            console.warn("Error during Square cleanup:", error);
+            console.warn("Mock Square: Error during cleanup:", error);
           } finally {
-            // Always reset state
             isAttached = false;
             container = null;
             mockElement = null;
+            console.log("Mock Square: Cleanup complete");
           }
         },
       };
