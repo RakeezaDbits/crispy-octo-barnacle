@@ -143,7 +143,7 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
 
     // Cleanup when component unmounts or step changes away from payment
     return () => {
-      if (cardInstance && currentStep !== 2) {
+      if (cardInstance) {
         try {
           cardInstance.destroy();
         } catch (error) {

@@ -86,11 +86,8 @@ function createMockSquarePayments() {
         destroy: () => {
           if (container && isAttached) {
             try {
-              // Safely clear the container
-              const mockElement = container.querySelector('.square-mock-ready');
-              if (mockElement && mockElement.parentNode === container) {
-                container.removeChild(mockElement);
-              }
+              // Safely clear the container using innerHTML
+              container.innerHTML = '';
             } catch (error) {
               // Ignore cleanup errors
             }
