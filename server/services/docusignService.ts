@@ -30,9 +30,11 @@ class DocuSignService {
   private async authenticate() {
     try {
       const rsaKey = Buffer.from(this.secretKey, 'base64').toString();
+      const scopes = ['signature', 'impersonation'];
       const results = await this.apiClient.requestJWTUserToken(
         this.integrationKey,
         this.userId,
+        scopes,
         rsaKey,
         3600 // 1 hour
       );
