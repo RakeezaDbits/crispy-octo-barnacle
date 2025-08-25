@@ -232,13 +232,15 @@ export default function CustomerDashboard() {
                           {appointment.docusignStatus.includes('sent') && !appointment.docusignStatus.includes('completed') && (
                             <button 
                               onClick={async () => {
-                                // Check if this is a mock URL (starts with #mock-signing-)
-                                const docusignInfo = appointment.docusignStatus.split(':');
-                                if (docusignInfo.length > 1 && docusignInfo[1].startsWith('mock_env_')) {
+                                // Check if this is a mock DocuSign status
+                                const isMockSigningUrl = appointment.docusignStatus.includes('mock_env_') || 
+                                                       appointment.docusignStatus.includes('#mock-signing-');
+                                
+                                if (isMockSigningUrl) {
                                   // For demo purposes, simulate the signing process
                                   const confirmed = window.confirm(
-                                    'DocuSign Demo Signing Process\n\n' +
-                                    'In a real environment, this would open DocuSign for digital signing.\n' +
+                                    '📝 DocuSign Demo Signing Process\n\n' +
+                                    'In a real environment, this would open DocuSign for digital signing.\n\n' +
                                     'For this demo, would you like to simulate signing the agreement?'
                                   );
 
@@ -273,7 +275,7 @@ export default function CustomerDashboard() {
                               }}
                               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium"
                             >
-                              📝 Sign Agreement (Demo)
+                              📝 Sign Agreement
                             </button>
                           )}
                         </div>
