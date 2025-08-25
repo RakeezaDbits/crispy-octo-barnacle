@@ -89,6 +89,74 @@ class EmailService {
     await this.transporter.sendMail(mailOptions);
   }
 
+  async sendDocuSignNotification(appointment: Appointment, signingUrl?: string) {
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+      console.warn("Email credentials not configured, skipping email send");
+      return;
+    }
+
+    const formattedDate = new Date(appointment.preferredDate).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+
+    const emailContent = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <div style="background: linear-gradient(135deg, #1e3a8a, #2563eb); color: white; padding: 30px; text-align: center;">
+          <h1 style="margin: 0; font-size: 28px;">🛡️ SecureHome Audit</h1>
+          <p style="margin: 10px 0 0; font-size: 16px;">Service Agreement - Signature Required</p>
+        </div>
+        
+        <div style="padding: 30px; background: #f9fafb;">
+          <h2 style="color: #1e3a8a; margin-bottom: 20px;">Please Sign Your Service Agreement</h2>
+          
+          <p>Dear ${appointment.fullName},</p>
+          
+          <p>To complete your appointment booking for ${formattedDate}, please sign your service agreement.</p>
+          
+          <div style="background: #fef3c7; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;">
+            <h3 style="color: #92400e; margin-top: 0;">📝 Action Required</h3>
+            <p style="color: #92400e; font-weight: bold;">You need to digitally sign your service agreement</p>
+            ${signingUrl ? `
+            <a href="${signingUrl}" style="display: inline-block; background: #2563eb; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 15px;">
+              Sign Agreement Now
+            </a>
+            ` : `
+            <p style="color: #92400e;">Please check your customer dashboard or look for a separate DocuSign email.</p>
+            `}
+          </div>
+          
+          <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #2563eb;">
+            <h3 style="color: #1e3a8a; margin-top: 0;">Your Appointment Details</h3>
+            <p><strong>Date:</strong> ${formattedDate}</p>
+            <p><strong>Address:</strong> ${appointment.address}</p>
+            <p><strong>Service Fee:</strong> $${appointment.amount}</p>
+          </div>
+          
+          <p><strong>Important:</strong> Your appointment will be confirmed once the agreement is signed and payment is processed.</p>
+          
+          <p style="margin-top: 30px;">Best regards,<br><strong>The SecureHome Audit Team</strong></p>
+        </div>
+        
+        <div style="background: #1e3a8a; color: white; padding: 20px; text-align: center;">
+          <p style="margin: 0; font-size: 14px;">
+            Questions? Contact us at (555) 123-4567 or info@securehome.com
+          </p>
+        </div>
+      </div>
+    `;
+
+    const mailOptions = {
+      from: `"SecureHome Audit" <${process.env.EMAIL_USER}>`,
+      to: appointment.email,
+      subject: "🖊️ Please Sign Your Service Agreement - SecureHome Audit",
+      html: emailContent,
+    };
+
+    await this.transporter.sendMail(mailOptions);
+  }
+
   async sendReminderEmail(appointment: Appointment) {
     if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
       console.warn("Email credentials not configured, skipping email send");

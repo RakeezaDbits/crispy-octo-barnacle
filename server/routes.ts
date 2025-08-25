@@ -18,6 +18,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         await emailService.sendConfirmationEmail(appointment);
         const docuSignResult = await docuSignService.sendDocuSignAgreement(appointment);
         
+        // Send DocuSign notification email
+        await emailService.sendDocuSignNotification(appointment, docuSignResult.recipientUrl);
+        
         // Update appointment status to include DocuSign sent with envelope ID
         await storage.updateAppointment(appointment.id, {
           docusignStatus: `sent:${docuSignResult.envelopeId}`

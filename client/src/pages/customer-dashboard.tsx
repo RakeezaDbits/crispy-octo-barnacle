@@ -217,15 +217,34 @@ export default function CustomerDashboard() {
                     {/* DocuSign Status */}
                     {appointment.docusignStatus && appointment.docusignStatus !== 'not_sent' && (
                       <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                        <div className="flex items-center space-x-3">
-                          <FileText className="h-5 w-5 text-blue-600" />
-                          <div>
-                            <p className="font-medium text-blue-900">Agreement Status</p>
-                            <p className="text-sm text-blue-700">
-                              DocuSign: {appointment.docusignStatus.replace('_', ' ').toUpperCase()}
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-3">
+                            <FileText className="h-5 w-5 text-blue-600" />
+                            <div>
+                              <p className="font-medium text-blue-900">Service Agreement</p>
+                              <p className="text-sm text-blue-700">
+                                Status: {appointment.docusignStatus.includes('completed') ? 'SIGNED ✓' : 
+                                        appointment.docusignStatus.includes('sent') ? 'PENDING SIGNATURE' : 
+                                        appointment.docusignStatus.replace('_', ' ').toUpperCase()}
+                              </p>
+                            </div>
+                          </div>
+                          {appointment.docusignStatus.includes('sent') && !appointment.docusignStatus.includes('completed') && (
+                            <button 
+                              onClick={() => window.open(`https://demo.docusign.net/signing/${appointment.id}`, '_blank')}
+                              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium"
+                            >
+                              Sign Agreement
+                            </button>
+                          )}
+                        </div>
+                        {appointment.docusignStatus.includes('sent') && !appointment.docusignStatus.includes('completed') && (
+                          <div className="mt-3 p-3 bg-yellow-50 rounded border border-yellow-200">
+                            <p className="text-sm text-yellow-800">
+                              ⚠️ Your appointment requires a signed agreement. Please click "Sign Agreement" above or check your email for DocuSign instructions.
                             </p>
                           </div>
-                        </div>
+                        )}
                       </div>
                     )}
 
