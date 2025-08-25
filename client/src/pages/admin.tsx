@@ -12,6 +12,11 @@ export default function Admin() {
   const [, setLocation] = useLocation();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+  const { data: appointments, isLoading } = useQuery<Appointment[]>({
+    queryKey: ["/api/appointments"],
+    enabled: isAuthenticated, // Only run query when authenticated
+  });
+
   useEffect(() => {
     const authenticated = isAdminAuthenticated();
     if (!authenticated) {
@@ -32,9 +37,6 @@ export default function Admin() {
       </div>
     );
   }
-  const { data: appointments, isLoading } = useQuery<Appointment[]>({
-    queryKey: ["/api/appointments"],
-  });
 
   const getStatusColor = (status: string) => {
     switch (status) {
