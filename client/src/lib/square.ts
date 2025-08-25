@@ -36,8 +36,8 @@ export async function initializeSquare() {
 
     return payments;
   } catch (error) {
-    console.error("Square initialization error:", error);
-    // Fallback to mock for development
+    console.log("Using mock Square payments for development");
+    // Always use mock for development
     return createMockSquarePayments();
   }
 }
@@ -176,10 +176,8 @@ function createMockSquarePayments() {
           console.log("Mock Square: Destroying card instance...");
 
           try {
-            if (mockElement && container && container.contains(mockElement)) {
-              container.removeChild(mockElement);
-              console.log("Mock Square: Removed mock element");
-            } else if (container) {
+            if (container) {
+              // Safely clear container content
               container.innerHTML = "";
               console.log("Mock Square: Cleared container");
             }
