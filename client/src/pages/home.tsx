@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { BookingModal } from "@/components/booking-modal";
+import BookingModal from "@/components/booking-modal";
 import { useAuth } from "@/lib/auth-context";
 import { useLocation } from "wouter";
 import { 
