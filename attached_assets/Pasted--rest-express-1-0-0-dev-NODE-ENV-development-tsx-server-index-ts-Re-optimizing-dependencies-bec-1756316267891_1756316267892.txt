@@ -1,0 +1,383 @@
+
+> rest-express@1.0.0 dev
+> NODE_ENV=development tsx server/index.ts
+
+Re-optimizing dependencies because lockfile has changed
+5:37:29 PM [express] serving on port 5000
+Error:   Failed to scan for dependencies from entries:
+  /home/runner/workspace/client/index.html
+
+  ✘ [ERROR] The symbol "Select" has already been declared
+
+    client/src/components/ui/select.tsx:169:6:
+      169 │ const Select = SelectPrimitive.Root
+          ╵       ~~~~~~
+
+  The symbol "Select" was originally declared here:
+
+    client/src/components/ui/select.tsx:9:6:
+      9 │ const Select = SelectPrimitive.Root
+        ╵       ~~~~~~
+
+
+✘ [ERROR] The symbol "SelectGroup" has already been declared
+
+    client/src/components/ui/select.tsx:171:6:
+      171 │ const SelectGroup = SelectPrimitive.Group
+          ╵       ~~~~~~~~~~~
+
+  The symbol "SelectGroup" was originally declared here:
+
+    client/src/components/ui/select.tsx:11:6:
+      11 │ const SelectGroup = SelectPrimitive.Group
+         ╵       ~~~~~~~~~~~
+
+
+✘ [ERROR] The symbol "SelectValue" has already been declared
+
+    client/src/components/ui/select.tsx:173:6:
+      173 │ const SelectValue = SelectPrimitive.Value
+          ╵       ~~~~~~~~~~~
+
+  The symbol "SelectValue" was originally declared here:
+
+    client/src/components/ui/select.tsx:13:6:
+      13 │ const SelectValue = SelectPrimitive.Value
+         ╵       ~~~~~~~~~~~
+
+
+✘ [ERROR] The symbol "SelectTrigger" has already been declared
+
+    client/src/components/ui/select.tsx:175:6:
+      175 │ const SelectTrigger = React.forwardRef<
+          ╵       ~~~~~~~~~~~~~
+
+  The symbol "SelectTrigger" was originally declared here:
+
+    client/src/components/ui/select.tsx:15:6:
+      15 │ const SelectTrigger = React.forwardRef<
+         ╵       ~~~~~~~~~~~~~
+
+
+✘ [ERROR] The symbol "SelectScrollUpButton" has already been declared
+
+    client/src/components/ui/select.tsx:195:6:
+      195 │ const SelectScrollUpButton = React.forwardRef<
+          ╵       ~~~~~~~~~~~~~~~~~~~~
+
+  The symbol "SelectScrollUpButton" was originally declared here:
+
+    client/src/components/ui/select.tsx:35:6:
+      35 │ const SelectScrollUpButton = React.forwardRef<
+         ╵       ~~~~~~~~~~~~~~~~~~~~
+
+
+✘ [ERROR] The symbol "SelectScrollDownButton" has already been declared
+
+    client/src/components/ui/select.tsx:212:6:
+      212 │ const SelectScrollDownButton = React.forwardRef<
+          ╵       ~~~~~~~~~~~~~~~~~~~~~~
+
+  The symbol "SelectScrollDownButton" was originally declared here:
+
+    client/src/components/ui/select.tsx:52:6:
+      52 │ const SelectScrollDownButton = React.forwardRef<
+         ╵       ~~~~~~~~~~~~~~~~~~~~~~
+
+
+✘ [ERROR] The symbol "SelectContent" has already been declared
+
+    client/src/components/ui/select.tsx:230:6:
+      230 │ const SelectContent = React.forwardRef<
+          ╵       ~~~~~~~~~~~~~
+
+  The symbol "SelectContent" was originally declared here:
+
+    client/src/components/ui/select.tsx:70:6:
+      70 │ const SelectContent = React.forwardRef<
+         ╵       ~~~~~~~~~~~~~
+
+
+✘ [ERROR] The symbol "SelectLabel" has already been declared
+
+    client/src/components/ui/select.tsx:262:6:
+      262 │ const SelectLabel = React.forwardRef<
+          ╵       ~~~~~~~~~~~
+
+  The symbol "SelectLabel" was originally declared here:
+
+    client/src/components/ui/select.tsx:102:6:
+      102 │ const SelectLabel = React.forwardRef<
+          ╵       ~~~~~~~~~~~
+
+
+✘ [ERROR] The symbol "SelectItem" has already been declared
+
+    client/src/components/ui/select.tsx:274:6:
+      274 │ const SelectItem = React.forwardRef<
+          ╵       ~~~~~~~~~~
+
+  The symbol "SelectItem" was originally declared here:
+
+    client/src/components/ui/select.tsx:114:6:
+      114 │ const SelectItem = React.forwardRef<
+          ╵       ~~~~~~~~~~
+
+
+✘ [ERROR] The symbol "SelectSeparator" has already been declared
+
+    client/src/components/ui/select.tsx:297:6:
+      297 │ const SelectSeparator = React.forwardRef<
+          ╵       ~~~~~~~~~~~~~~~
+
+  The symbol "SelectSeparator" was originally declared here:
+
+    client/src/components/ui/select.tsx:137:6:
+      137 │ const SelectSeparator = React.forwardRef<
+          ╵       ~~~~~~~~~~~~~~~
+
+
+✘ [ERROR] Multiple exports with the same name "Select"
+
+    client/src/components/ui/select.tsx:310:2:
+      310 │   Select,
+          ╵   ~~~~~~
+
+  The name "Select" was originally exported here:
+
+    client/src/components/ui/select.tsx:150:2:
+      150 │   Select,
+          ╵   ~~~~~~
+
+
+✘ [ERROR] Multiple exports with the same name "SelectGroup"
+
+    client/src/components/ui/select.tsx:311:2:
+      311 │   SelectGroup,
+          ╵   ~~~~~~~~~~~
+
+  The name "SelectGroup" was originally exported here:
+
+    client/src/components/ui/select.tsx:151:2:
+      151 │   SelectGroup,
+          ╵   ~~~~~~~~~~~
+
+
+✘ [ERROR] Multiple exports with the same name "SelectValue"
+
+    client/src/components/ui/select.tsx:312:2:
+      312 │   SelectValue,
+          ╵   ~~~~~~~~~~~
+
+  The name "SelectValue" was originally exported here:
+
+    client/src/components/ui/select.tsx:152:2:
+      152 │   SelectValue,
+          ╵   ~~~~~~~~~~~
+
+
+✘ [ERROR] Multiple exports with the same name "SelectTrigger"
+
+    client/src/components/ui/select.tsx:313:2:
+      313 │   SelectTrigger,
+          ╵   ~~~~~~~~~~~~~
+
+  The name "SelectTrigger" was originally exported here:
+
+    client/src/components/ui/select.tsx:153:2:
+      153 │   SelectTrigger,
+          ╵   ~~~~~~~~~~~~~
+
+
+✘ [ERROR] Multiple exports with the same name "SelectContent"
+
+    client/src/components/ui/select.tsx:314:2:
+      314 │   SelectContent,
+          ╵   ~~~~~~~~~~~~~
+
+  The name "SelectContent" was originally exported here:
+
+    client/src/components/ui/select.tsx:154:2:
+      154 │   SelectContent,
+          ╵   ~~~~~~~~~~~~~
+
+
+✘ [ERROR] Multiple exports with the same name "SelectLabel"
+
+    client/src/components/ui/select.tsx:315:2:
+      315 │   SelectLabel,
+          ╵   ~~~~~~~~~~~
+
+  The name "SelectLabel" was originally exported here:
+
+    client/src/components/ui/select.tsx:155:2:
+      155 │   SelectLabel,
+          ╵   ~~~~~~~~~~~
+
+
+✘ [ERROR] Multiple exports with the same name "SelectItem"
+
+    client/src/components/ui/select.tsx:316:2:
+      316 │   SelectItem,
+          ╵   ~~~~~~~~~~
+
+  The name "SelectItem" was originally exported here:
+
+    client/src/components/ui/select.tsx:156:2:
+      156 │   SelectItem,
+          ╵   ~~~~~~~~~~
+
+
+✘ [ERROR] Multiple exports with the same name "SelectSeparator"
+
+    client/src/components/ui/select.tsx:317:2:
+      317 │   SelectSeparator,
+          ╵   ~~~~~~~~~~~~~~~
+
+  The name "SelectSeparator" was originally exported here:
+
+    client/src/components/ui/select.tsx:157:2:
+      157 │   SelectSeparator,
+          ╵   ~~~~~~~~~~~~~~~
+
+
+✘ [ERROR] Multiple exports with the same name "SelectScrollUpButton"
+
+    client/src/components/ui/select.tsx:318:2:
+      318 │   SelectScrollUpButton,
+          ╵   ~~~~~~~~~~~~~~~~~~~~
+
+  The name "SelectScrollUpButton" was originally exported here:
+
+    client/src/components/ui/select.tsx:158:2:
+      158 │   SelectScrollUpButton,
+          ╵   ~~~~~~~~~~~~~~~~~~~~
+
+
+✘ [ERROR] Multiple exports with the same name "SelectScrollDownButton"
+
+    client/src/components/ui/select.tsx:319:2:
+      319 │   SelectScrollDownButton,
+          ╵   ~~~~~~~~~~~~~~~~~~~~~~
+
+  The name "SelectScrollDownButton" was originally exported here:
+
+    client/src/components/ui/select.tsx:159:2:
+      159 │   SelectScrollDownButton,
+          ╵   ~~~~~~~~~~~~~~~~~~~~~~
+
+
+✘ [ERROR] The symbol "Tabs" has already been declared
+
+    client/src/components/ui/tabs.tsx:61:6:
+      61 │ const Tabs = TabsPrimitive.Root
+         ╵       ~~~~
+
+  The symbol "Tabs" was originally declared here:
+
+    client/src/components/ui/tabs.tsx:6:6:
+      6 │ const Tabs = TabsPrimitive.Root
+        ╵       ~~~~
+
+
+✘ [ERROR] The symbol "TabsList" has already been declared
+
+    client/src/components/ui/tabs.tsx:63:6:
+      63 │ const TabsList = React.forwardRef<
+         ╵       ~~~~~~~~
+
+  The symbol "TabsList" was originally declared here:
+
+    client/src/components/ui/tabs.tsx:8:6:
+      8 │ const TabsList = React.forwardRef<
+        ╵       ~~~~~~~~
+
+
+✘ [ERROR] The symbol "TabsTrigger" has already been declared
+
+    client/src/components/ui/tabs.tsx:78:6:
+      78 │ const TabsTrigger = React.forwardRef<
+         ╵       ~~~~~~~~~~~
+
+  The symbol "TabsTrigger" was originally declared here:
+
+    client/src/components/ui/tabs.tsx:23:6:
+      23 │ const TabsTrigger = React.forwardRef<
+         ╵       ~~~~~~~~~~~
+
+
+✘ [ERROR] The symbol "TabsContent" has already been declared
+
+    client/src/components/ui/tabs.tsx:93:6:
+      93 │ const TabsContent = React.forwardRef<
+         ╵       ~~~~~~~~~~~
+
+  The symbol "TabsContent" was originally declared here:
+
+    client/src/components/ui/tabs.tsx:38:6:
+      38 │ const TabsContent = React.forwardRef<
+         ╵       ~~~~~~~~~~~
+
+
+✘ [ERROR] Multiple exports with the same name "Tabs"
+
+    client/src/components/ui/tabs.tsx:108:9:
+      108 │ export { Tabs, TabsList, TabsTrigger, TabsContent }
+          ╵          ~~~~
+
+  The name "Tabs" was originally exported here:
+
+    client/src/components/ui/tabs.tsx:53:9:
+      53 │ export { Tabs, TabsList, TabsTrigger, TabsContent }
+         ╵          ~~~~
+
+
+✘ [ERROR] Multiple exports with the same name "TabsList"
+
+    client/src/components/ui/tabs.tsx:108:15:
+      108 │ export { Tabs, TabsList, TabsTrigger, TabsContent }
+          ╵                ~~~~~~~~
+
+  The name "TabsList" was originally exported here:
+
+    client/src/components/ui/tabs.tsx:53:15:
+      53 │ export { Tabs, TabsList, TabsTrigger, TabsContent }
+         ╵                ~~~~~~~~
+
+
+✘ [ERROR] Multiple exports with the same name "TabsTrigger"
+
+    client/src/components/ui/tabs.tsx:108:25:
+      108 │ export { Tabs, TabsList, TabsTrigger, TabsContent }
+          ╵                          ~~~~~~~~~~~
+
+  The name "TabsTrigger" was originally exported here:
+
+    client/src/components/ui/tabs.tsx:53:25:
+      53 │ export { Tabs, TabsList, TabsTrigger, TabsContent }
+         ╵                          ~~~~~~~~~~~
+
+
+✘ [ERROR] Multiple exports with the same name "TabsContent"
+
+    client/src/components/ui/tabs.tsx:108:38:
+      108 │ export { Tabs, TabsList, TabsTrigger, TabsContent }
+          ╵                                       ~~~~~~~~~~~
+
+  The name "TabsContent" was originally exported here:
+
+    client/src/components/ui/tabs.tsx:53:38:
+      53 │ export { Tabs, TabsList, TabsTrigger, TabsContent }
+         ╵                                       ~~~~~~~~~~~
+
+
+    at failureErrorWithLog (/home/runner/workspace/node_modules/vite/node_modules/esbuild/lib/main.js:1472:15)
+    at /home/runner/workspace/node_modules/vite/node_modules/esbuild/lib/main.js:945:25
+    at runOnEndCallbacks (/home/runner/workspace/node_modules/vite/node_modules/esbuild/lib/main.js:1315:45)
+    at buildResponseToResult (/home/runner/workspace/node_modules/vite/node_modules/esbuild/lib/main.js:943:7)
+    at /home/runner/workspace/node_modules/vite/node_modules/esbuild/lib/main.js:955:9
+    at new Promise (<anonymous>)
+    at requestCallbacks.on-end (/home/runner/workspace/node_modules/vite/node_modules/esbuild/lib/main.js:954:54)
+    at handleRequest (/home/runner/workspace/node_modules/vite/node_modules/esbuild/lib/main.js:647:17)
+    at handleIncomingPacket (/home/runner/workspace/node_modules/vite/node_modules/esbuild/lib/main.js:672:7)
+    at Socket.readFromStdout (/home/runner/workspace/node_modules/vite/node_modules/esbuild/lib/main.js:600:7)
