@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -143,8 +142,8 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white overflow-hidden">
+      {/* Header Section */}
+      <header className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white overflow-hidden">
         <div className="absolute inset-0 bg-black/20"></div>
         <div 
           className="absolute inset-0 opacity-10"
@@ -154,24 +153,24 @@ export default function Home() {
             backgroundPosition: 'center'
           }}
         ></div>
-        
+
         <div className="relative container mx-auto px-4 py-24 lg:py-32">
           <div className="max-w-4xl mx-auto text-center">
             <Badge className="mb-4 bg-yellow-500/20 text-yellow-300 border-yellow-500/30 hover:bg-yellow-500/30">
               <Shield className="w-4 h-4 mr-2" />
               Trusted Security Professionals
             </Badge>
-            
+
             <h1 className="text-4xl lg:text-6xl font-bold mb-6 leading-tight">
               Protect Your Home & Assets with 
               <span className="bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent"> Professional Security</span>
             </h1>
-            
+
             <p className="text-xl lg:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
               Comprehensive security audits, title protection, and asset monitoring services by certified professionals. 
               Safeguard what matters most with industry-leading security solutions.
             </p>
-            
+
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Button 
                 size="lg" 
@@ -181,7 +180,7 @@ export default function Home() {
                 {customer ? 'Go to Dashboard' : 'Schedule Security Audit'}
                 <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
-              
+
               <Button 
                 variant="outline" 
                 size="lg"
@@ -193,6 +192,84 @@ export default function Home() {
               </Button>
             </div>
           </div>
+        </div>
+      </header>
+
+      {/* Hero Section */}
+      <section className="relative py-20 px-4 text-center overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-indigo-600/10"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-indigo-600/20"></div>
+
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 left-0 w-full h-full bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.1"%3E%3Ccircle cx="7" cy="7" r="1"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')]"></div>
+        </div>
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+          <div className="text-center">
+            <div className="flex justify-center mb-8">
+              <div className="relative">
+                <div className="w-20 h-20 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/20">
+                  <Shield className="w-10 h-10 text-white" />
+                </div>
+                <div className="absolute -top-1 -right-1 w-6 h-6 bg-green-400 rounded-full flex items-center justify-center">
+                  <CheckCircle className="w-4 h-4 text-white" />
+                </div>
+              </div>
+            </div>
+
+            <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
+              Alpha Security Bureau
+            </h1>
+
+            <p className="text-xl md:text-2xl text-blue-100 mb-8 max-w-3xl mx-auto leading-relaxed">
+              Premier Security Services • Professional Guards • 24/7 Protection
+            </p>
+
+            <div className="flex flex-wrap justify-center gap-6 mb-12">
+              <div className="flex items-center space-x-2 text-blue-200">
+                <Clock className="w-5 h-5" />
+                <span className="text-sm font-medium">24/7 Available</span>
+              </div>
+              <div className="flex items-center space-x-2 text-blue-200">
+                <Award className="w-5 h-5" />
+                <span className="text-sm font-medium">Licensed & Insured</span>
+              </div>
+              <div className="flex items-center space-x-2 text-blue-200">
+                <Users className="w-5 h-5" />
+                <span className="text-sm font-medium">Trained Professionals</span>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row justify-center gap-4">
+              <Button 
+                size="lg" 
+                className="bg-white text-blue-900 hover:bg-blue-50 font-semibold px-8 py-4 text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                onClick={handleGetStarted}
+              >
+                <Shield className="w-5 h-5 mr-2" />
+                Get Security Now
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Button>
+
+              <Button 
+                variant="outline" 
+                size="lg"
+                className="border-white/30 text-white hover:bg-white/10 backdrop-blur-sm font-semibold px-8 py-4 text-lg"
+                onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+              >
+                <Phone className="w-5 h-5 mr-2" />
+                Call: (555) 123-4567
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Wave */}
+        <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none">
+          <svg className="relative block w-full h-12" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" className="fill-gray-50"></path>
+          </svg>
         </div>
       </section>
 
@@ -263,7 +340,7 @@ export default function Home() {
                     Most Popular
                   </div>
                 )}
-                
+
                 <CardHeader className="pb-4">
                   <div className="flex items-center justify-between mb-4">
                     <div className="inline-flex items-center justify-center w-12 h-12 bg-gray-100 rounded-lg">
@@ -277,7 +354,7 @@ export default function Home() {
                   <CardTitle className="text-xl font-bold text-gray-900">{service.title}</CardTitle>
                   <CardDescription className="text-gray-600">{service.description}</CardDescription>
                 </CardHeader>
-                
+
                 <CardContent>
                   <ul className="space-y-3 mb-6">
                     {service.features.map((feature, fIndex) => (
@@ -287,7 +364,7 @@ export default function Home() {
                       </li>
                     ))}
                   </ul>
-                  
+
                   <Button 
                     className={`w-full ${service.popular ? 'bg-yellow-500 hover:bg-yellow-600 text-black' : 'bg-gray-900 hover:bg-gray-800 text-white'}`}
                     onClick={() => setIsBookingOpen(true)}
@@ -313,7 +390,7 @@ export default function Home() {
                 Our team consists of licensed security experts, former law enforcement professionals, 
                 and certified safety specialists with extensive training and background verification.
               </p>
-              
+
               <div className="grid grid-cols-2 gap-6 mb-8">
                 <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
                   <AlertTriangle className="w-8 h-8 text-yellow-400 mb-2" />
@@ -326,7 +403,7 @@ export default function Home() {
                   <p className="text-sm text-gray-300">Round-the-clock security surveillance</p>
                 </div>
               </div>
-              
+
               <Button 
                 size="lg" 
                 className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold"
@@ -335,7 +412,7 @@ export default function Home() {
                 Meet Our Team
               </Button>
             </div>
-            
+
             <div className="relative">
               <img 
                 src="https://images.unsplash.com/photo-1556157382-97eda2d62296?w=600&h=400&fit=crop"
@@ -369,9 +446,9 @@ export default function Home() {
                       <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
                     ))}
                   </div>
-                  
+
                   <p className="text-gray-700 mb-6 italic">"{testimonial.content}"</p>
-                  
+
                   <div className="flex items-center">
                     <img 
                       src={testimonial.image}
@@ -399,7 +476,7 @@ export default function Home() {
           <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
             Get started with a comprehensive security audit today. Our experts are standing by to protect what matters most to you.
           </p>
-          
+
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Button 
               size="lg" 
@@ -409,7 +486,7 @@ export default function Home() {
               <Calendar className="w-5 h-5 mr-2" />
               Schedule Assessment
             </Button>
-            
+
             <div className="flex items-center text-gray-300">
               <Phone className="w-5 h-5 mr-2" />
               <span>Call: (555) 123-SAFE</span>
