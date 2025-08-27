@@ -85,7 +85,15 @@ export default function CustomerDashboard() {
           <h1 className="font-heading text-4xl text-primary-900 tracking-wide mb-2">
             CUSTOMER PORTAL
           </h1>
-          <p className="text-gray-600">Track your security audit appointments and status</p>
+          <p className="text-gray-600">Track your security audit appointments and service status</p>
+          <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200 max-w-2xl mx-auto">
+            <h3 className="font-semibold text-blue-900 mb-2">💡 How Our Service Works</h3>
+            <div className="text-sm text-blue-800 space-y-1">
+              <p>• <strong>$100/month:</strong> Ongoing security monitoring and support</p>
+              <p>• <strong>$125 audit fee:</strong> Professional guard conducts thorough security assessment</p>
+              <p>• <strong>Complete service:</strong> On-site audit + monthly monitoring for total protection</p>
+            </div>
+          </div>
         </div>
 
         {/* Search Section */}
@@ -243,7 +251,7 @@ export default function CustomerDashboard() {
                             <button 
                               onClick={async () => {
                                 // Check if this is a mock DocuSign status - improved detection
-                                const statusString = appointment.docusignStatus.toLowerCase();
+                                const statusString = appointment.docusignStatus?.toLowerCase() || '';
                                 const isMockSigningUrl = statusString.includes('mock_env_') || 
                                                        statusString.includes('#mock-signing-') ||
                                                        statusString.includes('sent:mock_env_') ||
@@ -324,6 +332,32 @@ export default function CustomerDashboard() {
                         )}
                       </div>
                     )}
+
+                    {/* Service Process Information */}
+                    <div className="mt-6 p-4 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg border border-green-200">
+                      <h4 className="font-semibold text-green-900 mb-3">🛡️ Your Security Audit Process</h4>
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div className="space-y-3">
+                          <h5 className="font-medium text-green-800">What You Paid For:</h5>
+                          <ul className="text-sm text-green-700 space-y-1">
+                            <li>✓ First Month Service Fee: $100.00</li>
+                            <li>✓ Professional Guard Audit: $125.00</li>
+                            <li>✓ Comprehensive Security Assessment</li>
+                            <li>✓ Detailed Report & Recommendations</li>
+                          </ul>
+                        </div>
+                        <div className="space-y-3">
+                          <h5 className="font-medium text-blue-800">What Happens Next:</h5>
+                          <ul className="text-sm text-blue-700 space-y-1">
+                            <li>📞 Our team will contact you 24hrs before</li>
+                            <li>🚗 Professional guard arrives at scheduled time</li>
+                            <li>📋 Complete security assessment (60-90 mins)</li>
+                            <li>📄 Receive detailed security report</li>
+                            <li>🔒 Ongoing monthly security monitoring</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
 
                     {/* Appointment Timeline */}
                     <div className="mt-6 border-t pt-4">
