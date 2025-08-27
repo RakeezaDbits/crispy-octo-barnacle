@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "wouter";
 import { ArrowLeft, Calendar, DollarSign, Users, CheckCircle, LogOut, Shield } from "lucide-react";
 import { useEffect, useState } from "react";
-import { isAdminAuthenticated, logout } from "@/lib/auth";
+import { isAdminAuthenticated, adminLogout } from "@/lib/auth";
 import type { Appointment } from "@shared/schema";
 
 export default function Admin() {
@@ -86,7 +86,7 @@ export default function Admin() {
             </Link>
             <Button 
               variant="outline" 
-              onClick={logout}
+              onClick={adminLogout}
               className="text-red-600 border-red-600 hover:bg-red-50"
               data-testid="button-logout"
             >

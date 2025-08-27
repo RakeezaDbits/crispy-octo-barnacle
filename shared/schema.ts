@@ -10,8 +10,35 @@ export const users = pgTable("users", {
   role: text("role").notNull().default("admin"),
 });
 
+export const customers = pgTable("customers", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  email: text("email").notNull().unique(),
+  password: text("password").notNull(),
+  fullName: text("full_name").notNull(),
+  phone: text("phone"),
+  isEmailVerified: boolean("is_email_verified").default(false),
+  emailVerificationToken: text("email_verification_token"),
+  passwordResetToken: text("password_reset_token"),
+  passwordResetTokenExpiry: timestamp("password_reset_token_expiry"),
+  lastLoginAt: timestamp("last_login_at"),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const customerSessions = pgTable("customer_sessions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  customerId: varchar("customer_id").notNull().references(() => customers.id, { onDelete: 'cascade' }),
+  token: text("token").notNull().unique(),
+  expiresAt: timestamp("expires_at").notNull(),
+  userAgent: text("user_agent"),
+  ipAddress: text("ip_address"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 export const appointments = pgTable("appointments", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  customerId: varchar("customer_id").references(() => customers.id, { onDelete: 'cascade' }),
   fullName: text("full_name").notNull(),
   email: text("email").notNull(),
   phone: text("phone").notNull(),
@@ -21,7 +48,7 @@ export const appointments = pgTable("appointments", {
   status: text("status").notNull().default("pending"), // pending, confirmed, in_progress, completed, cancelled
   paymentId: text("payment_id"),
   paymentStatus: text("payment_status").default("pending"), // pending, completed, failed
-  amount: decimal("amount", { precision: 10, scale: 2 }).default("50.00"),
+  amount: decimal("amount", { precision: 10, scale: 2 }).default("225.00"),
   titleProtection: boolean("title_protection").default(false),
   docusignStatus: text("docusign_status").default("not_sent"), // not_sent, sent, signed
   servicePackageId: integer("service_package_id"),
@@ -63,8 +90,35 @@ export const insertUserSchema = createInsertSchema(users).pick({
   password: true,
 });
 
+export const insertCustomerSchema = createInsertSchema(customers).pick({
+  email: true,
+  password: true,
+  fullName: true,
+  phone: true,
+}).extend({
+  email: z.string().email("Valid email is required"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+  fullName: z.string().min(2, "Full name is required"),
+  phone: z.string().optional(),
+});
+
+export const customerLoginSchema = z.object({
+  email: z.string().email("Valid email is required"),
+  password: z.string().min(1, "Password is required"),
+});
+
+export const passwordResetSchema = z.object({
+  email: z.string().email("Valid email is required"),
+});
+
+export const passwordResetConfirmSchema = z.object({
+  token: z.string().min(1, "Reset token is required"),
+  newPassword: z.string().min(8, "Password must be at least 8 characters"),
+});
+
 export const insertAppointmentSchema = createInsertSchema(appointments).omit({
   id: true,
+  customerId: true,
   createdAt: true,
   updatedAt: true,
   paymentId: true,
@@ -91,6 +145,12 @@ export const insertServicePackageSchema = createInsertSchema(servicePackages).om
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
+export type InsertCustomer = z.infer<typeof insertCustomerSchema>;
+export type Customer = typeof customers.$inferSelect;
+export type CustomerLogin = z.infer<typeof customerLoginSchema>;
+export type PasswordReset = z.infer<typeof passwordResetSchema>;
+export type PasswordResetConfirm = z.infer<typeof passwordResetConfirmSchema>;
+export type CustomerSession = typeof customerSessions.$inferSelect;
 export type InsertAppointment = z.infer<typeof insertAppointmentSchema>;
 export type Appointment = typeof appointments.$inferSelect;
 export type Officer = typeof officers.$inferSelect;

@@ -227,6 +227,126 @@ class EmailService {
 
     await this.transporter.sendMail(mailOptions);
   }
+
+  async sendWelcomeEmail(email: string, fullName: string, verificationToken: string) {
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+      console.warn("Email credentials not configured, skipping email send");
+      return;
+    }
+
+    const domainUrl = process.env.NODE_ENV === 'production' 
+      ? `https://${process.env.REPL_SLUG || 'your-repl'}.${process.env.REPL_OWNER || 'your-username'}.repl.co`
+      : `https://${process.env.REPL_SLUG || 'your-repl'}.${process.env.REPL_OWNER || 'your-username'}.repl.co`;
+
+    const verificationUrl = `${domainUrl}/api/auth/verify-email/${verificationToken}`;
+
+    const emailContent = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <div style="background: linear-gradient(135deg, #1e3a8a, #2563eb); color: white; padding: 30px; text-align: center;">
+          <h1 style="margin: 0; font-size: 28px;">🛡️ Alpha Security Bureau</h1>
+          <p style="margin: 10px 0 0; font-size: 16px;">Welcome to Professional Security Services</p>
+        </div>
+
+        <div style="padding: 30px; background: #f9fafb;">
+          <h2 style="color: #1e3a8a; margin-bottom: 20px;">Welcome ${fullName}!</h2>
+
+          <p>Thank you for creating an account with Alpha Security Bureau. To complete your registration and start booking security audits, please verify your email address.</p>
+
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${verificationUrl}" style="background: #2563eb; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold;">
+              Verify Email Address
+            </a>
+          </div>
+
+          <p style="color: #666; font-size: 14px;">If the button doesn't work, copy and paste this link: ${verificationUrl}</p>
+
+          <div style="background: #e0f2fe; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <h3 style="color: #01579b; margin-top: 0;">What's Next?</h3>
+            <ul style="color: #01579b;">
+              <li>Verify your email to activate your account</li>
+              <li>Book your first security audit</li>
+              <li>Track your appointments and service history</li>
+              <li>Access exclusive security recommendations</li>
+            </ul>
+          </div>
+
+          <p style="margin-top: 30px;">Best regards,<br><strong>The Alpha Security Bureau Team</strong></p>
+        </div>
+
+        <div style="background: #1e3a8a; color: white; padding: 20px; text-align: center;">
+          <p style="margin: 0; font-size: 14px;">
+            Questions? Contact us at (555) 123-4567 or info@alphasecurity.com
+          </p>
+        </div>
+      </div>
+    `;
+
+    const mailOptions = {
+      from: `"Alpha Security Bureau" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: "Verify Your Email - Alpha Security Bureau",
+      html: emailContent,
+    };
+
+    await this.transporter.sendMail(mailOptions);
+  }
+
+  async sendPasswordResetEmail(email: string, resetToken: string) {
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+      console.warn("Email credentials not configured, skipping email send");
+      return;
+    }
+
+    const domainUrl = process.env.NODE_ENV === 'production' 
+      ? `https://${process.env.REPL_SLUG || 'your-repl'}.${process.env.REPL_OWNER || 'your-username'}.repl.co`
+      : `https://${process.env.REPL_SLUG || 'your-repl'}.${process.env.REPL_OWNER || 'your-username'}.repl.co`;
+
+    const resetUrl = `${domainUrl}/reset-password?token=${resetToken}`;
+
+    const emailContent = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <div style="background: linear-gradient(135deg, #1e3a8a, #2563eb); color: white; padding: 30px; text-align: center;">
+          <h1 style="margin: 0; font-size: 28px;">🛡️ Alpha Security Bureau</h1>
+          <p style="margin: 10px 0 0; font-size: 16px;">Password Reset Request</p>
+        </div>
+
+        <div style="padding: 30px; background: #f9fafb;">
+          <h2 style="color: #1e3a8a; margin-bottom: 20px;">Reset Your Password</h2>
+
+          <p>We received a request to reset your password. If you didn't make this request, you can safely ignore this email.</p>
+
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${resetUrl}" style="background: #dc2626; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold;">
+              Reset Password
+            </a>
+          </div>
+
+          <p style="color: #666; font-size: 14px;">If the button doesn't work, copy and paste this link: ${resetUrl}</p>
+
+          <div style="background: #fef3c7; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #f59e0b;">
+            <p style="color: #92400e; margin: 0;"><strong>Security Notice:</strong> This reset link will expire in 1 hour for your security.</p>
+          </div>
+
+          <p style="margin-top: 30px;">Best regards,<br><strong>The Alpha Security Bureau Team</strong></p>
+        </div>
+
+        <div style="background: #1e3a8a; color: white; padding: 20px; text-align: center;">
+          <p style="margin: 0; font-size: 14px;">
+            Questions? Contact us at (555) 123-4567 or info@alphasecurity.com
+          </p>
+        </div>
+      </div>
+    `;
+
+    const mailOptions = {
+      from: `"Alpha Security Bureau" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: "Password Reset - Alpha Security Bureau",
+      html: emailContent,
+    };
+
+    await this.transporter.sendMail(mailOptions);
+  }
 }
 
 export const emailService = new EmailService();

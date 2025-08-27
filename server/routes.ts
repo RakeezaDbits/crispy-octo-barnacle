@@ -1,10 +1,12 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertAppointmentSchema, insertUserSchema } from "@shared/schema";
+import { insertAppointmentSchema, insertUserSchema, insertCustomerSchema, customerLoginSchema, passwordResetSchema, passwordResetConfirmSchema } from "@shared/schema";
 import { emailService } from "./services/emailService";
 import { squareService } from "./services/squareService";
 import { docuSignService } from "./services/docusignService";
+import { AuthService } from "./services/authService";
+import { authenticateCustomer, optionalAuthentication, getCustomerId } from "./middleware/authMiddleware";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Create appointment
@@ -251,6 +253,199 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Failed to send reminder emails:", error);
       res.status(500).json({ error: "Failed to send reminder emails" });
+    }
+  });
+
+  // Customer authentication routes
+  // Register customer
+  app.post("/api/auth/register", async (req, res) => {
+    try {
+      const validatedData = insertCustomerSchema.parse(req.body);
+      const { customer, token } = await AuthService.registerCustomer(validatedData);
+      
+      // Send verification email
+      try {
+        await emailService.sendWelcomeEmail(customer.email, customer.fullName, customer.emailVerificationToken!);
+      } catch (emailError) {
+        console.error("Failed to send verification email:", emailError);
+      }
+      
+      res.status(201).json({ 
+        message: "Registration successful. Please check your email to verify your account.",
+        token,
+        customer: {
+          id: customer.id,
+          email: customer.email,
+          fullName: customer.fullName,
+          phone: customer.phone,
+          isEmailVerified: customer.isEmailVerified,
+        }
+      });
+    } catch (error) {
+      console.error("Registration error:", error);
+      res.status(400).json({ message: error instanceof Error ? error.message : "Registration failed" });
+    }
+  });
+
+  // Login customer
+  app.post("/api/auth/login", async (req, res) => {
+    try {
+      const validatedData = customerLoginSchema.parse(req.body);
+      const result = await AuthService.loginCustomer(validatedData);
+      
+      if (!result) {
+        return res.status(401).json({ message: "Invalid email or password" });
+      }
+      
+      const { customer, token } = result;
+      res.json({ 
+        message: "Login successful",
+        token,
+        customer: {
+          id: customer.id,
+          email: customer.email,
+          fullName: customer.fullName,
+          phone: customer.phone,
+          isEmailVerified: customer.isEmailVerified,
+        }
+      });
+    } catch (error) {
+      console.error("Login error:", error);
+      res.status(400).json({ message: error instanceof Error ? error.message : "Login failed" });
+    }
+  });
+
+  // Logout customer
+  app.post("/api/auth/logout", authenticateCustomer, async (req, res) => {
+    try {
+      const authHeader = req.headers.authorization;
+      const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : '';
+      
+      if (token) {
+        await AuthService.logout(token);
+      }
+      
+      res.json({ message: "Logout successful" });
+    } catch (error) {
+      console.error("Logout error:", error);
+      res.status(500).json({ message: "Logout failed" });
+    }
+  });
+
+  // Verify email
+  app.get("/api/auth/verify-email/:token", async (req, res) => {
+    try {
+      const { token } = req.params;
+      const success = await AuthService.verifyEmail(token);
+      
+      if (success) {
+        res.json({ message: "Email verified successfully" });
+      } else {
+        res.status(400).json({ message: "Invalid or expired verification token" });
+      }
+    } catch (error) {
+      console.error("Email verification error:", error);
+      res.status(500).json({ message: "Email verification failed" });
+    }
+  });
+
+  // Request password reset
+  app.post("/api/auth/forgot-password", async (req, res) => {
+    try {
+      const validatedData = passwordResetSchema.parse(req.body);
+      const resetToken = await AuthService.generatePasswordResetToken(validatedData.email);
+      
+      if (resetToken) {
+        // Send password reset email
+        try {
+          await emailService.sendPasswordResetEmail(validatedData.email, resetToken);
+        } catch (emailError) {
+          console.error("Failed to send password reset email:", emailError);
+        }
+      }
+      
+      // Always return success for security reasons
+      res.json({ message: "If the email exists, a password reset link has been sent" });
+    } catch (error) {
+      console.error("Password reset request error:", error);
+      res.status(400).json({ message: error instanceof Error ? error.message : "Password reset failed" });
+    }
+  });
+
+  // Reset password
+  app.post("/api/auth/reset-password", async (req, res) => {
+    try {
+      const validatedData = passwordResetConfirmSchema.parse(req.body);
+      const success = await AuthService.resetPassword(validatedData.token, validatedData.newPassword);
+      
+      if (success) {
+        res.json({ message: "Password reset successful. Please login with your new password." });
+      } else {
+        res.status(400).json({ message: "Invalid or expired reset token" });
+      }
+    } catch (error) {
+      console.error("Password reset error:", error);
+      res.status(400).json({ message: error instanceof Error ? error.message : "Password reset failed" });
+    }
+  });
+
+  // Get current customer profile
+  app.get("/api/auth/profile", authenticateCustomer, async (req, res) => {
+    try {
+      const customer = req.customer!;
+      res.json({
+        id: customer.id,
+        email: customer.email,
+        fullName: customer.fullName,
+        phone: customer.phone,
+        isEmailVerified: customer.isEmailVerified,
+        createdAt: customer.createdAt,
+        lastLoginAt: customer.lastLoginAt,
+      });
+    } catch (error) {
+      console.error("Profile fetch error:", error);
+      res.status(500).json({ message: "Failed to fetch profile" });
+    }
+  });
+
+  // Get customer's appointments
+  app.get("/api/auth/appointments", authenticateCustomer, async (req, res) => {
+    try {
+      const customerId = getCustomerId(req);
+      const appointments = await storage.getAppointmentsByCustomerId(customerId);
+      res.json(appointments);
+    } catch (error) {
+      console.error("Failed to get customer appointments:", error);
+      res.status(500).json({ message: "Failed to get appointments" });
+    }
+  });
+
+  // Create appointment for authenticated customer
+  app.post("/api/auth/appointments", authenticateCustomer, async (req, res) => {
+    try {
+      const customerId = getCustomerId(req);
+      const appointmentData = {
+        ...req.body,
+        customerId, // Link appointment to authenticated customer
+        status: "pending",
+        paymentStatus: "pending",
+        amount: 225, // Fixed service fee ($100 monthly + $125 audit)
+      };
+
+      const appointment = await storage.createAppointment(appointmentData);
+      
+      // Send confirmation email
+      try {
+        await emailService.sendConfirmationEmail(appointment);
+      } catch (emailError) {
+        console.error("Failed to send confirmation email:", emailError);
+        // Don't fail the appointment creation if email fails
+      }
+
+      res.status(201).json(appointment);
+    } catch (error) {
+      console.error("Failed to create appointment:", error);
+      res.status(500).json({ message: "Failed to create appointment" });
     }
   });
 

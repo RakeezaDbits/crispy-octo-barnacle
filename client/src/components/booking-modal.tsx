@@ -30,6 +30,8 @@ import {
   Clock,
   MapPin,
   DollarSign,
+  Shield,
+  User,
 } from "lucide-react";
 import {
   insertAppointmentSchema,
@@ -40,6 +42,9 @@ import { z } from "zod";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { SquarePaymentForm } from "@/components/square-payment-form";
+import { useAuth } from "@/lib/auth-context";
+import { authenticatedRequest } from "@/lib/auth";
+import { useLocation } from "wouter";
 
 interface BookingModalProps {
   isOpen: boolean;
@@ -62,6 +67,21 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
 
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { customer } = useAuth();
+  const [, setLocation] = useLocation();
+
+  // Check authentication when modal opens
+  useEffect(() => {
+    if (isOpen && !customer) {
+      onClose();
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to book an appointment",
+        variant: "destructive",
+      });
+      setLocation('/auth');
+    }
+  }, [isOpen, customer, onClose, toast, setLocation]);
 
   // Fetch service packages
   const { data: servicePackages, isLoading: packagesLoading } = useQuery<
@@ -82,9 +102,9 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
       }),
     ),
     defaultValues: {
-      fullName: "",
-      email: "",
-      phone: "",
+      fullName: customer?.fullName || "",
+      email: customer?.email || "",
+      phone: customer?.phone || "",
       address: "",
       preferredDate: "",
       preferredTime: "",
@@ -93,9 +113,25 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
     },
   });
 
+  // Update form with customer data when it becomes available
+  useEffect(() => {
+    if (customer) {
+      form.setValue('fullName', customer.fullName);
+      form.setValue('email', customer.email);
+      if (customer.phone) {
+        form.setValue('phone', customer.phone);
+      }
+    }
+  }, [customer, form]);
+
   const createAppointmentMutation = useMutation({
     mutationFn: async (data: InsertAppointment) => {
-      const response = await apiRequest("POST", "/api/appointments", data);
+      // Use authenticated endpoint for creating appointments
+      const response = await authenticatedRequest("POST", "/api/auth/appointments", data);
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to create appointment');
+      }
       return response.json();
     },
     onSuccess: (appointment) => {

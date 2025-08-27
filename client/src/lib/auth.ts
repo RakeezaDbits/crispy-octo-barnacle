@@ -1,3 +1,18 @@
+import { apiRequest } from './queryClient';
+
+// Helper function to make authenticated API requests
+export const authenticatedRequest = async (method: string, url: string, data?: any) => {
+  const token = localStorage.getItem('auth_token');
+  
+  return apiRequest(method, url, data, {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+};
+
+// Admin auth functions (legacy)
 export function getAdminToken(): string | null {
   return localStorage.getItem('adminToken');
 }
@@ -16,7 +31,7 @@ export function isAdminAuthenticated(): boolean {
   }
 }
 
-export function logout(): void {
+export function adminLogout(): void {
   localStorage.removeItem('adminToken');
   window.location.href = '/admin/login';
 }

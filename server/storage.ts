@@ -11,6 +11,7 @@ export interface IStorage {
   updateAppointment(id: string, updates: Partial<Appointment>): Promise<Appointment | undefined>;
   getAllAppointments(): Promise<Appointment[]>;
   getAppointmentsByEmail(email: string): Promise<Appointment[]>;
+  getAppointmentsByCustomerId(customerId: string): Promise<Appointment[]>;
   getServicePackages(): Promise<ServicePackage[]>;
   createServicePackage(servicePackage: InsertServicePackage): Promise<ServicePackage>;
 }
@@ -64,6 +65,13 @@ export class DatabaseStorage implements IStorage {
     return await db.select()
       .from(appointments)
       .where(eq(appointments.email, email))
+      .orderBy(desc(appointments.createdAt));
+  }
+
+  async getAppointmentsByCustomerId(customerId: string): Promise<Appointment[]> {
+    return await db.select()
+      .from(appointments)
+      .where(eq(appointments.customerId, customerId))
       .orderBy(desc(appointments.createdAt));
   }
 
