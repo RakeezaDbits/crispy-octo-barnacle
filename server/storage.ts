@@ -1,4 +1,4 @@
-import { appointments, users, servicePackages, type User, type InsertUser, type Appointment, type InsertAppointment, type ServicePackage, type InsertServicePackage } from "@shared/schema";
+import { appointments, users, servicePackages, customers, type User, type InsertUser, type Appointment, type InsertAppointment, type ServicePackage, type InsertServicePackage } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc } from "drizzle-orm";
 
@@ -14,6 +14,7 @@ export interface IStorage {
   getAppointmentsByCustomerId(customerId: string): Promise<Appointment[]>;
   getServicePackages(): Promise<ServicePackage[]>;
   createServicePackage(servicePackage: InsertServicePackage): Promise<ServicePackage>;
+  getAllCustomers(): Promise<User[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -48,13 +49,19 @@ export class DatabaseStorage implements IStorage {
     return appointment || undefined;
   }
 
-  async updateAppointment(id: string, updates: Partial<Appointment>): Promise<Appointment | undefined> {
+  async updateAppointment(appointmentId: string, updates: Partial<InsertAppointment>) {
     const [updatedAppointment] = await db
       .update(appointments)
       .set({ ...updates, updatedAt: new Date() })
-      .where(eq(appointments.id, id))
+      .where(eq(appointments.id, appointmentId))
       .returning();
-    return updatedAppointment || undefined;
+
+    return updatedAppointment;
+  }
+
+  // Get all customers
+  async getAllCustomers() {
+    return db.select().from(customers).orderBy(desc(customers.createdAt));
   }
 
   async getAllAppointments(): Promise<Appointment[]> {

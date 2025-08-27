@@ -75,13 +75,19 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
     if (isOpen && !customer) {
       onClose();
       toast({
-        title: "Authentication Required",
-        description: "Please sign in to book an appointment",
+        title: "Authentication Required", 
+        description: "You must be logged in to book an appointment. Please sign in or register first.",
         variant: "destructive",
       });
       setLocation('/auth');
+      return;
     }
   }, [isOpen, customer, onClose, toast, setLocation]);
+
+  // Prevent modal from rendering if not authenticated
+  if (isOpen && !customer) {
+    return null;
+  }
 
   // Fetch service packages
   const { data: servicePackages, isLoading: packagesLoading } = useQuery<

@@ -76,6 +76,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get all customers (admin)
+  app.get("/api/customers", async (req, res) => {
+    try {
+      const customers = await storage.getAllCustomers();
+      res.json(customers);
+    } catch (error) {
+      console.error("Failed to fetch customers:", error);
+      res.status(500).json({ message: "Failed to fetch customers" });
+    }
+  });
+
   // Get single appointment
   app.get("/api/appointments/:id", async (req, res) => {
     try {
