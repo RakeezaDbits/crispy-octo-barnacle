@@ -1,683 +1,400 @@
-import { useState, useEffect, useRef, useCallback } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
+import { useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import {
-  CheckCircle,
-  CreditCard,
-  X,
-  Calendar,
-  Clock,
-  MapPin,
-  DollarSign,
-  Shield,
-  User,
-} from "lucide-react";
-import {
-  insertAppointmentSchema,
-  type InsertAppointment,
-  type ServicePackage,
-} from "@shared/schema";
-import { z } from "zod";
-import { apiRequest } from "@/lib/queryClient";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import { CalendarIcon, MapPin, Clock, Shield, Phone, Mail, User, DollarSign } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useToast } from "@/hooks/use-toast";
-import { SquarePaymentForm } from "@/components/square-payment-form";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
 import { useAuth } from "@/lib/auth-context";
-import { authenticatedRequest } from "@/lib/auth";
 import { useLocation } from "wouter";
 
 interface BookingModalProps {
   isOpen: boolean;
   onClose: () => void;
+  selectedPackage?: {
+    id: string;
+    name: string;
+    price: string;
+    description: string;
+    features: string[];
+    duration?: number;
+  } | null;
 }
 
-type FormData = InsertAppointment & {
-  readinessCheck: boolean;
-  servicePackageId: number;
-};
+export default function BookingModal({ isOpen, onClose, selectedPackage }: BookingModalProps) {
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    phone: "",
+    address: "",
+    preferredDate: undefined as Date | undefined,
+    preferredTime: "",
+    notes: "",
+    titleProtection: false,
+  });
 
-export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
-  const [currentStep, setCurrentStep] = useState(1);
-  const [appointmentId, setAppointmentId] = useState<string>("");
-  const [confirmedAppointment, setConfirmedAppointment] = useState<any>(null);
-  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
-  const [selectedPackage, setSelectedPackage] = useState<ServicePackage | null>(
-    null,
-  );
-
+  const [, setLocation] = useLocation();
+  const { customer, token } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { customer } = useAuth();
-  const [, setLocation] = useLocation();
 
-  // Check authentication when modal opens
-  useEffect(() => {
-    if (isOpen && !customer) {
-      onClose();
-      toast({
-        title: "Authentication Required", 
-        description: "You must be logged in to book an appointment. Please sign in or register first.",
-        variant: "destructive",
-      });
-      setLocation('/auth');
-      return;
-    }
-  }, [isOpen, customer, onClose, toast, setLocation]);
+  const bookingMutation = useMutation({
+    mutationFn: async (data: any) => {
+      const endpoint = customer ? "/api/auth/appointments" : "/api/appointments";
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+      };
 
-  // Prevent modal from rendering if not authenticated
-  if (isOpen && !customer) {
-    return null;
-  }
-
-  // Fetch service packages
-  const { data: servicePackages, isLoading: packagesLoading } = useQuery<
-    ServicePackage[]
-  >({
-    queryKey: ["/api/service-packages"],
-  });
-
-  const form = useForm<FormData>({
-    resolver: zodResolver(
-      insertAppointmentSchema.extend({
-        readinessCheck: z
-          .boolean()
-          .refine(
-            (val: boolean) => val === true,
-            "You must confirm readiness for the audit",
-          ),
-      }),
-    ),
-    defaultValues: {
-      fullName: customer?.fullName || "",
-      email: customer?.email || "",
-      phone: customer?.phone || "",
-      address: "",
-      preferredDate: "",
-      preferredTime: "",
-      titleProtection: false,
-      readinessCheck: false,
-    },
-  });
-
-  // Update form with customer data when it becomes available
-  useEffect(() => {
-    if (customer) {
-      form.setValue('fullName', customer.fullName);
-      form.setValue('email', customer.email);
-      if (customer.phone) {
-        form.setValue('phone', customer.phone);
+      if (customer && token) {
+        headers.Authorization = `Bearer ${token}`;
       }
-    }
-  }, [customer, form]);
 
-  const createAppointmentMutation = useMutation({
-    mutationFn: async (data: InsertAppointment) => {
-      // Use authenticated endpoint for creating appointments
-      const response = await authenticatedRequest("POST", "/api/auth/appointments", data);
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(data),
+      });
+
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Failed to create appointment');
+        throw new Error(error.message || "Failed to create appointment");
       }
-      return response.json();
-    },
-    onSuccess: (appointment) => {
-      setAppointmentId(appointment.id);
-      setCurrentStep(2);
-      queryClient.invalidateQueries({ queryKey: ["/api/appointments"] });
-    },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description:
-          error instanceof Error
-            ? error.message
-            : "Failed to create appointment",
-        variant: "destructive",
-      });
-    },
-  });
 
-  const processPaymentMutation = useMutation({
-    mutationFn: async ({
-      sourceId,
-      amount,
-    }: {
-      sourceId: string;
-      amount: number;
-    }) => {
-      const response = await apiRequest("POST", "/api/payments", {
-        appointmentId,
-        sourceId,
-        amount,
-      });
       return response.json();
     },
     onSuccess: () => {
-      setCurrentStep(3);
-      setConfirmedAppointment({
-        ...form.getValues(),
-        id: appointmentId,
+      toast({
+        title: "Appointment Booked!",
+        description: "Your security audit has been scheduled. You'll receive a confirmation email shortly.",
       });
       queryClient.invalidateQueries({ queryKey: ["/api/appointments"] });
+      onClose();
+      resetForm();
     },
-    onError: (error) => {
+    onError: (error: Error) => {
       toast({
-        title: "Payment Failed",
-        description:
-          error instanceof Error ? error.message : "Payment processing failed",
+        title: "Booking Failed",
+        description: error.message,
         variant: "destructive",
       });
     },
   });
 
-  // Reset modal state
-  const resetModal = useCallback(() => {
-    setCurrentStep(1);
-    setAppointmentId("");
-    setConfirmedAppointment(null);
-    setSelectedPackage(null);
-    form.reset();
-  }, [form]);
+  const resetForm = () => {
+    setFormData({
+      fullName: "",
+      email: "",
+      phone: "",
+      address: "",
+      preferredDate: undefined,
+      preferredTime: "",
+      notes: "",
+      titleProtection: false,
+    });
+  };
 
-  const handleStep1Submit = async (data: FormData) => {
-    if (!data.readinessCheck) {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!customer) {
       toast({
-        title: "Confirmation Required",
-        description:
-          "Please confirm that you will have all necessary items ready for the audit.",
+        title: "Authentication Required",
+        description: "Please login or register to book an appointment.",
+        variant: "destructive",
+      });
+      setLocation("/auth");
+      return;
+    }
+
+    if (!formData.fullName || !formData.email || !formData.phone || !formData.address || !formData.preferredDate) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required fields.",
         variant: "destructive",
       });
       return;
     }
 
-    const { readinessCheck, ...appointmentData } = data;
-    createAppointmentMutation.mutate(appointmentData);
+    const baseAmount = selectedPackage ? parseFloat(selectedPackage.price) : 150.00;
+    const titleProtectionFee = formData.titleProtection ? 25.00 : 0;
+    const totalAmount = baseAmount + titleProtectionFee;
+
+    const appointmentData = {
+      ...formData,
+      preferredDate: formData.preferredDate.toISOString(),
+      packageId: selectedPackage?.id,
+      packageName: selectedPackage?.name || "Comprehensive Security & Title Protection",
+      amount: totalAmount.toFixed(2),
+      status: "pending",
+      paymentStatus: "pending",
+    };
+
+    bookingMutation.mutate(appointmentData);
   };
 
-  const handlePaymentSuccess = async (paymentRequest: any) => {
-    setIsProcessingPayment(true);
-    try {
-      await processPaymentMutation.mutateAsync({
-        sourceId: paymentRequest.nonce,
-        amount: paymentRequest.amount,
-      });
-    } catch (error) {
-      toast({
-        title: "Payment Error",
-        description:
-          error instanceof Error ? error.message : "Payment processing failed",
-        variant: "destructive",
-      });
-    } finally {
-      setIsProcessingPayment(false);
-    }
+  const handleInputChange = (field: string, value: any) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handlePaymentError = (error: string) => {
-    toast({
-      title: "Payment Error",
-      description: error,
-      variant: "destructive",
-    });
-  };
-
-  const handleClose = useCallback(() => {
-    resetModal();
-    onClose();
-  }, [resetModal, onClose]);
-
-  const getMinDate = () => {
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    return tomorrow.toISOString().split("T")[0];
-  };
-
-  const getMaxDate = () => {
-    const maxDate = new Date();
-    maxDate.setDate(maxDate.getDate() + 7);
-    return maxDate.toISOString().split("T")[0];
-  };
-
-  // Don't render anything if not open
-  if (!isOpen) return null;
-
-  return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent
-        className="sm:max-w-2xl max-h-[90vh] overflow-y-auto"
-        aria-describedby="booking-dialog-description"
-      >
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Calendar className="h-5 w-5 text-primary-600" />
-            {currentStep === 1 && "Schedule Your Audit"}
-            {currentStep === 2 && "Payment Information"}
-            {currentStep === 3 && "Booking Confirmed"}
-          </DialogTitle>
-        </DialogHeader>
-        <DialogDescription id="booking-dialog-description" className="sr-only">
-          {currentStep === 1 &&
-            "Fill out your information to schedule an audit"}
-          {currentStep === 2 && "Complete your payment to confirm the booking"}
-          {currentStep === 3 && "Your audit has been successfully booked"}
-        </DialogDescription>
-
-        {/* Progress Steps */}
-        <div className="px-6 py-4 bg-gray-50 -mx-6 -mt-2">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${
-                  currentStep >= 1
-                    ? "bg-primary-600 text-white"
-                    : "bg-gray-300 text-gray-600"
-                }`}
-              >
-                1
-              </div>
-              <span
-                className={`ml-2 text-sm font-medium ${
-                  currentStep >= 1 ? "text-primary-600" : "text-gray-600"
-                }`}
-              >
-                Contact Info
-              </span>
-            </div>
-            <div className="h-px bg-gray-300 flex-1 mx-4"></div>
-            <div className="flex items-center">
-              <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${
-                  currentStep >= 2
-                    ? "bg-primary-600 text-white"
-                    : "bg-gray-300 text-gray-600"
-                }`}
-              >
-                2
-              </div>
-              <span
-                className={`ml-2 text-sm font-medium ${
-                  currentStep >= 2 ? "text-primary-600" : "text-gray-600"
-                }`}
-              >
-                Payment
-              </span>
-            </div>
-            <div className="h-px bg-gray-300 flex-1 mx-4"></div>
-            <div className="flex items-center">
-              <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${
-                  currentStep >= 3
-                    ? "bg-primary-600 text-white"
-                    : "bg-gray-300 text-gray-600"
-                }`}
-              >
-                3
-              </div>
-              <span
-                className={`ml-2 text-sm font-medium ${
-                  currentStep >= 3 ? "text-primary-600" : "text-gray-600"
-                }`}
-              >
-                Confirmation
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Step 1: Contact Information */}
-        {currentStep === 1 && (
-          <form
-            onSubmit={form.handleSubmit(handleStep1Submit)}
-            className="space-y-6"
-          >
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="fullName">Full Name *</Label>
-                <Input
-                  id="fullName"
-                  {...form.register("fullName")}
-                  placeholder="John Smith"
-                  data-testid="input-full-name"
-                />
-                {form.formState.errors.fullName && (
-                  <p className="text-sm text-red-600 mt-1">
-                    {form.formState.errors.fullName.message}
-                  </p>
-                )}
-              </div>
-              <div>
-                <Label htmlFor="email">Email Address *</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  {...form.register("email")}
-                  placeholder="john@example.com"
-                  data-testid="input-email"
-                />
-                {form.formState.errors.email && (
-                  <p className="text-sm text-red-600 mt-1">
-                    {form.formState.errors.email.message}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="phone">Phone Number *</Label>
-                <Input
-                  id="phone"
-                  type="tel"
-                  {...form.register("phone")}
-                  placeholder="(555) 123-4567"
-                  data-testid="input-phone"
-                />
-                {form.formState.errors.phone && (
-                  <p className="text-sm text-red-600 mt-1">
-                    {form.formState.errors.phone.message}
-                  </p>
-                )}
-              </div>
-              <div>
-                <Label htmlFor="preferredDate">Preferred Date *</Label>
-                <Input
-                  id="preferredDate"
-                  type="date"
-                  {...form.register("preferredDate")}
-                  min={getMinDate()}
-                  max={getMaxDate()}
-                  data-testid="input-preferred-date"
-                />
-                {form.formState.errors.preferredDate && (
-                  <p className="text-sm text-red-600 mt-1">
-                    {form.formState.errors.preferredDate.message}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            <div>
-              <Label htmlFor="address">Home Address *</Label>
-              <Input
-                id="address"
-                {...form.register("address")}
-                placeholder="123 Main Street, City, State 12345"
-                data-testid="input-address"
-              />
-              {form.formState.errors.address && (
-                <p className="text-sm text-red-600 mt-1">
-                  {form.formState.errors.address.message}
-                </p>
-              )}
-            </div>
-
-            <div>
-              <Label htmlFor="preferredTime">Preferred Time</Label>
-              <Select
-                onValueChange={(value) => form.setValue("preferredTime", value)}
-              >
-                <SelectTrigger data-testid="select-preferred-time">
-                  <SelectValue placeholder="Select preferred time" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="morning">
-                    Morning (9 AM - 12 PM)
-                  </SelectItem>
-                  <SelectItem value="afternoon">
-                    Afternoon (12 PM - 5 PM)
-                  </SelectItem>
-                  <SelectItem value="evening">Evening (5 PM - 7 PM)</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex items-start space-x-2">
-              <Checkbox
-                id="readinessCheck"
-                checked={form.watch("readinessCheck")}
-                onCheckedChange={(checked) =>
-                  form.setValue("readinessCheck", checked as boolean)
-                }
-                data-testid="checkbox-readiness"
-              />
-              <Label htmlFor="readinessCheck" className="text-sm leading-5">
-                I confirm that I will have all valuable items, receipts, and
-                warranty papers ready for the audit appointment
-              </Label>
-            </div>
-
-            <Button
-              type="submit"
-              className="w-full bg-primary-600 hover:bg-primary-700"
-              disabled={createAppointmentMutation.isPending}
-              data-testid="button-proceed-payment"
-            >
-              {createAppointmentMutation.isPending
-                ? "Creating..."
-                : "Proceed to Payment"}
-            </Button>
-          </form>
-        )}
-
-        {/* Step 2: Payment */}
-        {currentStep === 2 && (
-          <div className="space-y-6">
-            <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-              <h4 className="font-semibold text-blue-900 mb-3">Payment Breakdown</h4>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-blue-700">First Month Service Fee:</span>
-                  <span className="font-medium text-blue-900">$100.00</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-blue-700">Guard Audit Service Charge:</span>
-                  <span className="font-medium text-blue-900">$125.00</span>
-                </div>
-                <div className="border-t border-blue-200 pt-2 mt-2">
-                  <div className="flex justify-between font-semibold">
-                    <span className="text-blue-900">Total Amount:</span>
-                    <span className="text-blue-900">$225.00</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <SquarePaymentForm
-              appointmentId={appointmentId}
-              amount={225}
-              onPaymentSuccess={handlePaymentSuccess}
-              onPaymentError={handlePaymentError}
-              disabled={isProcessingPayment || processPaymentMutation.isPending}
-            />
-
-            <div className="flex space-x-4">
+  if (!customer) {
+    return (
+      <Dialog open={isOpen} onOpenChange={onClose}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Authentication Required</DialogTitle>
+          </DialogHeader>
+          <div className="text-center py-6">
+            <Shield className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
+            <h3 className="text-lg font-semibold mb-2">Please Login or Register</h3>
+            <p className="text-muted-foreground mb-6">
+              You need to be logged in to book an appointment with our security experts.
+            </p>
+            <div className="space-y-3">
               <Button
-                variant="outline"
-                onClick={() => setCurrentStep(1)}
-                className="flex-1"
-                data-testid="button-back-step1"
+                onClick={() => setLocation("/auth")}
+                className="w-full"
               >
-                Back
+                Login / Register
+              </Button>
+              <Button variant="outline" onClick={onClose} className="w-full">
+                Cancel
               </Button>
             </div>
           </div>
-        )}
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
-        {/* Step 3: Confirmation */}
-        {currentStep === 3 && confirmedAppointment && (
-          <div className="space-y-6">
-            <div className="text-center py-8">
-              <div className="w-16 h-16 bg-success-500 bg-opacity-10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="text-success-500 h-8 w-8" />
-              </div>
-              <h4
-                className="text-2xl font-bold text-gray-900 mb-2"
-                data-testid="text-booking-confirmed"
-              >
-                Booking Confirmed!
-              </h4>
-              <p className="text-gray-600">
-                Your audit has been successfully scheduled
-              </p>
+  const baseAmount = selectedPackage ? parseFloat(selectedPackage.price) : 150.00;
+  const titleProtectionFee = formData.titleProtection ? 25.00 : 0;
+  const totalAmount = baseAmount + titleProtectionFee;
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="flex items-center text-2xl">
+            <Shield className="h-6 w-6 mr-2 text-primary" />
+            Book Your Security Audit
+          </DialogTitle>
+        </DialogHeader>
+
+        {selectedPackage && (
+          <div className="bg-muted/50 p-4 rounded-lg mb-4">
+            <h3 className="font-semibold text-lg mb-2">{selectedPackage.name}</h3>
+            <p className="text-sm text-muted-foreground mb-2">{selectedPackage.description}</p>
+            <div className="flex items-center justify-between">
+              <span className="text-2xl font-bold text-primary">${selectedPackage.price}</span>
+              {selectedPackage.duration && (
+                <span className="text-sm text-muted-foreground">
+                  <Clock className="h-4 w-4 inline mr-1" />
+                  {selectedPackage.duration} minutes
+                </span>
+              )}
             </div>
-
-            <Card className="bg-gray-50">
-              <CardContent className="p-6">
-                <h5 className="font-semibold text-gray-900 mb-4 flex items-center">
-                  <Calendar className="h-5 w-5 mr-2" />
-                  Appointment Details
-                </h5>
-                <div className="space-y-3 text-sm">
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600 flex items-center">
-                      <Calendar className="h-4 w-4 mr-2" />
-                      Date:
-                    </span>
-                    <span
-                      className="font-medium"
-                      data-testid="text-confirmed-date"
-                    >
-                      {new Date(
-                        confirmedAppointment.preferredDate,
-                      ).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600 flex items-center">
-                      <Clock className="h-4 w-4 mr-2" />
-                      Time:
-                    </span>
-                    <span
-                      className="font-medium"
-                      data-testid="text-confirmed-time"
-                    >
-                      {confirmedAppointment.preferredTime
-                        ? confirmedAppointment.preferredTime === "morning"
-                          ? "Morning (9 AM - 12 PM)"
-                          : confirmedAppointment.preferredTime === "afternoon"
-                            ? "Afternoon (12 PM - 5 PM)"
-                            : confirmedAppointment.preferredTime === "evening"
-                              ? "Evening (5 PM - 7 PM)"
-                              : confirmedAppointment.preferredTime
-                        : "To be confirmed"}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600 flex items-center">
-                      <MapPin className="h-4 w-4 mr-2" />
-                      Address:
-                    </span>
-                    <span
-                      className="font-medium text-right max-w-xs"
-                      data-testid="text-confirmed-address"
-                    >
-                      {confirmedAppointment.address}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600 flex items-center">
-                      <DollarSign className="h-4 w-4 mr-2" />
-                      Amount Paid:
-                    </span>
-                    <span
-                      className="font-medium"
-                      data-testid="text-confirmed-amount"
-                    >
-                      $225.00
-                    </span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Preparation Checklist */}
-            <Card className="bg-yellow-50 border-yellow-200">
-              <CardContent className="p-6">
-                <h5 className="font-semibold text-yellow-800 mb-4">
-                  📋 Preparation Checklist
-                </h5>
-                <ul className="space-y-2 text-sm text-yellow-700">
-                  <li className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-yellow-600 mr-2" />
-                    Gather all receipts for valuable items
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-yellow-600 mr-2" />
-                    Collect warranty papers and documentation
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-yellow-600 mr-2" />
-                    Ensure access to all rooms and storage areas
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-yellow-600 mr-2" />
-                    Have jewelry and small valuables readily available
-                  </li>
-                </ul>
-              </CardContent>
-            </Card>
-
-            {/* Optional Upsell */}
-            <Card className="border-primary-200 bg-primary-50">
-              <CardContent className="p-6">
-                <h5 className="font-semibold text-primary-900 mb-2 flex items-center">
-                  <Badge className="bg-primary-100 text-primary-800 mr-2">
-                    Optional
-                  </Badge>
-                  Add Title Protection Service
-                </h5>
-                <p className="text-primary-700 text-sm mb-4">
-                  Monitor your property title 24/7 for unauthorized changes or
-                  fraud attempts
-                </p>
-                <div className="flex items-center justify-between">
-                  <span className="text-primary-900 font-semibold">
-                    $50/month
-                  </span>
-                  <Button
-                    size="sm"
-                    className="bg-primary-600 hover:bg-primary-700"
-                    data-testid="button-add-protection"
-                  >
-                    Add Protection
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Button
-              onClick={handleClose}
-              className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700"
-              data-testid="button-close-confirmation"
-            >
-              Close
-            </Button>
           </div>
         )}
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Customer Information */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold border-b pb-2">Contact Information</h3>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="fullName" className="flex items-center">
+                  <User className="h-4 w-4 mr-1" />
+                  Full Name *
+                </Label>
+                <Input
+                  id="fullName"
+                  value={formData.fullName}
+                  onChange={(e) => handleInputChange("fullName", e.target.value)}
+                  placeholder="Enter your full name"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="phone" className="flex items-center">
+                  <Phone className="h-4 w-4 mr-1" />
+                  Phone Number *
+                </Label>
+                <Input
+                  id="phone"
+                  type="tel"
+                  value={formData.phone}
+                  onChange={(e) => handleInputChange("phone", e.target.value)}
+                  placeholder="(555) 123-4567"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="email" className="flex items-center">
+                <Mail className="h-4 w-4 mr-1" />
+                Email Address *
+              </Label>
+              <Input
+                id="email"
+                type="email"
+                value={formData.email}
+                onChange={(e) => handleInputChange("email", e.target.value)}
+                placeholder="your.email@example.com"
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="address" className="flex items-center">
+                <MapPin className="h-4 w-4 mr-1" />
+                Property Address *
+              </Label>
+              <Textarea
+                id="address"
+                value={formData.address}
+                onChange={(e) => handleInputChange("address", e.target.value)}
+                placeholder="Enter the complete address where the security audit will be conducted"
+                required
+                rows={3}
+              />
+            </div>
+          </div>
+
+          {/* Scheduling */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold border-b pb-2">Preferred Schedule</h3>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label className="flex items-center">
+                  <CalendarIcon className="h-4 w-4 mr-1" />
+                  Preferred Date *
+                </Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !formData.preferredDate && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {formData.preferredDate ? format(formData.preferredDate, "PPP") : "Pick a date"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      selected={formData.preferredDate}
+                      onSelect={(date) => handleInputChange("preferredDate", date)}
+                      disabled={(date) => date < new Date() || date < new Date("1900-01-01")}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="preferredTime" className="flex items-center">
+                  <Clock className="h-4 w-4 mr-1" />
+                  Preferred Time
+                </Label>
+                <Input
+                  id="preferredTime"
+                  type="time"
+                  value={formData.preferredTime}
+                  onChange={(e) => handleInputChange("preferredTime", e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="notes">Additional Notes</Label>
+              <Textarea
+                id="notes"
+                value={formData.notes}
+                onChange={(e) => handleInputChange("notes", e.target.value)}
+                placeholder="Any specific concerns, access instructions, or special requirements?"
+                rows={3}
+              />
+            </div>
+          </div>
+
+          {/* Additional Services */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold border-b pb-2">Additional Services</h3>
+
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="titleProtection"
+                checked={formData.titleProtection}
+                onCheckedChange={(checked) => handleInputChange("titleProtection", checked)}
+              />
+              <Label htmlFor="titleProtection" className="flex items-center cursor-pointer">
+                <Shield className="h-4 w-4 mr-1 text-primary" />
+                Add Title Protection Service (+$25.00)
+              </Label>
+            </div>
+            <p className="text-sm text-muted-foreground ml-6">
+              Protect your property title from fraud and unauthorized transfers
+            </p>
+          </div>
+
+          {/* Price Summary */}
+          <div className="bg-muted/50 p-4 rounded-lg">
+            <h3 className="font-semibold mb-3 flex items-center">
+              <DollarSign className="h-4 w-4 mr-1" />
+              Price Summary
+            </h3>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span>Security Audit Service</span>
+                <span>${baseAmount.toFixed(2)}</span>
+              </div>
+              {formData.titleProtection && (
+                <div className="flex justify-between">
+                  <span>Title Protection Service</span>
+                  <span>+${titleProtectionFee.toFixed(2)}</span>
+                </div>
+              )}
+              <div className="border-t pt-2 font-semibold flex justify-between">
+                <span>Total Amount</span>
+                <span className="text-primary">${totalAmount.toFixed(2)}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Submit Buttons */}
+          <div className="flex space-x-3 pt-4">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+              className="flex-1"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              disabled={bookingMutation.isPending}
+              className="flex-1"
+            >
+              {bookingMutation.isPending ? "Booking..." : "Book Appointment"}
+            </Button>
+          </div>
+        </form>
       </DialogContent>
     </Dialog>
   );

@@ -3,9 +3,12 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Link, useLocation } from "wouter";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Separator } from "@/components/ui/separator";
+import { useLocation } from "wouter";
 import { 
-  ArrowLeft, 
   Calendar, 
   DollarSign, 
   Users, 
@@ -19,7 +22,22 @@ import {
   Activity,
   Eye,
   FileText,
-  BarChart3
+  BarChart3,
+  Settings,
+  User,
+  Home,
+  Bell,
+  Database,
+  Palette,
+  Globe,
+  Mail,
+  Phone,
+  MapPin,
+  ChevronLeft,
+  ChevronRight,
+  Moon,
+  Sun,
+  Monitor
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { isAdminAuthenticated, adminLogout } from "@/lib/auth";
@@ -46,12 +64,354 @@ import {
 } from 'recharts';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarInset,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+  SidebarTrigger,
+  useSidebar,
+} from "@/components/ui/sidebar";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff7c7c', '#8dd1e1'];
+
+// Menu items for sidebar
+const menuItems = [
+  {
+    title: "Dashboard",
+    icon: Home,
+    id: "overview"
+  },
+  {
+    title: "Appointments",
+    icon: Calendar,
+    id: "appointments"
+  },
+  {
+    title: "Customers",
+    icon: Users,
+    id: "customers"
+  },
+  {
+    title: "Analytics",
+    icon: BarChart3,
+    id: "analytics"
+  },
+  {
+    title: "Reports",
+    icon: FileText,
+    id: "reports"
+  },
+  {
+    title: "Notifications",
+    icon: Bell,
+    id: "notifications"
+  }
+];
+
+// Admin sidebar component
+function AdminSidebar({ activeSection, setActiveSection }: { activeSection: string, setActiveSection: (section: string) => void }) {
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [themeMode, setThemeMode] = useState('light');
+  const [notifications, setNotifications] = useState(true);
+  const { toast } = useToast();
+
+  const handleThemeChange = (theme: string) => {
+    setThemeMode(theme);
+    document.documentElement.className = theme;
+    toast({
+      title: "Theme Updated",
+      description: `Switched to ${theme} mode`,
+    });
+  };
+
+  const handleLogout = () => {
+    adminLogout();
+    toast({
+      title: "Logged Out",
+      description: "Successfully logged out from admin panel",
+    });
+  };
+
+  return (
+    <Sidebar variant="inset">
+      <SidebarHeader>
+        <div className="flex items-center space-x-3 px-4 py-2">
+          <img 
+            src="/@assets/logo_1756065815534.png" 
+            alt="Alpha Security Logo" 
+            className="h-8 w-auto"
+          />
+          <div>
+            <h2 className="font-bold text-lg">Admin Panel</h2>
+            <p className="text-xs text-muted-foreground">Security Control</p>
+          </div>
+        </div>
+      </SidebarHeader>
+      
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupLabel>Main Navigation</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {menuItems.map((item) => (
+                <SidebarMenuItem key={item.id}>
+                  <SidebarMenuButton
+                    isActive={activeSection === item.id}
+                    onClick={() => setActiveSection(item.id)}
+                  >
+                    <item.icon className="h-4 w-4" />
+                    <span>{item.title}</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <Separator className="my-4" />
+
+        <SidebarGroup>
+          <SidebarGroupLabel>System</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
+                  <DialogTrigger asChild>
+                    <SidebarMenuButton>
+                      <Settings className="h-4 w-4" />
+                      <span>Settings</span>
+                    </SidebarMenuButton>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[600px]">
+                    <DialogHeader>
+                      <DialogTitle>System Settings</DialogTitle>
+                      <DialogDescription>
+                        Configure your admin panel preferences and system settings.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-6 py-4">
+                      <div className="space-y-4">
+                        <h4 className="text-sm font-medium">Appearance</h4>
+                        <div className="flex items-center justify-between">
+                          <Label htmlFor="theme">Theme Mode</Label>
+                          <Select value={themeMode} onValueChange={handleThemeChange}>
+                            <SelectTrigger className="w-32">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="light">
+                                <div className="flex items-center">
+                                  <Sun className="h-4 w-4 mr-2" />
+                                  Light
+                                </div>
+                              </SelectItem>
+                              <SelectItem value="dark">
+                                <div className="flex items-center">
+                                  <Moon className="h-4 w-4 mr-2" />
+                                  Dark
+                                </div>
+                              </SelectItem>
+                              <SelectItem value="system">
+                                <div className="flex items-center">
+                                  <Monitor className="h-4 w-4 mr-2" />
+                                  System
+                                </div>
+                              </SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        
+                        <div className="flex items-center justify-between">
+                          <Label htmlFor="notifications">Enable Notifications</Label>
+                          <Switch 
+                            id="notifications" 
+                            checked={notifications} 
+                            onCheckedChange={setNotifications}
+                          />
+                        </div>
+                      </div>
+
+                      <Separator />
+
+                      <div className="space-y-4">
+                        <h4 className="text-sm font-medium">Logo & Branding</h4>
+                        <div className="space-y-2">
+                          <Label htmlFor="logo">Company Logo</Label>
+                          <Input id="logo" type="file" accept="image/*" />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="company-name">Company Name</Label>
+                          <Input id="company-name" defaultValue="Alpha Security Bureau" />
+                        </div>
+                      </div>
+
+                      <Separator />
+
+                      <div className="space-y-4">
+                        <h4 className="text-sm font-medium">System Configuration</h4>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="timezone">Timezone</Label>
+                            <Select defaultValue="utc">
+                              <SelectTrigger>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="utc">UTC</SelectItem>
+                                <SelectItem value="est">EST</SelectItem>
+                                <SelectItem value="pst">PST</SelectItem>
+                                <SelectItem value="gmt">GMT</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="language">Language</Label>
+                            <Select defaultValue="en">
+                              <SelectTrigger>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="en">English</SelectItem>
+                                <SelectItem value="ur">Urdu</SelectItem>
+                                <SelectItem value="es">Spanish</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <DialogFooter>
+                      <Button onClick={() => setSettingsOpen(false)}>
+                        Save Changes
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              </SidebarMenuItem>
+
+              <SidebarMenuItem>
+                <Dialog open={profileOpen} onOpenChange={setProfileOpen}>
+                  <DialogTrigger asChild>
+                    <SidebarMenuButton>
+                      <User className="h-4 w-4" />
+                      <span>Profile</span>
+                    </SidebarMenuButton>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[500px]">
+                    <DialogHeader>
+                      <DialogTitle>Admin Profile</DialogTitle>
+                      <DialogDescription>
+                        Manage your admin account settings and personal information.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-6 py-4">
+                      <div className="flex items-center space-x-4">
+                        <Avatar className="h-20 w-20">
+                          <AvatarImage src="/placeholder-avatar.jpg" />
+                          <AvatarFallback className="text-lg">AD</AvatarFallback>
+                        </Avatar>
+                        <div className="space-y-2">
+                          <Button variant="outline" size="sm">
+                            Change Photo
+                          </Button>
+                          <p className="text-xs text-muted-foreground">
+                            JPG, PNG, max 2MB
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="first-name">First Name</Label>
+                          <Input id="first-name" defaultValue="Admin" />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="last-name">Last Name</Label>
+                          <Input id="last-name" defaultValue="User" />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="email">Email</Label>
+                        <Input id="email" type="email" defaultValue="admin@alphasecurity.com" />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="phone">Phone Number</Label>
+                        <Input id="phone" defaultValue="+1 (555) 123-4567" />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="role">Role</Label>
+                        <Input id="role" defaultValue="System Administrator" disabled />
+                      </div>
+
+                      <Separator />
+
+                      <div className="space-y-4">
+                        <h4 className="text-sm font-medium">Security</h4>
+                        <Button variant="outline" className="w-full">
+                          Change Password
+                        </Button>
+                        <Button variant="outline" className="w-full">
+                          Enable Two-Factor Authentication
+                        </Button>
+                      </div>
+                    </div>
+                    <DialogFooter>
+                      <Button onClick={() => setProfileOpen(false)}>
+                        Save Changes
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+
+      <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton onClick={handleLogout}>
+              <LogOut className="h-4 w-4" />
+              <span>Logout</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+        <div className="px-4 py-2 text-xs text-muted-foreground">
+          Version 2.0.1
+        </div>
+      </SidebarFooter>
+    </Sidebar>
+  );
+}
 
 export default function Admin() {
   const [, setLocation] = useLocation();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [activeSection, setActiveSection] = useState('overview');
   const [selectedPeriod, setSelectedPeriod] = useState('7');
   const { toast } = useToast();
 
@@ -141,24 +501,6 @@ export default function Admin() {
     };
   });
 
-  // Monthly revenue data
-  const monthlyData = Array.from({ length: 6 }, (_, i) => {
-    const date = subDays(new Date(), i * 30);
-    const monthAppointments = appointments?.filter(a => {
-      const appointmentDate = new Date(a.createdAt);
-      return appointmentDate.getMonth() === date.getMonth() && 
-             appointmentDate.getFullYear() === date.getFullYear();
-    }) || [];
-    
-    return {
-      month: format(date, 'MMM yyyy'),
-      revenue: monthAppointments
-        .filter(a => a.paymentStatus === "completed")
-        .reduce((sum, a) => sum + Number(a.amount), 0),
-      appointments: monthAppointments.length
-    };
-  }).reverse();
-
   const getStatusColor = (status: string) => {
     switch (status) {
       case "confirmed": return "bg-green-100 text-green-800";
@@ -200,74 +542,22 @@ export default function Admin() {
     });
   };
 
-  const exportCustomersToExcel = () => {
-    if (!customers) return;
-    
-    const exportData = customers.map(customer => ({
-      'ID': customer.id,
-      'Full Name': customer.fullName,
-      'Email': customer.email,
-      'Phone': customer.phone,
-      'Email Verified': customer.isEmailVerified ? 'Yes' : 'No',
-      'Active': customer.isActive ? 'Yes' : 'No',
-      'Registered Date': format(new Date(customer.createdAt), 'yyyy-MM-dd HH:mm:ss'),
-      'Last Login': customer.lastLoginAt ? format(new Date(customer.lastLoginAt), 'yyyy-MM-dd HH:mm:ss') : 'Never',
-    }));
-
-    const ws = XLSX.utils.json_to_sheet(exportData);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Customers');
-    XLSX.writeFile(wb, `customers-${format(new Date(), 'yyyy-MM-dd')}.xlsx`);
-    
-    toast({
-      title: "Export Successful",
-      description: "Customers data has been exported to Excel file.",
-    });
-  };
-
-  return (
-    <div className="min-h-screen bg-gray-50 p-4">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center space-x-4">
-            <img 
-              src="/@assets/logo_1756065815534.png" 
-              alt="Alpha Security Bureau Logo" 
-              className="h-12 w-auto"
-            />
-            <div>
-              <h1 className="font-heading text-3xl text-primary-900 tracking-wide">ADVANCED ADMIN DASHBOARD</h1>
-              <p className="text-gray-600 mt-2">Advanced Security Operations Control Center</p>
-            </div>
-          </div>
-          <div className="flex items-center space-x-4">
-            <Link href="/">
-              <Button variant="outline">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Home
+  const renderContent = () => {
+    switch (activeSection) {
+      case 'overview':
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-3xl font-bold">Dashboard Overview</h1>
+                <p className="text-muted-foreground">Welcome back to your admin control center</p>
+              </div>
+              <Button onClick={exportToExcel}>
+                <Download className="h-4 w-4 mr-2" />
+                Export Data
               </Button>
-            </Link>
-            <Button 
-              variant="outline" 
-              onClick={adminLogout}
-              className="text-red-600 border-red-600 hover:bg-red-50"
-            >
-              <LogOut className="h-4 w-4 mr-2" />
-              Logout
-            </Button>
-          </div>
-        </div>
+            </div>
 
-        <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="appointments">Appointments</TabsTrigger>
-            <TabsTrigger value="customers">Customers</TabsTrigger>
-            <TabsTrigger value="analytics">Analytics</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="overview" className="space-y-6">
             {/* Overview Stats */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <Card>
@@ -368,19 +658,20 @@ export default function Admin() {
                 </CardContent>
               </Card>
             </div>
-          </TabsContent>
+          </div>
+        );
 
-          <TabsContent value="appointments" className="space-y-6">
-            {/* Export Buttons */}
+      case 'appointments':
+        return (
+          <div className="space-y-6">
             <div className="flex justify-between items-center">
               <h2 className="text-2xl font-bold">Appointments Management</h2>
-              <Button onClick={exportToExcel} className="flex items-center">
+              <Button onClick={exportToExcel}>
                 <Download className="h-4 w-4 mr-2" />
                 Export to Excel
               </Button>
             </div>
 
-            {/* Appointments Table */}
             <Card>
               <CardHeader>
                 <CardTitle>All Appointments</CardTitle>
@@ -450,75 +741,13 @@ export default function Admin() {
                 )}
               </CardContent>
             </Card>
-          </TabsContent>
+          </div>
+        );
 
-          <TabsContent value="customers" className="space-y-6">
-            {/* Customer Analytics */}
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold">Customer Management</h2>
-              <div className="flex space-x-2">
-                <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
-                  <SelectTrigger className="w-32">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="7">Last 7 days</SelectItem>
-                    <SelectItem value="30">Last 30 days</SelectItem>
-                    <SelectItem value="90">Last 90 days</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Button onClick={exportCustomersToExcel} className="flex items-center">
-                  <Download className="h-4 w-4 mr-2" />
-                  Export Customers
-                </Button>
-              </div>
-            </div>
-
-            {/* Customer Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total Customers</CardTitle>
-                  <Users className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{customerAnalytics.total}</div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Active Customers</CardTitle>
-                  <Activity className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-green-600">{customerAnalytics.active}</div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Verified Emails</CardTitle>
-                  <CheckCircle className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-blue-600">{customerAnalytics.verified}</div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">New Registrations</CardTitle>
-                  <UserCheck className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-purple-600">{customerAnalytics.recentRegistrations}</div>
-                  <p className="text-xs text-muted-foreground">Last {selectedPeriod} days</p>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Customers Table */}
+      case 'customers':
+        return (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold">Customer Management</h2>
             <Card>
               <CardHeader>
                 <CardTitle>Customer Directory</CardTitle>
@@ -532,7 +761,6 @@ export default function Admin() {
                           <th className="text-left py-3 px-4 font-medium text-gray-700">Customer</th>
                           <th className="text-left py-3 px-4 font-medium text-gray-700">Status</th>
                           <th className="text-left py-3 px-4 font-medium text-gray-700">Registration</th>
-                          <th className="text-left py-3 px-4 font-medium text-gray-700">Last Login</th>
                           <th className="text-left py-3 px-4 font-medium text-gray-700">Verification</th>
                         </tr>
                       </thead>
@@ -557,11 +785,6 @@ export default function Admin() {
                               </div>
                             </td>
                             <td className="py-4 px-4">
-                              <div className="text-sm">
-                                {customer.lastLoginAt ? format(new Date(customer.lastLoginAt), 'MMM dd, yyyy') : 'Never'}
-                              </div>
-                            </td>
-                            <td className="py-4 px-4">
                               <Badge className={customer.isEmailVerified ? "bg-blue-100 text-blue-800" : "bg-yellow-100 text-yellow-800"}>
                                 {customer.isEmailVerified ? "Verified" : "Pending"}
                               </Badge>
@@ -576,82 +799,155 @@ export default function Admin() {
                 )}
               </CardContent>
             </Card>
-          </TabsContent>
+          </div>
+        );
 
-          <TabsContent value="analytics" className="space-y-6">
+      case 'analytics':
+        return (
+          <div className="space-y-6">
             <h2 className="text-2xl font-bold">Advanced Analytics</h2>
-            
-            {/* Revenue Analytics */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="text-center p-4 bg-blue-50 rounded-lg">
+                <div className="text-3xl font-bold text-blue-600">
+                  {((analytics.confirmed / analytics.total) * 100).toFixed(1)}%
+                </div>
+                <div className="text-sm text-gray-600">Confirmation Rate</div>
+              </div>
+              <div className="text-center p-4 bg-green-50 rounded-lg">
+                <div className="text-3xl font-bold text-green-600">
+                  ${(analytics.revenue / analytics.total).toFixed(2)}
+                </div>
+                <div className="text-sm text-gray-600">Average Order Value</div>
+              </div>
+              <div className="text-center p-4 bg-purple-50 rounded-lg">
+                <div className="text-3xl font-bold text-purple-600">
+                  {((customerAnalytics.verified / customerAnalytics.total) * 100).toFixed(1)}%
+                </div>
+                <div className="text-sm text-gray-600">Email Verification Rate</div>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'reports':
+        return (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold">Reports & Documents</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Monthly Revenue Trend</CardTitle>
+                  <CardTitle>Monthly Report</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <AreaChart data={monthlyData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="month" />
-                      <YAxis />
-                      <Tooltip formatter={(value) => [`$${value}`, 'Revenue']} />
-                      <Area type="monotone" dataKey="revenue" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.3} />
-                    </AreaChart>
-                  </ResponsiveContainer>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Generate comprehensive monthly performance report
+                  </p>
+                  <Button className="w-full">Generate Report</Button>
                 </CardContent>
               </Card>
-
               <Card>
                 <CardHeader>
-                  <CardTitle>Daily Revenue vs Appointments</CardTitle>
+                  <CardTitle>Customer Analytics</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <LineChart data={last7Days}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="date" />
-                      <YAxis yAxisId="left" />
-                      <YAxis yAxisId="right" orientation="right" />
-                      <Tooltip />
-                      <Legend />
-                      <Bar yAxisId="left" dataKey="appointments" fill="#8884d8" name="Appointments" />
-                      <Line yAxisId="right" type="monotone" dataKey="revenue" stroke="#82ca9d" name="Revenue ($)" />
-                    </LineChart>
-                  </ResponsiveContainer>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Detailed customer behavior and engagement metrics
+                  </p>
+                  <Button className="w-full">View Analytics</Button>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Financial Summary</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Revenue and payment processing summary
+                  </p>
+                  <Button className="w-full">Download Summary</Button>
                 </CardContent>
               </Card>
             </div>
+          </div>
+        );
 
-            {/* Performance Metrics */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Performance Metrics</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="text-center p-4 bg-blue-50 rounded-lg">
-                    <div className="text-3xl font-bold text-blue-600">
-                      {((analytics.confirmed / analytics.total) * 100).toFixed(1)}%
+      case 'notifications':
+        return (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold">Notification Center</h2>
+            <div className="space-y-4">
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="flex items-center space-x-4">
+                    <div className="h-2 w-2 bg-blue-500 rounded-full"></div>
+                    <div className="flex-1">
+                      <p className="font-medium">New appointment scheduled</p>
+                      <p className="text-sm text-muted-foreground">John Doe scheduled an appointment for tomorrow</p>
                     </div>
-                    <div className="text-sm text-gray-600">Confirmation Rate</div>
+                    <div className="text-sm text-muted-foreground">2 min ago</div>
                   </div>
-                  <div className="text-center p-4 bg-green-50 rounded-lg">
-                    <div className="text-3xl font-bold text-green-600">
-                      ${(analytics.revenue / analytics.total).toFixed(2)}
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="flex items-center space-x-4">
+                    <div className="h-2 w-2 bg-green-500 rounded-full"></div>
+                    <div className="flex-1">
+                      <p className="font-medium">Payment received</p>
+                      <p className="text-sm text-muted-foreground">Payment of $150 received from Jane Smith</p>
                     </div>
-                    <div className="text-sm text-gray-600">Average Order Value</div>
+                    <div className="text-sm text-muted-foreground">1 hour ago</div>
                   </div>
-                  <div className="text-center p-4 bg-purple-50 rounded-lg">
-                    <div className="text-3xl font-bold text-purple-600">
-                      {((customerAnalytics.verified / customerAnalytics.total) * 100).toFixed(1)}%
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="flex items-center space-x-4">
+                    <div className="h-2 w-2 bg-yellow-500 rounded-full"></div>
+                    <div className="flex-1">
+                      <p className="font-medium">System maintenance</p>
+                      <p className="text-sm text-muted-foreground">Scheduled maintenance tonight at 2 AM</p>
                     </div>
-                    <div className="text-sm text-gray-600">Email Verification Rate</div>
+                    <div className="text-sm text-muted-foreground">3 hours ago</div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        );
+
+      default:
+        return <div>Section not found</div>;
+    }
+  };
+
+  return (
+    <SidebarProvider>
+      <div className="flex h-screen w-full">
+        <AdminSidebar activeSection={activeSection} setActiveSection={setActiveSection} />
+        <SidebarInset className="flex-1">
+          <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+            <SidebarTrigger className="-ml-1" />
+            <Separator orientation="vertical" className="mr-2 h-4" />
+            <div className="flex items-center gap-2">
+              <h1 className="text-lg font-semibold">
+                {menuItems.find(item => item.id === activeSection)?.title || 'Dashboard'}
+              </h1>
+            </div>
+            <div className="ml-auto flex items-center space-x-4">
+              <Button variant="outline" size="sm">
+                <Bell className="h-4 w-4" />
+              </Button>
+              <Avatar className="h-8 w-8">
+                <AvatarFallback>AD</AvatarFallback>
+              </Avatar>
+            </div>
+          </header>
+          <main className="flex-1 overflow-y-auto p-6">
+            {renderContent()}
+          </main>
+        </SidebarInset>
       </div>
-    </div>
+    </SidebarProvider>
   );
 }
