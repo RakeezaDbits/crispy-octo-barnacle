@@ -440,9 +440,29 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
         {/* Step 2: Payment */}
         {currentStep === 2 && (
           <div className="space-y-6">
+            <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <h4 className="font-semibold text-blue-900 mb-3">Payment Breakdown</h4>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-blue-700">First Month Service Fee:</span>
+                  <span className="font-medium text-blue-900">$100.00</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-blue-700">Guard Audit Service Charge:</span>
+                  <span className="font-medium text-blue-900">$125.00</span>
+                </div>
+                <div className="border-t border-blue-200 pt-2 mt-2">
+                  <div className="flex justify-between font-semibold">
+                    <span className="text-blue-900">Total Amount:</span>
+                    <span className="text-blue-900">$225.00</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
             <SquarePaymentForm
               appointmentId={appointmentId}
-              amount={50}
+              amount={225}
               onPaymentSuccess={handlePaymentSuccess}
               onPaymentError={handlePaymentError}
               disabled={isProcessingPayment || processPaymentMutation.isPending}
@@ -545,7 +565,7 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
                       className="font-medium"
                       data-testid="text-confirmed-amount"
                     >
-                      $50.00
+                      $225.00
                     </span>
                   </div>
                 </div>
