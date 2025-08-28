@@ -120,7 +120,7 @@ export default function CustomerDashboard() {
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
               <img 
-                src="/@assets/logo_1756065815534.png" 
+                src="/attached_assets/logo_1756065815534.png" 
                 alt="Alpha Security Bureau Logo" 
                 className="h-8 w-auto"
               />

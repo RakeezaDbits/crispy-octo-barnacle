@@ -167,7 +167,7 @@ export default function Admin() {
     notifications: true,
     autoRefresh: false,
     companyName: 'Alpha Security Bureau',
-    companyLogo: '/@assets/logo_1756065815534.png',
+    companyLogo: '/attached_assets/logo_1756065815534.png',
     primaryColor: '#3b82f6',
     language: 'en',
     timezone: 'UTC'

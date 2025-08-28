@@ -1,43 +1,46 @@
-import { Switch, Route } from "wouter";
-import { queryClient } from "./lib/queryClient";
-import { QueryClientProvider } from "@tanstack/react-query";
+import "./index.css";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Router, Route, Switch } from "wouter";
+import ErrorBoundary from "@/components/error-boundary";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { ErrorBoundary } from "@/components/error-boundary";
 import { AuthProvider } from "@/lib/auth-context";
+
 import Home from "@/pages/home";
+import Auth from "@/pages/auth";
+import CustomerDashboard from "@/pages/customer-dashboard";
 import Admin from "@/pages/admin";
 import AdminLogin from "@/pages/admin-login";
-import CustomerDashboard from "@/pages/customer-dashboard";
-import AuthPage from "@/pages/auth";
 import NotFound from "@/pages/not-found";
 
-function Router() {
-  return (
-    <Switch>
-      <Route path="/" component={Home} />
-      <Route path="/auth" component={AuthPage} />
-      <Route path="/dashboard" component={CustomerDashboard} />
-      <Route path="/admin/login" component={AdminLogin} />
-      <Route path="/admin" component={Admin} />
-      <Route component={NotFound} />
-    </Switch>
-  );
-}
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes
+    },
+  },
+});
 
-function App() {
+export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <TooltipProvider>
+      <TooltipProvider>
+        <AuthProvider>
           <ErrorBoundary>
+            <Router>
+              <Switch>
+                <Route path="/" component={Home} />
+                <Route path="/auth" component={Auth} />
+                <Route path="/dashboard" component={CustomerDashboard} />
+                <Route path="/admin" component={Admin} />
+                <Route path="/admin/login" component={AdminLogin} />
+                <Route component={NotFound} />
+              </Switch>
+            </Router>
             <Toaster />
-            <Router />
           </ErrorBoundary>
-        </TooltipProvider>
-      </AuthProvider>
+        </AuthProvider>
+      </TooltipProvider>
     </QueryClientProvider>
   );
 }
-
-export default App;

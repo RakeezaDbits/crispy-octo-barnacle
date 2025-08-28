@@ -21,7 +21,7 @@ const registerSchema = z.object({
 type RegisterFormData = z.infer<typeof registerSchema>;
 
 interface RegisterFormProps {
-  onSuccess: (data: { token: string; customer: any }) => void;
+  onSuccess: (userData: { email: string; password: string; fullName: string; phone?: string }) => Promise<void>;
   onSwitchToLogin: () => void;
 }
 
