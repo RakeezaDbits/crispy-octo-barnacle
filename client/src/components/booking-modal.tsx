@@ -71,7 +71,7 @@ export default function BookingModal({ isOpen, onClose, selectedPackage }: Booki
   // Replaced mutation to use fetch directly with auth token
   const createAppointmentMutation = useMutation({
     mutationFn: async (appointmentData: any) => {
-      const token = localStorage.getItem('authToken');
+      const token = localStorage.getItem('auth_token'); // Fixed: use correct token key
       const response = await fetch('/api/appointments', {
         method: 'POST',
         headers: {
@@ -97,7 +97,7 @@ export default function BookingModal({ isOpen, onClose, selectedPackage }: Booki
     setFormData({
       fullName: customer?.fullName || '',
       email: customer?.email || '',
-      phone: '',
+      phone: customer?.phone || '',
       address: '',
       preferredDate: undefined,
       preferredTime: '',
@@ -167,7 +167,8 @@ export default function BookingModal({ isOpen, onClose, selectedPackage }: Booki
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!customer) {
+    const authToken = localStorage.getItem('auth_token');
+    if (!customer || !authToken) {
       toast({
         title: "Authentication Required",
         description: "Please login or register to book an appointment.",
