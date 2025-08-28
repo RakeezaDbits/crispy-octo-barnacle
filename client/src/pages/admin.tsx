@@ -145,6 +145,12 @@ const menuItems = [
     icon: Bell,
     id: "notifications",
     description: "System notifications"
+  },
+  {
+    title: "Theme Manager",
+    icon: Palette,
+    id: "theme-manager",
+    description: "Customize app appearance and themes"
   }
 ];
 
@@ -971,141 +977,1119 @@ export default function Admin() {
           <div className="space-y-6">
             <h2 className="text-2xl font-bold">System Settings</h2>
             
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Appearance Settings */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Palette className="h-5 w-5 mr-2" />
-                    Appearance & Branding
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="theme">Theme Mode</Label>
-                    <Select 
-                      value={adminState.currentTheme} 
-                      onValueChange={(value: 'light' | 'dark' | 'system') => 
-                        setAdminState(prev => ({ ...prev, currentTheme: value }))
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="light">
-                          <div className="flex items-center">
-                            <Sun className="h-4 w-4 mr-2" />
-                            Light
-                          </div>
-                        </SelectItem>
-                        <SelectItem value="dark">
-                          <div className="flex items-center">
-                            <Moon className="h-4 w-4 mr-2" />
-                            Dark
-                          </div>
-                        </SelectItem>
-                        <SelectItem value="system">
-                          <div className="flex items-center">
-                            <Monitor className="h-4 w-4 mr-2" />
-                            System
-                          </div>
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+            <Tabs defaultValue="appearance" className="w-full">
+              <TabsList className="grid w-full grid-cols-4">
+                <TabsTrigger value="appearance">Appearance & Theme</TabsTrigger>
+                <TabsTrigger value="branding">Branding</TabsTrigger>
+                <TabsTrigger value="system">System</TabsTrigger>
+                <TabsTrigger value="advanced">Advanced</TabsTrigger>
+              </TabsList>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="company-name">Company Name</Label>
-                    <Input 
-                      id="company-name" 
-                      value={adminState.companyName}
-                      onChange={(e) => setAdminState(prev => ({ ...prev, companyName: e.target.value }))}
-                    />
-                  </div>
+              <TabsContent value="appearance" className="space-y-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Theme Foundation */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center">
+                        <Palette className="h-5 w-5 mr-2" />
+                        Theme Foundation
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="space-y-2">
+                        <Label>Background Color</Label>
+                        <div className="flex items-center space-x-3">
+                          <Input 
+                            type="color"
+                            value="#ffffff"
+                            className="w-12 h-10 p-1 border rounded"
+                          />
+                          <Input 
+                            placeholder="#ffffff"
+                            value="#ffffff"
+                            className="flex-1"
+                          />
+                        </div>
+                      </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="primary-color">Primary Color</Label>
-                    <Input 
-                      id="primary-color" 
-                      type="color"
-                      value={adminState.primaryColor}
-                      onChange={(e) => setAdminState(prev => ({ ...prev, primaryColor: e.target.value }))}
-                    />
-                  </div>
+                      <div className="space-y-2">
+                        <Label>Text Color</Label>
+                        <div className="flex items-center space-x-3">
+                          <Input 
+                            type="color"
+                            value="#0f1419"
+                            className="w-12 h-10 p-1 border rounded"
+                          />
+                          <Input 
+                            placeholder="#0f1419"
+                            value="#0f1419"
+                            className="flex-1"
+                          />
+                        </div>
+                      </div>
 
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="notifications">Enable Notifications</Label>
-                    <Switch 
-                      id="notifications" 
-                      checked={adminState.notifications} 
-                      onCheckedChange={(checked) => setAdminState(prev => ({ ...prev, notifications: checked }))}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
+                      <div className="space-y-2">
+                        <Label>Muted Background Color</Label>
+                        <div className="flex items-center space-x-3">
+                          <Input 
+                            type="color"
+                            value="#e5e5e6"
+                            className="w-12 h-10 p-1 border rounded"
+                          />
+                          <Input 
+                            placeholder="#e5e5e6"
+                            value="#e5e5e6"
+                            className="flex-1"
+                          />
+                        </div>
+                      </div>
 
-              {/* System Configuration */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Database className="h-5 w-5 mr-2" />
-                    System Configuration
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="language">Language</Label>
-                    <Select 
-                      value={adminState.language} 
-                      onValueChange={(value: 'en' | 'ur' | 'es') => 
-                        setAdminState(prev => ({ ...prev, language: value }))
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="en">English</SelectItem>
-                        <SelectItem value="ur">اردو (Urdu)</SelectItem>
-                        <SelectItem value="es">Español</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                      <div className="space-y-2">
+                        <Label>Muted Text Color</Label>
+                        <div className="flex items-center space-x-3">
+                          <Input 
+                            type="color"
+                            value="#0f1419"
+                            className="w-12 h-10 p-1 border rounded"
+                          />
+                          <Input 
+                            placeholder="#0f1419"
+                            value="#0f1419"
+                            className="flex-1"
+                          />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="timezone">Timezone</Label>
-                    <Select 
-                      value={adminState.timezone} 
-                      onValueChange={(value) => setAdminState(prev => ({ ...prev, timezone: value }))}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="UTC">UTC</SelectItem>
-                        <SelectItem value="EST">EST</SelectItem>
-                        <SelectItem value="PST">PST</SelectItem>
-                        <SelectItem value="GMT">GMT</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                  {/* Actions Theme */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Actions & Components</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="space-y-2">
+                        <Label>Primary Background</Label>
+                        <div className="flex items-center space-x-3">
+                          <Input 
+                            type="color"
+                            value="#e7b008"
+                            className="w-12 h-10 p-1 border rounded"
+                          />
+                          <Input 
+                            placeholder="#e7b008"
+                            value="#e7b008"
+                            className="flex-1"
+                          />
+                        </div>
+                      </div>
 
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="auto-refresh">Auto-refresh Data</Label>
-                    <Switch 
-                      id="auto-refresh" 
-                      checked={adminState.autoRefresh} 
-                      onCheckedChange={(checked) => setAdminState(prev => ({ ...prev, autoRefresh: checked }))}
-                    />
-                  </div>
+                      <div className="space-y-2">
+                        <Label>Primary Text</Label>
+                        <div className="flex items-center space-x-3">
+                          <Input 
+                            type="color"
+                            value="#000000"
+                            className="w-12 h-10 p-1 border rounded"
+                          />
+                          <Input 
+                            placeholder="#000000"
+                            value="#000000"
+                            className="flex-1"
+                          />
+                        </div>
+                      </div>
 
-                  <Button className="w-full">
-                    Save Configuration
+                      <div className="space-y-2">
+                        <Label>Secondary Background</Label>
+                        <div className="flex items-center space-x-3">
+                          <Input 
+                            type="color"
+                            value="#0f1419"
+                            className="w-12 h-10 p-1 border rounded"
+                          />
+                          <Input 
+                            placeholder="#0f1419"
+                            value="#0f1419"
+                            className="flex-1"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label>Secondary Text</Label>
+                        <div className="flex items-center space-x-3">
+                          <Input 
+                            type="color"
+                            value="#ffffff"
+                            className="w-12 h-10 p-1 border rounded"
+                          />
+                          <Input 
+                            placeholder="#ffffff"
+                            value="#ffffff"
+                            className="flex-1"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label>Accent Background</Label>
+                        <div className="flex items-center space-x-3">
+                          <Input 
+                            type="color"
+                            value="#e3ecf6"
+                            className="w-12 h-10 p-1 border rounded"
+                          />
+                          <Input 
+                            placeholder="#e3ecf6"
+                            value="#e3ecf6"
+                            className="flex-1"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label>Accent Text</Label>
+                        <div className="flex items-center space-x-3">
+                          <Input 
+                            type="color"
+                            value="#1e9df1"
+                            className="w-12 h-10 p-1 border rounded"
+                          />
+                          <Input 
+                            placeholder="#1e9df1"
+                            value="#1e9df1"
+                            className="flex-1"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label>Destructive Background</Label>
+                        <div className="flex items-center space-x-3">
+                          <Input 
+                            type="color"
+                            value="#f4212e"
+                            className="w-12 h-10 p-1 border rounded"
+                          />
+                          <Input 
+                            placeholder="#f4212e"
+                            value="#f4212e"
+                            className="flex-1"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label>Destructive Text</Label>
+                        <div className="flex items-center space-x-3">
+                          <Input 
+                            type="color"
+                            value="#ffffff"
+                            className="w-12 h-10 p-1 border rounded"
+                          />
+                          <Input 
+                            placeholder="#ffffff"
+                            value="#ffffff"
+                            className="flex-1"
+                          />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Forms & Containers */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Forms</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="space-y-2">
+                        <Label>Input Background</Label>
+                        <div className="flex items-center space-x-3">
+                          <Input 
+                            type="color"
+                            value="#f7f9fa"
+                            className="w-12 h-10 p-1 border rounded"
+                          />
+                          <Input 
+                            placeholder="#f7f9fa"
+                            value="#f7f9fa"
+                            className="flex-1"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label>Border Color</Label>
+                        <div className="flex items-center space-x-3">
+                          <Input 
+                            type="color"
+                            value="#e1eaef"
+                            className="w-12 h-10 p-1 border rounded"
+                          />
+                          <Input 
+                            placeholder="#e1eaef"
+                            value="#e1eaef"
+                            className="flex-1"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label>Focus Border</Label>
+                        <div className="flex items-center space-x-3">
+                          <Input 
+                            type="color"
+                            value="#1da1f2"
+                            className="w-12 h-10 p-1 border rounded"
+                          />
+                          <Input 
+                            placeholder="#1da1f2"
+                            value="#1da1f2"
+                            className="flex-1"
+                          />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Containers</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="space-y-2">
+                        <Label>Card Background</Label>
+                        <div className="flex items-center space-x-3">
+                          <Input 
+                            type="color"
+                            value="#f7f8f8"
+                            className="w-12 h-10 p-1 border rounded"
+                          />
+                          <Input 
+                            placeholder="#f7f8f8"
+                            value="#f7f8f8"
+                            className="flex-1"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label>Card Text</Label>
+                        <div className="flex items-center space-x-3">
+                          <Input 
+                            type="color"
+                            value="#0f1419"
+                            className="w-12 h-10 p-1 border rounded"
+                          />
+                          <Input 
+                            placeholder="#0f1419"
+                            value="#0f1419"
+                            className="flex-1"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label>Popover Background</Label>
+                        <div className="flex items-center space-x-3">
+                          <Input 
+                            type="color"
+                            value="#ffffff"
+                            className="w-12 h-10 p-1 border rounded"
+                          />
+                          <Input 
+                            placeholder="#ffffff"
+                            value="#ffffff"
+                            className="flex-1"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label>Popover Text</Label>
+                        <div className="flex items-center space-x-3">
+                          <Input 
+                            type="color"
+                            value="#0f1419"
+                            className="w-12 h-10 p-1 border rounded"
+                          />
+                          <Input 
+                            placeholder="#0f1419"
+                            value="#0f1419"
+                            className="flex-1"
+                          />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Charts */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Charts & Analytics</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                      <div className="space-y-2">
+                        <Label>Chart 1</Label>
+                        <div className="flex items-center space-x-2">
+                          <Input 
+                            type="color"
+                            value="#1e9df1"
+                            className="w-10 h-8 p-1 border rounded"
+                          />
+                          <Input 
+                            placeholder="#1e9df1"
+                            value="#1e9df1"
+                            className="flex-1 text-xs"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label>Chart 2</Label>
+                        <div className="flex items-center space-x-2">
+                          <Input 
+                            type="color"
+                            value="#00b87a"
+                            className="w-10 h-8 p-1 border rounded"
+                          />
+                          <Input 
+                            placeholder="#00b87a"
+                            value="#00b87a"
+                            className="flex-1 text-xs"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label>Chart 3</Label>
+                        <div className="flex items-center space-x-2">
+                          <Input 
+                            type="color"
+                            value="#f7b928"
+                            className="w-10 h-8 p-1 border rounded"
+                          />
+                          <Input 
+                            placeholder="#f7b928"
+                            value="#f7b928"
+                            className="flex-1 text-xs"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label>Chart 4</Label>
+                        <div className="flex items-center space-x-2">
+                          <Input 
+                            type="color"
+                            value="#17bf63"
+                            className="w-10 h-8 p-1 border rounded"
+                          />
+                          <Input 
+                            placeholder="#17bf63"
+                            value="#17bf63"
+                            className="flex-1 text-xs"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label>Chart 5</Label>
+                        <div className="flex items-center space-x-2">
+                          <Input 
+                            type="color"
+                            value="#e0245e"
+                            className="w-10 h-8 p-1 border rounded"
+                          />
+                          <Input 
+                            placeholder="#e0245e"
+                            value="#e0245e"
+                            className="flex-1 text-xs"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Typography */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Typography</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="space-y-2">
+                        <Label>Sans-serif Font</Label>
+                        <Select defaultValue="poppins">
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="poppins">Poppins</SelectItem>
+                            <SelectItem value="inter">Inter</SelectItem>
+                            <SelectItem value="roboto">Roboto</SelectItem>
+                            <SelectItem value="system">System</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label>Serif Font</Label>
+                        <Select defaultValue="georgia">
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="georgia">Georgia</SelectItem>
+                            <SelectItem value="times">Times New Roman</SelectItem>
+                            <SelectItem value="merriweather">Merriweather</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label>Monospace Font</Label>
+                        <Select defaultValue="menlo">
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="menlo">Menlo</SelectItem>
+                            <SelectItem value="monaco">Monaco</SelectItem>
+                            <SelectItem value="consolas">Consolas</SelectItem>
+                            <SelectItem value="courier">Courier New</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Border Radius</Label>
+                      <div className="flex items-center space-x-4">
+                        <Input 
+                          type="range"
+                          min="0"
+                          max="2"
+                          step="0.1"
+                          defaultValue="1.3"
+                          className="flex-1"
+                        />
+                        <span className="text-sm font-mono">1.3 rem</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <div className="flex justify-end space-x-4">
+                  <Button variant="outline">
+                    Reset to Default
                   </Button>
-                </CardContent>
-              </Card>
+                  <Button variant="outline">
+                    Export Theme
+                  </Button>
+                  <Button>
+                    Save Changes for this app
+                  </Button>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="branding" className="space-y-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center">
+                        <Palette className="h-5 w-5 mr-2" />
+                        Company Branding
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="company-name">Company Name</Label>
+                        <Input 
+                          id="company-name" 
+                          value={adminState.companyName}
+                          onChange={(e) => setAdminState(prev => ({ ...prev, companyName: e.target.value }))}
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="company-logo">Company Logo URL</Label>
+                        <Input 
+                          id="company-logo" 
+                          value={adminState.companyLogo}
+                          onChange={(e) => setAdminState(prev => ({ ...prev, companyLogo: e.target.value }))}
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="primary-color">Primary Brand Color</Label>
+                        <div className="flex items-center space-x-3">
+                          <Input 
+                            id="primary-color" 
+                            type="color"
+                            value={adminState.primaryColor}
+                            onChange={(e) => setAdminState(prev => ({ ...prev, primaryColor: e.target.value }))}
+                            className="w-12 h-10 p-1 border rounded"
+                          />
+                          <Input 
+                            value={adminState.primaryColor}
+                            onChange={(e) => setAdminState(prev => ({ ...prev, primaryColor: e.target.value }))}
+                            className="flex-1"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label>Logo Preview</Label>
+                        <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+                          <img 
+                            src={adminState.companyLogo} 
+                            alt="Company Logo"
+                            className="h-16 w-auto mx-auto"
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                            }}
+                          />
+                          <p className="text-sm text-gray-500 mt-2">Logo Preview</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center">
+                        <Globe className="h-5 w-5 mr-2" />
+                        Contact Information
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="space-y-2">
+                        <Label>Business Address</Label>
+                        <Textarea 
+                          placeholder="Enter your business address"
+                          className="min-h-[80px]"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label>Phone Number</Label>
+                        <Input placeholder="+1 (555) 123-4567" />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label>Email Address</Label>
+                        <Input placeholder="contact@company.com" />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label>Website URL</Label>
+                        <Input placeholder="https://www.company.com" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="system" className="space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <Database className="h-5 w-5 mr-2" />
+                      System Configuration
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="language">Language</Label>
+                        <Select 
+                          value={adminState.language} 
+                          onValueChange={(value: 'en' | 'ur' | 'es') => 
+                            setAdminState(prev => ({ ...prev, language: value }))
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="en">English</SelectItem>
+                            <SelectItem value="ur">اردو (Urdu)</SelectItem>
+                            <SelectItem value="es">Español</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="timezone">Timezone</Label>
+                        <Select 
+                          value={adminState.timezone} 
+                          onValueChange={(value) => setAdminState(prev => ({ ...prev, timezone: value }))}
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="UTC">UTC</SelectItem>
+                            <SelectItem value="EST">EST</SelectItem>
+                            <SelectItem value="PST">PST</SelectItem>
+                            <SelectItem value="GMT">GMT</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="notifications">Enable Notifications</Label>
+                      <Switch 
+                        id="notifications" 
+                        checked={adminState.notifications} 
+                        onCheckedChange={(checked) => setAdminState(prev => ({ ...prev, notifications: checked }))}
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="auto-refresh">Auto-refresh Data</Label>
+                      <Switch 
+                        id="auto-refresh" 
+                        checked={adminState.autoRefresh} 
+                        onCheckedChange={(checked) => setAdminState(prev => ({ ...prev, autoRefresh: checked }))}
+                      />
+                    </div>
+
+                    <Button className="w-full">
+                      Save Configuration
+                    </Button>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="advanced" className="space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <Settings className="h-5 w-5 mr-2" />
+                      Advanced Settings
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                      <div className="flex items-center">
+                        <AlertTriangle className="h-5 w-5 text-yellow-600 mr-2" />
+                        <p className="text-sm text-yellow-800">
+                          Advanced settings can affect system functionality. Please proceed with caution.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <Label>Debug Mode</Label>
+                          <p className="text-sm text-gray-500">Enable detailed logging and error reporting</p>
+                        </div>
+                        <Switch />
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <Label>Performance Monitoring</Label>
+                          <p className="text-sm text-gray-500">Track system performance metrics</p>
+                        </div>
+                        <Switch />
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <Label>Analytics Collection</Label>
+                          <p className="text-sm text-gray-500">Collect usage analytics for optimization</p>
+                        </div>
+                        <Switch defaultChecked />
+                      </div>
+
+                      <Separator />
+
+                      <div className="space-y-3">
+                        <Label>Data Management</Label>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          <Button variant="outline" className="justify-start">
+                            <Download className="h-4 w-4 mr-2" />
+                            Export All Data
+                          </Button>
+                          <Button variant="outline" className="justify-start">
+                            <RefreshCw className="h-4 w-4 mr-2" />
+                            Clear Cache
+                          </Button>
+                        </div>
+                      </div>
+
+                      <Separator />
+
+                      <div className="space-y-3">
+                        <Label className="text-red-600">Danger Zone</Label>
+                        <Button variant="destructive" className="w-full">
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Reset All Settings
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
+          </div>
+        );
+
+      case 'theme-manager':
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold">Theme Manager</h2>
+                <p className="text-gray-600">Complete control over your app's appearance and branding</p>
+              </div>
+              <div className="flex space-x-3">
+                <Button variant="outline">
+                  <Download className="h-4 w-4 mr-2" />
+                  Export Theme
+                </Button>
+                <Button>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create New Theme
+                </Button>
+              </div>
             </div>
+
+            {/* Live Preview */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Eye className="h-5 w-5 mr-2" />
+                  Live Preview
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 bg-gray-50">
+                  <div className="bg-white rounded-lg shadow-sm p-4 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-lg font-semibold">Sample Interface</h3>
+                      <Button size="sm" style={{ backgroundColor: adminState.primaryColor }}>
+                        Primary Button
+                      </Button>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="bg-blue-50 p-3 rounded border border-blue-200">
+                        <div className="flex items-center mb-2">
+                          <Calendar className="h-4 w-4 text-blue-600 mr-2" />
+                          <span className="text-sm font-medium">Card Title</span>
+                        </div>
+                        <p className="text-xs text-gray-600">Sample card content with theme colors applied</p>
+                      </div>
+                      <div className="bg-green-50 p-3 rounded border border-green-200">
+                        <div className="flex items-center mb-2">
+                          <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
+                          <span className="text-sm font-medium">Success State</span>
+                        </div>
+                        <p className="text-xs text-gray-600">Shows positive actions and confirmations</p>
+                      </div>
+                      <div className="bg-red-50 p-3 rounded border border-red-200">
+                        <div className="flex items-center mb-2">
+                          <AlertTriangle className="h-4 w-4 text-red-600 mr-2" />
+                          <span className="text-sm font-medium">Error State</span>
+                        </div>
+                        <p className="text-xs text-gray-600">Displays warnings and error messages</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Same content as settings tab but dedicated to theme */}
+            <Tabs defaultValue="foundation" className="w-full">
+              <TabsList className="grid w-full grid-cols-4">
+                <TabsTrigger value="foundation">Foundation</TabsTrigger>
+                <TabsTrigger value="components">Components</TabsTrigger>
+                <TabsTrigger value="advanced">Advanced</TabsTrigger>
+                <TabsTrigger value="export">Export/Import</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="foundation" className="space-y-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Core Colors</CardTitle>
+                      <CardDescription>Define the fundamental colors for your application</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="space-y-2">
+                        <Label>Background Color</Label>
+                        <div className="flex items-center space-x-3">
+                          <Input 
+                            type="color"
+                            defaultValue="#ffffff"
+                            className="w-12 h-10 p-1 border rounded"
+                          />
+                          <Input 
+                            placeholder="#ffffff"
+                            defaultValue="#ffffff"
+                            className="flex-1"
+                          />
+                        </div>
+                        <p className="text-xs text-gray-500">Main background color for the entire application</p>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label>Text Color</Label>
+                        <div className="flex items-center space-x-3">
+                          <Input 
+                            type="color"
+                            defaultValue="#0f1419"
+                            className="w-12 h-10 p-1 border rounded"
+                          />
+                          <Input 
+                            placeholder="#0f1419"
+                            defaultValue="#0f1419"
+                            className="flex-1"
+                          />
+                        </div>
+                        <p className="text-xs text-gray-500">Primary text color for readability</p>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label>Brand Primary</Label>
+                        <div className="flex items-center space-x-3">
+                          <Input 
+                            type="color"
+                            value={adminState.primaryColor}
+                            onChange={(e) => setAdminState(prev => ({ ...prev, primaryColor: e.target.value }))}
+                            className="w-12 h-10 p-1 border rounded"
+                          />
+                          <Input 
+                            placeholder={adminState.primaryColor}
+                            value={adminState.primaryColor}
+                            onChange={(e) => setAdminState(prev => ({ ...prev, primaryColor: e.target.value }))}
+                            className="flex-1"
+                          />
+                        </div>
+                        <p className="text-xs text-gray-500">Your main brand color for buttons and highlights</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Typography</CardTitle>
+                      <CardDescription>Configure fonts and text styling</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="space-y-2">
+                        <Label>Primary Font Family</Label>
+                        <Select defaultValue="inter">
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="inter">Inter</SelectItem>
+                            <SelectItem value="roboto">Roboto</SelectItem>
+                            <SelectItem value="poppins">Poppins</SelectItem>
+                            <SelectItem value="openSans">Open Sans</SelectItem>
+                            <SelectItem value="system">System Default</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label>Heading Font</Label>
+                        <Select defaultValue="bebasNeue">
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="bebasNeue">Bebas Neue</SelectItem>
+                            <SelectItem value="montserrat">Montserrat</SelectItem>
+                            <SelectItem value="oswald">Oswald</SelectItem>
+                            <SelectItem value="robotoCondensed">Roboto Condensed</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label>Base Font Size</Label>
+                        <div className="flex items-center space-x-4">
+                          <Input 
+                            type="range"
+                            min="12"
+                            max="18"
+                            defaultValue="14"
+                            className="flex-1"
+                          />
+                          <span className="text-sm font-mono w-12">14px</span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="components" className="space-y-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Buttons & Actions</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between p-3 border rounded-lg">
+                          <span>Primary Button</span>
+                          <Button style={{ backgroundColor: adminState.primaryColor }}>Sample</Button>
+                        </div>
+                        <div className="flex items-center justify-between p-3 border rounded-lg">
+                          <span>Secondary Button</span>
+                          <Button variant="outline">Sample</Button>
+                        </div>
+                        <div className="flex items-center justify-between p-3 border rounded-lg">
+                          <span>Destructive Button</span>
+                          <Button variant="destructive">Sample</Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Forms & Inputs</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="space-y-2">
+                        <Label>Sample Input</Label>
+                        <Input placeholder="Type something..." />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Sample Textarea</Label>
+                        <Textarea placeholder="Type a longer message..." rows={3} />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Sample Select</Label>
+                        <Select>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Choose an option" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="option1">Option 1</SelectItem>
+                            <SelectItem value="option2">Option 2</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="advanced" className="space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Advanced Customization</CardTitle>
+                    <CardDescription>Fine-tune detailed aspects of your theme</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>Border Radius</Label>
+                        <div className="flex items-center space-x-4">
+                          <Input 
+                            type="range"
+                            min="0"
+                            max="20"
+                            defaultValue="6"
+                            className="flex-1"
+                          />
+                          <span className="text-sm font-mono w-12">6px</span>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label>Shadow Intensity</Label>
+                        <div className="flex items-center space-x-4">
+                          <Input 
+                            type="range"
+                            min="0"
+                            max="10"
+                            defaultValue="3"
+                            className="flex-1"
+                          />
+                          <span className="text-sm font-mono w-12">3</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <Separator />
+
+                    <div className="space-y-4">
+                      <Label>Custom CSS</Label>
+                      <Textarea 
+                        placeholder="Add custom CSS rules..."
+                        className="min-h-[100px] font-mono text-sm"
+                      />
+                      <p className="text-xs text-gray-500">Advanced users can add custom CSS to override default styles</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="export" className="space-y-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Export Theme</CardTitle>
+                      <CardDescription>Save your current theme configuration</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="space-y-2">
+                        <Label>Theme Name</Label>
+                        <Input placeholder="My Custom Theme" />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Description</Label>
+                        <Textarea placeholder="Describe your theme..." rows={3} />
+                      </div>
+                      <Button className="w-full">
+                        <Download className="h-4 w-4 mr-2" />
+                        Export Theme
+                      </Button>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Import Theme</CardTitle>
+                      <CardDescription>Load a previously saved theme</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                        <div className="space-y-2">
+                          <FileText className="h-8 w-8 text-gray-400 mx-auto" />
+                          <p className="text-sm text-gray-600">Drag and drop theme file here</p>
+                          <Button variant="outline" size="sm">
+                            Choose File
+                          </Button>
+                        </div>
+                      </div>
+                      <Button className="w-full" variant="outline">
+                        Load From Library
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </div>
+              </TabsContent>
+            </Tabs>
           </div>
         );
 
