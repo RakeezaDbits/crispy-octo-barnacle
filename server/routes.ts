@@ -7,6 +7,7 @@ import { squareService } from "./services/squareService";
 import { docuSignService } from "./services/docusignService";
 import { AuthService } from "./services/authService";
 import { authenticateCustomer, optionalAuthentication, getCustomerId } from "./middleware/authMiddleware";
+import { authRequired } from "./middleware/authMiddleware";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Create appointment
@@ -84,8 +85,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }, 60 * 60 * 1000); // 1 hour in milliseconds
 
-      res.json({ 
-        success: true, 
+      res.json({
+        success: true,
         message: 'Appointment created successfully! Confirmation email sent.',
         appointment: {
           ...appointment,
@@ -94,9 +95,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     } catch (error) {
       console.error("❌ Error creating appointment:", error);
-      res.status(500).json({ 
-        success: false, 
-        message: error instanceof Error ? error.message : 'Failed to create appointment' 
+      res.status(500).json({
+        success: false,
+        message: error instanceof Error ? error.message : 'Failed to create appointment'
       });
     }
   });
@@ -221,9 +222,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
             description: "Complete security audit plus title monitoring and protection services for maximum peace of mind.",
             price: "150.00",
             features: [
-              "Complete security audit", 
-              "Title deed verification", 
-              "Property ownership monitoring", 
+              "Complete security audit",
+              "Title deed verification",
+              "Property ownership monitoring",
               "Legal document review",
               "6-month monitoring service",
               "Detailed report with action plan"
@@ -237,7 +238,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             price: "300.00",
             features: [
               "Advanced threat assessment",
-              "Emergency response planning", 
+              "Emergency response planning",
               "Smart home security integration",
               "24/7 monitoring setup",
               "Personal security consultation",
@@ -275,7 +276,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         if (envelopeId) {
           // Find appointment by envelope ID and update DocuSign status
           const appointments = await storage.getAllAppointments();
-          const appointment = appointments.find(apt => 
+          const appointment = appointments.find(apt =>
             apt.docusignStatus && apt.docusignStatus.includes(envelopeId)
           );
 
@@ -320,8 +321,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
 
-      res.json({ 
-        message: `Processed ${appointmentsForTomorrow.length} appointments, sent ${emailsSent} reminders` 
+      res.json({
+        message: `Processed ${appointmentsForTomorrow.length} appointments, sent ${emailsSent} reminders`
       });
     } catch (error) {
       console.error("Failed to send reminder emails:", error);
@@ -343,7 +344,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error("Failed to send verification email:", emailError);
       }
 
-      res.status(201).json({ 
+      res.status(201).json({
         message: "Registration successful. Please check your email to verify your account.",
         token,
         customer: {
@@ -371,7 +372,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const { customer, token } = result;
-      res.json({ 
+      res.json({
         message: "Login successful",
         token,
         customer: {
