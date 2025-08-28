@@ -166,6 +166,7 @@ export default function BookingModal({ isOpen, onClose, selectedPackage }: Booki
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Form submitted, current step:', currentStep);
 
     const authToken = localStorage.getItem('auth_token');
     if (!customer || !authToken) {
@@ -178,6 +179,7 @@ export default function BookingModal({ isOpen, onClose, selectedPackage }: Booki
       return;
     }
 
+    console.log('Form data validation:', formData);
     if (!formData.fullName || !formData.email || !formData.phone || !formData.address || !formData.preferredDate) {
       toast({
         title: "Missing Information",
@@ -188,6 +190,7 @@ export default function BookingModal({ isOpen, onClose, selectedPackage }: Booki
     }
 
     // Move to payment step
+    console.log('Moving to step 2 (payment)');
     setCurrentStep(2);
   };
 
