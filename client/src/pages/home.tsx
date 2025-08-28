@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import BookingModal from "@/components/booking-modal";
+import Navigation from "@/components/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { useLocation } from "wouter";
 import { 
@@ -143,6 +144,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Navigation />
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white overflow-hidden">
         <div className="absolute inset-0 bg-black/20"></div>
