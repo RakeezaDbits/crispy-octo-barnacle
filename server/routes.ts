@@ -10,32 +10,94 @@ import { authenticateCustomer, optionalAuthentication, getCustomerId } from "./m
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Create appointment
-  app.post("/api/appointments", async (req, res) => {
+  app.post("/api/appointments", authRequired, async (req, res) => {
     try {
-      const validatedData = insertAppointmentSchema.parse(req.body);
-      const appointment = await storage.createAppointment(validatedData);
-      
-      // Send confirmation email and DocuSign agreement
+      const appointmentData = insertAppointmentSchema.parse(req.body);
+
+      console.log('Processing appointment for customer:', req.user?.email);
+
+      // Process payment first
+      const paymentResult = await squareService.processPayment(
+        appointmentData.nonce,
+        appointmentData.amount,
+        appointmentData
+      );
+
+      console.log('Payment processed successfully:', paymentResult);
+
+      // Create appointment record
+      const appointmentToInsert = {
+        ...appointmentData,
+        customerId: req.user!.id,
+        paymentStatus: 'paid',
+        status: 'confirmed',
+        squarePaymentId: paymentResult.id,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      const [appointment] = await db
+        .insert(appointments)
+        .values(appointmentToInsert)
+        .returning();
+
+      console.log('Appointment created with ID:', appointment.id);
+
+      // Send confirmation email immediately
       try {
         await emailService.sendConfirmationEmail(appointment);
-        const docuSignResult = await docuSignService.sendDocuSignAgreement(appointment);
-        
-        // Send DocuSign notification email
-        await emailService.sendDocuSignNotification(appointment, docuSignResult.recipientUrl);
-        
-        // Update appointment status to include DocuSign sent with envelope ID
-        await storage.updateAppointment(appointment.id, {
-          docusignStatus: `sent:${docuSignResult.envelopeId}`
-        });
+        console.log('✅ Confirmation email sent successfully to:', appointment.email);
       } catch (emailError) {
-        console.error("Failed to send confirmation email or DocuSign:", emailError);
-        // Don't fail the appointment creation if email fails
+        console.error('❌ Failed to send confirmation email:', emailError);
       }
 
-      res.json(appointment);
+      // Send DocuSign agreement
+      try {
+        console.log('📝 Sending DocuSign agreement...');
+        const docuSignResult = await docuSignService.sendDocuSignAgreement(appointment);
+        console.log('✅ DocuSign sent successfully:', docuSignResult);
+
+        // Update appointment with DocuSign info
+        await db
+          .update(appointments)
+          .set({
+            docusignEnvelopeId: docuSignResult.envelopeId,
+            docusignStatus: docuSignResult.status,
+            updatedAt: new Date(),
+          })
+          .where(eq(appointments.id, appointment.id));
+
+        // Send DocuSign notification email
+        await emailService.sendDocuSignNotification(appointment, docuSignResult.recipientUrl);
+        console.log('✅ DocuSign notification email sent successfully');
+      } catch (docuSignError) {
+        console.error('❌ Failed to send DocuSign agreement:', docuSignError);
+      }
+
+      // Send a follow-up reminder email after 1 hour (in production, use a job queue)
+      setTimeout(async () => {
+        try {
+          await emailService.sendReminderEmail(appointment);
+          console.log('✅ Reminder email sent after 1 hour');
+        } catch (reminderError) {
+          console.error('❌ Failed to send reminder email:', reminderError);
+        }
+      }, 60 * 60 * 1000); // 1 hour in milliseconds
+
+      res.json({ 
+        success: true, 
+        message: 'Appointment created successfully! Confirmation email sent.',
+        appointment: {
+          ...appointment,
+          paymentId: paymentResult.id
+        }
+      });
     } catch (error) {
-      console.error("Failed to create appointment:", error);
-      res.status(400).json({ message: error instanceof Error ? error.message : "Invalid appointment data" });
+      console.error("❌ Error creating appointment:", error);
+      res.status(500).json({ 
+        success: false, 
+        message: error instanceof Error ? error.message : 'Failed to create appointment' 
+      });
     }
   });
 
@@ -43,14 +105,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/payments", async (req, res) => {
     try {
       const { appointmentId, sourceId, amount } = req.body;
-      
+
       const appointment = await storage.getAppointment(appointmentId);
       if (!appointment) {
         return res.status(404).json({ message: "Appointment not found" });
       }
 
       const payment = await squareService.processPayment(sourceId, amount, appointment);
-      
+
       // Update appointment with payment info
       await storage.updateAppointment(appointmentId, {
         paymentId: payment.id,
@@ -106,15 +168,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { status, docusignStatus } = req.body;
       const updates: any = {};
-      
+
       if (status) updates.status = status;
       if (docusignStatus) updates.docusignStatus = docusignStatus;
-      
+
       const appointment = await storage.updateAppointment(req.params.id, updates);
       if (!appointment) {
         return res.status(404).json({ message: "Appointment not found" });
       }
-      
+
       res.json(appointment);
     } catch (error) {
       console.error("Failed to update appointment:", error);
@@ -129,7 +191,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!email) {
         return res.status(400).json({ error: "Email parameter is required" });
       }
-      
+
       const appointments = await storage.getAppointmentsByEmail(email as string);
       res.json(appointments);
     } catch (error) {
@@ -142,7 +204,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/service-packages", async (req, res) => {
     try {
       let packages = await storage.getServicePackages();
-      
+
       // If no packages exist, create default ones
       if (packages.length === 0) {
         const defaultPackages = [
@@ -190,10 +252,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         for (const pkg of defaultPackages) {
           await storage.createServicePackage(pkg);
         }
-        
+
         packages = await storage.getServicePackages();
       }
-      
+
       res.json(packages);
     } catch (error) {
       console.error("Failed to get service packages:", error);
@@ -205,18 +267,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/docusign/webhook", async (req, res) => {
     try {
       const { event, data } = req.body;
-      
+
       if (event === 'envelope-completed' || event === 'envelope-signed') {
         const envelopeId = data?.envelopeId;
         const status = event === 'envelope-completed' ? 'completed' : 'signed';
-        
+
         if (envelopeId) {
           // Find appointment by envelope ID and update DocuSign status
           const appointments = await storage.getAllAppointments();
           const appointment = appointments.find(apt => 
             apt.docusignStatus && apt.docusignStatus.includes(envelopeId)
           );
-          
+
           if (appointment) {
             await storage.updateAppointment(appointment.id, {
               docusignStatus: status
@@ -225,7 +287,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
         }
       }
-      
+
       res.json({ received: true });
     } catch (error) {
       console.error("DocuSign webhook error:", error);
@@ -239,14 +301,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const appointments = await storage.getAllAppointments();
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
-      
+
       // Find appointments scheduled for tomorrow
       const appointmentsForTomorrow = appointments.filter(appointment => {
         const appointmentDate = new Date(appointment.preferredDate);
         return appointmentDate.toDateString() === tomorrow.toDateString() &&
                appointment.status === 'confirmed';
       });
-      
+
       let emailsSent = 0;
       for (const appointment of appointmentsForTomorrow) {
         try {
@@ -257,7 +319,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           console.error(`Failed to send reminder to ${appointment.email}:`, error);
         }
       }
-      
+
       res.json({ 
         message: `Processed ${appointmentsForTomorrow.length} appointments, sent ${emailsSent} reminders` 
       });
@@ -273,14 +335,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const validatedData = insertCustomerSchema.parse(req.body);
       const { customer, token } = await AuthService.registerCustomer(validatedData);
-      
+
       // Send verification email
       try {
         await emailService.sendWelcomeEmail(customer.email, customer.fullName, customer.emailVerificationToken!);
       } catch (emailError) {
         console.error("Failed to send verification email:", emailError);
       }
-      
+
       res.status(201).json({ 
         message: "Registration successful. Please check your email to verify your account.",
         token,
@@ -303,11 +365,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const validatedData = customerLoginSchema.parse(req.body);
       const result = await AuthService.loginCustomer(validatedData);
-      
+
       if (!result) {
         return res.status(401).json({ message: "Invalid email or password" });
       }
-      
+
       const { customer, token } = result;
       res.json({ 
         message: "Login successful",
@@ -331,11 +393,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const authHeader = req.headers.authorization;
       const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : '';
-      
+
       if (token) {
         await AuthService.logout(token);
       }
-      
+
       res.json({ message: "Logout successful" });
     } catch (error) {
       console.error("Logout error:", error);
@@ -348,7 +410,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { token } = req.params;
       const success = await AuthService.verifyEmail(token);
-      
+
       if (success) {
         res.json({ message: "Email verified successfully" });
       } else {
@@ -365,7 +427,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const validatedData = passwordResetSchema.parse(req.body);
       const resetToken = await AuthService.generatePasswordResetToken(validatedData.email);
-      
+
       if (resetToken) {
         // Send password reset email
         try {
@@ -374,7 +436,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           console.error("Failed to send password reset email:", emailError);
         }
       }
-      
+
       // Always return success for security reasons
       res.json({ message: "If the email exists, a password reset link has been sent" });
     } catch (error) {
@@ -388,7 +450,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const validatedData = passwordResetConfirmSchema.parse(req.body);
       const success = await AuthService.resetPassword(validatedData.token, validatedData.newPassword);
-      
+
       if (success) {
         res.json({ message: "Password reset successful. Please login with your new password." });
       } else {
@@ -444,7 +506,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       };
 
       const appointment = await storage.createAppointment(appointmentData);
-      
+
       // Send confirmation email
       try {
         await emailService.sendConfirmationEmail(appointment);
@@ -464,7 +526,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/admin/login", async (req, res) => {
     try {
       const { username, password } = req.body;
-      
+
       // Demo authentication - in production, use proper password hashing
       if (username === "admin" && password === "admin123") {
         const token = generateAuthToken(1, username);
@@ -492,10 +554,10 @@ function generateAuthToken(userId: number, username: string): string {
     iat: Math.floor(Date.now() / 1000),
     exp: Math.floor(Date.now() / 1000) + (24 * 60 * 60) // 24 hours
   };
-  
+
   const headerB64 = btoa(JSON.stringify(header));
   const payloadB64 = btoa(JSON.stringify(payload));
   const signature = btoa(`secret_${userId}_${payload.exp}`);
-  
+
   return `${headerB64}.${payloadB64}.${signature}`;
 }
