@@ -68,32 +68,28 @@ export default function BookingModal({ isOpen, onClose, selectedPackage }: Booki
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Mock mutation - actual mutation will happen after payment
-  const bookingMutation = useMutation({
-    mutationFn: async (data: any) => {
-      // This part is now handled by handlePaymentSuccess after payment is processed
-      // For now, we can return a success placeholder or handle it differently
-      console.log("Booking mutation called with data:", data);
-      // In a real scenario, you might use this mutation for other tasks if needed
-      // For example, to fetch available slots or confirm package details before payment.
-      return { success: true, message: "Data prepared for payment." };
-    },
-    onSuccess: (data) => {
-      // This success toast is now shown in handlePaymentSuccess
-      // toast({
-      //   title: "Appointment Booked!",
-      //   description: "Your security audit has been scheduled. You'll receive a confirmation email shortly.",
-      // });
-      queryClient.invalidateQueries({ queryKey: ["/api/appointments"] });
-      // onClose(); // onClose is now handled in handlePaymentSuccess after a delay
-      // resetForm(); // resetForm is also handled in handlePaymentSuccess after a delay
-    },
-    onError: (error: Error) => {
-      toast({
-        title: "Booking Failed",
-        description: error.message,
-        variant: "destructive",
+  // Replaced mutation to use fetch directly with auth token
+  const createAppointmentMutation = useMutation({
+    mutationFn: async (appointmentData: any) => {
+      const token = localStorage.getItem('authToken');
+      const response = await fetch('/api/appointments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token && { 'Authorization': `Bearer ${token}` })
+        },
+        body: JSON.stringify(appointmentData)
       });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: 'Network error' }));
+        throw new Error(errorData.message || 'Failed to create appointment');
+      }
+
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/appointments"] });
     },
   });
 
@@ -121,53 +117,46 @@ export default function BookingModal({ isOpen, onClose, selectedPackage }: Booki
     setIsProcessing(false); // Ensure processing state is reset
   };
 
-  const handlePaymentSuccess = async (paymentData: any) => {
-    try {
-      setIsProcessing(true);
+  // Updated handlePaymentSuccess to match the new mutation structure and include all necessary fields
+  const handlePaymentSuccess = async (result: any) => {
+    setIsProcessing(true);
 
+    try {
       const appointmentData = {
-        ...formData,
+        fullName: formData.fullName,
+        email: formData.email,
+        phone: formData.phone,
+        preferredDate: formData.preferredDate,
+        preferredTime: formData.preferredTime,
+        address: formData.address,
+        // Assuming these fields might be relevant, though not explicitly in initial formData
+        // city: formData.city,
+        // state: formData.state,
+        // zipCode: formData.zipCode,
+        // specialRequests: formData.notes, // Mapping notes to specialRequests
+        servicePackageId: selectedPackage?.id,
         amount: totalAmount,
-        nonce: paymentData.nonce, // Nonce received from Square
-        preferredDate: formData.preferredDate ? formData.preferredDate.toISOString() : '', // Ensure date is ISO string
+        nonce: result.nonce || result.token, // Payment token from Square
+        titleProtection: formData.titleProtection || false,
+        status: 'pending',
+        paymentStatus: 'pending'
       };
 
-      console.log('Submitting appointment with payment:', appointmentData);
+      console.log('Creating appointment with data:', appointmentData);
 
-      // Use the apiRequest for consistency, or fetch directly if preferred
-      const response = await apiRequest("/api/appointments", {
-        method: "POST",
-        body: JSON.stringify(appointmentData),
+      const response = await createAppointmentMutation.mutateAsync(appointmentData);
+
+      toast({
+        title: "Payment Successful! 🎉",
+        description: "Your appointment has been booked. You'll receive a confirmation email shortly.",
       });
 
-      if (response.ok) {
-        const result = await response.json();
-        console.log('Appointment created successfully:', result);
-
-        // Move to confirmation step
-        setCurrentStep(3);
-
-        // Show success message
-        toast({
-          title: "Payment Successful! 🎉",
-          description: "Your appointment has been booked and confirmed!",
-        });
-
-        // Auto-close modal after 3 seconds
-        setTimeout(() => {
-          resetForm(); // Reset form and step
-          onClose();  // Close the modal
-        }, 3000);
-      } else {
-        const errorData = await response.json();
-        console.error('Appointment creation failed:', errorData);
-        throw new Error(errorData.message || 'Failed to create appointment');
-      }
+      setCurrentStep(3); // Move to confirmation step
     } catch (error) {
-      console.error("Payment processing error:", error);
+      console.error('Appointment creation failed:', error);
       toast({
-        title: "Payment Failed",
-        description: error instanceof Error ? error.message : "Failed to process payment. Please try again.",
+        title: "Booking Failed",
+        description: error instanceof Error ? error.message : "Failed to create appointment after payment",
         variant: "destructive",
       });
     } finally {
