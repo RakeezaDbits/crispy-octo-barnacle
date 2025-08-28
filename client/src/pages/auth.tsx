@@ -10,17 +10,22 @@ export default function AuthPage() {
   const [, setLocation] = useLocation();
   const { login, register } = useAuth();
 
-  const handleAuthSuccess = (data: { token: string; customer: any }) => {
-    // Redirect to dashboard after successful auth
-    setLocation('/dashboard');
+  const handleLogin = async (email: string, password: string) => {
+    try {
+      await login(email, password);
+      setLocation('/dashboard');
+    } catch (error) {
+      throw error; // Let the form handle the error
+    }
   };
 
-  const handleLogin = async (data: { token: string; customer: any }) => {
-    handleAuthSuccess(data);
-  };
-
-  const handleRegister = async (data: { token: string; customer: any }) => {
-    handleAuthSuccess(data);
+  const handleRegister = async (userData: { email: string; password: string; fullName: string; phone?: string }) => {
+    try {
+      await register(userData);
+      setLocation('/dashboard');
+    } catch (error) {
+      throw error; // Let the form handle the error
+    }
   };
 
   const handleForgotPassword = () => {

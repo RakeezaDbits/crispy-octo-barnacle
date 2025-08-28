@@ -1,4 +1,4 @@
-import { Menu, User } from "lucide-react";
+import { Menu, User, Shield } from "lucide-react";
 import logoImage from "@/assets/images/Logo.png";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";

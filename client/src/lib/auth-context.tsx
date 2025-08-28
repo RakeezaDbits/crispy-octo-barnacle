@@ -87,6 +87,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Save to localStorage
     localStorage.setItem('auth_token', data.token);
     localStorage.setItem('customer_data', JSON.stringify(data.customer));
+    
+    return data;
   };
 
   const register = async (userData: { email: string; password: string; fullName: string; phone?: string }) => {
@@ -104,6 +106,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Save to localStorage
     localStorage.setItem('auth_token', data.token);
     localStorage.setItem('customer_data', JSON.stringify(data.customer));
+    
+    return data;
   };
 
   const logout = () => {

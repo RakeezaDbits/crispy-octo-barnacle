@@ -19,7 +19,7 @@ const loginSchema = z.object({
 type LoginFormData = z.infer<typeof loginSchema>;
 
 interface LoginFormProps {
-  onSuccess: (data: { token: string; customer: any }) => void;
+  onSuccess: (email: string, password: string) => Promise<void>;
   onSwitchToRegister: () => void;
   onForgotPassword: () => void;
 }
@@ -38,15 +38,13 @@ export default function LoginForm({ onSuccess, onSwitchToRegister, onForgotPassw
 
   const loginMutation = useMutation({
     mutationFn: async (data: LoginFormData) => {
-      const response = await apiRequest("POST", "/api/auth/login", data);
-      return response.json();
+      return await onSuccess(data.email, data.password);
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       toast({
         title: "Welcome back!",
         description: "Login successful",
       });
-      onSuccess(data);
     },
     onError: (error: any) => {
       toast({

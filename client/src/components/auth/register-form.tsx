@@ -41,20 +41,18 @@ export default function RegisterForm({ onSuccess, onSwitchToLogin }: RegisterFor
 
   const registerMutation = useMutation({
     mutationFn: async (data: RegisterFormData) => {
-      const response = await apiRequest("POST", "/api/auth/register", data);
-      return response.json();
+      return await onSuccess(data);
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       toast({
-        title: "Registration Successful!",
-        description: "Please check your email to verify your account",
+        title: "Welcome to Alpha Security Bureau!",
+        description: "Registration successful",
       });
-      onSuccess(data);
     },
     onError: (error: any) => {
       toast({
         title: "Registration Failed",
-        description: error?.message || "Please try again",
+        description: error?.message || "Registration failed",
         variant: "destructive",
       });
     },
