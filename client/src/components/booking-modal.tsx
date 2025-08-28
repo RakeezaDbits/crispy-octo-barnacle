@@ -462,7 +462,7 @@ export default function BookingModal({ isOpen, onClose, selectedPackage }: Booki
             <div className="space-y-6">
               <div className="text-center">
                 <h3 className="text-lg font-semibold mb-2">Payment Details</h3>
-                <p className="text-muted-foreground">
+                <p className="text-muted-foreground mb-4">
                   Complete your payment to confirm your appointment
                 </p>
               </div>
