@@ -1,5 +1,6 @@
 
-import { Shield, Phone, Menu, X, User, Home, Info, Phone as PhoneIcon, Settings } from "lucide-react";
+import { Menu, User } from "lucide-react";
+import logoImage from "@/assets/images/Logo.png";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Link, useLocation } from "wouter";
@@ -25,10 +26,10 @@ export default function Navigation() {
   };
 
   const navItems = [
-    { name: 'Home', href: '/', icon: Home },
-    { name: 'Services', href: '#services', icon: Shield },
-    { name: 'About', href: '#about', icon: Info },
-    { name: 'Contact', href: '#contact', icon: PhoneIcon },
+    { name: 'Home', href: '/' },
+    { name: 'Services', href: '#services' },
+    { name: 'About', href: '#about' },
+    { name: 'Contact', href: '#contact' },
   ];
 
   return (
@@ -38,12 +39,11 @@ export default function Navigation() {
           {/* Logo Section */}
           <div className="flex items-center cursor-pointer" onClick={() => setLocation('/')}>
             <div className="flex-shrink-0 flex items-center">
-              <div className="relative">
-                <Shield className="h-10 w-10 text-primary mr-3" />
-                <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full flex items-center justify-center">
-                  <span className="text-xs font-bold text-black">A</span>
-                </div>
-              </div>
+              <img 
+                src={logoImage} 
+                alt="Alpha Security Bureau Logo" 
+                className="h-10 w-auto mr-3"
+              />
               <div className="flex flex-col">
                 <span className="font-bold text-xl text-gray-900 leading-tight">Alpha Security</span>
                 <span className="text-sm text-primary font-medium leading-tight">Bureau</span>
@@ -54,14 +54,12 @@ export default function Navigation() {
           {/* Desktop Navigation Items */}
           <nav className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => {
-              const Icon = item.icon;
               return (
                 <a
                   key={item.name}
                   href={item.href}
-                  className="flex items-center text-gray-700 hover:text-primary px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-primary/5 group"
+                  className="text-gray-700 hover:text-primary px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-primary/5"
                 >
-                  <Icon className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform" />
                   {item.name}
                 </a>
               );
@@ -119,7 +117,11 @@ export default function Navigation() {
                 <nav className="flex flex-col gap-4 mt-6">
                   {/* Mobile Logo */}
                   <div className="flex items-center mb-6">
-                    <Shield className="h-8 w-8 text-primary mr-2" />
+                    <img 
+                      src={logoImage} 
+                      alt="Alpha Security Bureau Logo" 
+                      className="h-8 w-auto mr-2"
+                    />
                     <div className="flex flex-col">
                       <span className="font-bold text-lg text-gray-900">Alpha Security</span>
                       <span className="text-sm text-primary font-medium">Bureau</span>
@@ -128,15 +130,13 @@ export default function Navigation() {
 
                   {/* Mobile Navigation Items */}
                   {navItems.map((item) => {
-                    const Icon = item.icon;
                     return (
                       <a
                         key={item.name}
                         href={item.href}
-                        className="flex items-center text-gray-700 hover:text-primary px-4 py-3 rounded-lg text-base font-medium transition-colors hover:bg-primary/5"
+                        className="text-gray-700 hover:text-primary px-4 py-3 rounded-lg text-base font-medium transition-colors hover:bg-primary/5 block"
                         onClick={() => setIsOpen(false)}
                       >
-                        <Icon className="h-5 w-5 mr-3" />
                         {item.name}
                       </a>
                     );
@@ -154,7 +154,6 @@ export default function Navigation() {
                             setIsOpen(false);
                           }}
                         >
-                          <User className="w-5 h-5 mr-3" />
                           Dashboard
                         </Button>
                         <Button
