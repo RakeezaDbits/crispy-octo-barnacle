@@ -151,7 +151,7 @@ export default function Home() {
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: `url('@assets/image_1756390018173.png')`,
+            backgroundImage: `url('https://alphasecuritybureau.com/wp-content/uploads/2025/06/WhatsApp-Image-2025-06-24-at-17.32.13_459c3183.jpg')`,
           }}
         ></div>
         
@@ -168,7 +168,7 @@ export default function Home() {
             </div>
             
             {/* Main Heading */}
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight" style={{ fontFamily: 'Bebas Neue, sans-serif' }}>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl mb-6 leading-tight" style={{ fontFamily: 'Bebas Neue, sans-serif' }}>
               ARMED AND UNARMED SECURITY<br />
               OFFICERS , FREE SECURITY CONSULTING<br />
               AND COUNSELING, FREE PRICE QUOTE
@@ -192,7 +192,7 @@ export default function Home() {
               <Button 
                 variant="outline" 
                 size="lg"
-                className="border-2 border-white/50 text-white hover:bg-white/10 px-8 py-4 text-lg transition-all duration-300"
+                className="border-2 border-white text-white hover:bg-navy-900 hover:text-white px-8 py-4 text-lg transition-all duration-300"
                 onClick={() => document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' })}
               >
                 READ MORE
