@@ -1,4 +1,4 @@
-import { appointments, users, servicePackages, customers, type User, type InsertUser, type Appointment, type InsertAppointment, type ServicePackage, type InsertServicePackage } from "@shared/schema";
+import { appointments, users, servicePackages, customers, type User, type InsertUser, type Customer, type Appointment, type InsertAppointment, type ServicePackage, type InsertServicePackage } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc } from "drizzle-orm";
 
@@ -14,7 +14,7 @@ export interface IStorage {
   getAppointmentsByCustomerId(customerId: string): Promise<Appointment[]>;
   getServicePackages(): Promise<ServicePackage[]>;
   createServicePackage(servicePackage: InsertServicePackage): Promise<ServicePackage>;
-  getAllCustomers(): Promise<User[]>;
+  getAllCustomers(): Promise<Customer[]>;
 }
 
 export class DatabaseStorage implements IStorage {
