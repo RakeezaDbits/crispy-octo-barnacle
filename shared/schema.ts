@@ -131,6 +131,8 @@ export const insertAppointmentSchema = createInsertSchema(appointments).omit({
   phone: z.string().min(10, "Valid phone number is required"),
   address: z.string().min(10, "Complete address is required"),
   preferredDate: z.string().min(1, "Preferred date is required"),
+  amount: z.union([z.string(), z.number()]).transform((val) => String(val)),
+  nonce: z.string().optional(),
 });
 
 export const insertOfficerSchema = createInsertSchema(officers).omit({
