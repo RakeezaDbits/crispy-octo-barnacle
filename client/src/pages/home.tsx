@@ -46,75 +46,75 @@ export default function Home() {
   const services = [
     {
       icon: Shield,
-      title: "Basic Security Audit",
-      price: "$50",
-      description: "Essential home security assessment covering entry points, locks, and basic vulnerabilities.",
-      features: ["Entry point assessment", "Lock evaluation", "Basic security recommendations", "Written report"],
-      duration: "60 min",
+      title: "Armed and Unarmed Security Officers",
+      price: "Contact for Quote",
+      description: "Trained personnel offering visible deterrence and responsive protection tailored to your specific security needs.",
+      features: ["Licensed security guards", "24/7 availability", "Visible deterrence", "Professional uniforms", "Detailed reporting"],
+      duration: "24/7",
       popular: false
     },
     {
-      icon: Lock,
-      title: "Comprehensive Security & Title Protection",
-      price: "$150",
-      description: "Complete security audit plus title monitoring and protection services for maximum peace of mind.",
+      icon: Eye,
+      title: "Fire Watch & Security Services",
+      price: "Contact for Quote",
+      description: "Professional Fire Watch and Security Services ensuring 24/7 protection and compliance.",
       features: [
-        "Complete security audit", 
-        "Title deed verification", 
-        "Property ownership monitoring", 
-        "Legal document review",
-        "6-month monitoring service",
-        "Detailed report with action plan"
+        "Fire safety monitoring", 
+        "Emergency response", 
+        "Compliance documentation", 
+        "Professional reporting",
+        "24/7 coverage",
+        "Trained fire watch personnel"
       ],
-      duration: "120 min",
+      duration: "24/7",
       popular: true
     },
     {
-      icon: Eye,
-      title: "Premium Executive Protection Package",
-      price: "$300",
-      description: "Advanced security assessment with ongoing monitoring, emergency response planning, and VIP consultation.",
+      icon: Target,
+      title: "Active Shooter Prevention",
+      price: "Contact for Quote",
+      description: "Professional active shooter prevention, swift response, and crisis management for high-risk scenarios.",
       features: [
-        "Advanced threat assessment",
+        "Threat assessment",
         "Emergency response planning", 
-        "Smart home security integration",
-        "24/7 monitoring setup",
-        "Personal security consultation",
-        "Quarterly follow-up assessments",
-        "Priority emergency response"
+        "Crisis management",
+        "Staff training",
+        "Security protocols",
+        "Rapid response team",
+        "Risk mitigation"
       ],
-      duration: "180 min",
+      duration: "As needed",
       popular: false
     }
   ];
 
   const stats = [
-    { icon: Users, number: "2,500+", label: "Homes Protected" },
-    { icon: Award, number: "15+", label: "Years Experience" },
+    { icon: Users, number: "8,859,613+", label: "Total Visitors" },
+    { icon: Award, number: "50+", label: "Years Experience" },
     { icon: Star, number: "4.9/5", label: "Customer Rating" },
-    { icon: CheckCircle, number: "99%", label: "Success Rate" }
+    { icon: CheckCircle, number: "24/7", label: "Security Available" }
   ];
 
   const features = [
     {
       icon: Target,
-      title: "Precision Assessment",
-      description: "Our certified experts conduct thorough security evaluations using industry-leading methodologies."
+      title: "Elite Security Officers",
+      description: "Licensed and trained security personnel for your business or event with professional uniforms."
     },
     {
       icon: TrendingUp,
-      title: "Advanced Analytics",
-      description: "Comprehensive reporting with actionable insights and priority-based recommendations."
+      title: "Manpower and Technology",
+      description: "Advanced security solutions combining skilled personnel with cutting-edge technology."
     },
     {
       icon: UserCheck,
-      title: "Certified Professionals",
-      description: "Licensed security specialists with extensive training and background verification."
+      title: "Licensed & Insured",
+      description: "Fully licensed, insured, and bonded security professionals ready for deployment."
     },
     {
       icon: Zap,
-      title: "Rapid Response",
-      description: "Quick deployment and immediate assessment with detailed reporting within 24 hours."
+      title: "24/7/365 Availability",
+      description: "Round-the-clock security services available every day of the year when you need us."
     }
   ];
 
@@ -159,19 +159,19 @@ export default function Home() {
         
         <div className="relative container mx-auto px-4 py-24 lg:py-32">
           <div className="max-w-4xl mx-auto text-center">
-            <Badge className="mb-4 bg-yellow-500/20 text-yellow-300 border-yellow-500/30 hover:bg-yellow-500/30">
-              <Shield className="w-4 h-4 mr-2" />
-              Trusted Security Professionals
-            </Badge>
+            <div className="mb-6 text-center">
+              <div className="text-yellow-400 font-semibold mb-2">Licensed and Trained Security Guards</div>
+              <div className="text-yellow-400 font-semibold mb-2">Free Consultations</div>
+              <div className="text-yellow-400 font-semibold">50 Years of Combined Experience</div>
+            </div>
             
             <h1 className="text-4xl lg:text-6xl font-bold mb-6 leading-tight">
-              Protect Your Home & Assets with 
-              <span className="bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent"> Professional Security</span>
+              We Supply 
+              <span className="bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">Protection</span>
             </h1>
             
             <p className="text-xl lg:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
-              Comprehensive security audits, title protection, and asset monitoring services by certified professionals. 
-              Safeguard what matters most with industry-leading security solutions.
+              Armed and Unarmed Security Officers, Free Security Consulting and Counseling, Free Price Quote
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -180,7 +180,7 @@ export default function Home() {
                 className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-8 py-4 text-lg rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl group"
                 onClick={handleGetStarted}
               >
-                {customer ? 'Go to Dashboard' : 'Schedule Security Audit'}
+                {customer ? 'Go to Dashboard' : 'Book A Free Consultation'}
                 <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
               
@@ -220,10 +220,10 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-              Why Choose Alpha Security Bureau
+              What We Offer
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Our comprehensive approach to security combines cutting-edge technology with decades of expertise
+              Providing you protection is our only business. We uphold our reputation of being an industry leader.
             </p>
           </div>
 
@@ -250,10 +250,10 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-              Professional Security Services
+              Complete Security Guard Services
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Choose from our comprehensive security packages designed to protect your home and assets
+              Alpha Security Bureau provides top-tier Armed and Unarmed Security Guard services tailored for every environment.
             </p>
           </div>
 
@@ -309,23 +309,23 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="text-3xl lg:text-4xl font-bold mb-6">
-                Certified Security Professionals
+                Get 3 Security Companies at the Price of One
               </h2>
               <p className="text-xl text-gray-300 mb-8">
-                Our team consists of licensed security experts, former law enforcement professionals, 
-                and certified safety specialists with extensive training and background verification.
+                We can start as soon as possible and our prices are the most competitive ones in the entire nation. 
+                Let us help you with a free price quote and beat the current security price that you're paying.
               </p>
               
               <div className="grid grid-cols-2 gap-6 mb-8">
                 <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
                   <AlertTriangle className="w-8 h-8 text-yellow-400 mb-2" />
-                  <h3 className="font-semibold mb-1">Risk Assessment</h3>
-                  <p className="text-sm text-gray-300">Comprehensive vulnerability analysis</p>
+                  <h3 className="font-semibold mb-1">Elite Security Officers</h3>
+                  <p className="text-sm text-gray-300">Professional guards for your business or event</p>
                 </div>
                 <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
                   <Globe className="w-8 h-8 text-blue-400 mb-2" />
-                  <h3 className="font-semibold mb-1">24/7 Monitoring</h3>
-                  <p className="text-sm text-gray-300">Round-the-clock security surveillance</p>
+                  <h3 className="font-semibold mb-1">Security Available 24/7/365</h3>
+                  <p className="text-sm text-gray-300">Round-the-clock protection when you need it</p>
                 </div>
               </div>
               
@@ -334,7 +334,7 @@ export default function Home() {
                 className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold"
                 onClick={() => setIsBookingOpen(true)}
               >
-                Meet Our Team
+                Get Free Quote
               </Button>
             </div>
             
@@ -396,10 +396,10 @@ export default function Home() {
       <section className="py-20 bg-gradient-to-r from-gray-900 to-black text-white">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl lg:text-4xl font-bold mb-4">
-            Ready to Secure Your Property?
+            Ready to Secure Your Business?
           </h2>
           <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-            Get started with a comprehensive security audit today. Our experts are standing by to protect what matters most to you.
+            Contact us today for a free quote and find out how we can help secure your site, property, or event with reliable and professional security solutions.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -409,7 +409,7 @@ export default function Home() {
               onClick={() => setIsBookingOpen(true)}
             >
               <Calendar className="w-5 h-5 mr-2" />
-              Schedule Assessment
+              Get Free Consultation
             </Button>
             
             <div className="flex items-center text-gray-300">
