@@ -62,3 +62,6 @@ export const getCustomerId = (req: Request): string => {
   }
   return req.customer.id;
 };
+
+// Alias for authenticateCustomer to match usage in routes
+export const authRequired = authenticateCustomer;

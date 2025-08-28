@@ -8,6 +8,9 @@ import { docuSignService } from "./services/docusignService";
 import { AuthService } from "./services/authService";
 import { authenticateCustomer, optionalAuthentication, getCustomerId } from "./middleware/authMiddleware";
 import { authRequired } from "./middleware/authMiddleware";
+import { db } from "./db";
+import { appointments } from "@shared/schema";
+import { eq } from "drizzle-orm";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Create appointment
@@ -15,7 +18,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const appointmentData = insertAppointmentSchema.parse(req.body);
 
-      console.log('Processing appointment for customer:', req.user?.email);
+      console.log('Processing appointment for customer:', req.customer?.email);
 
       // Process payment first
       const paymentResult = await squareService.processPayment(
@@ -29,7 +32,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Create appointment record
       const appointmentToInsert = {
         ...appointmentData,
-        customerId: req.user!.id,
+        customerId: req.customer!.id,
         paymentStatus: 'paid',
         status: 'confirmed',
         squarePaymentId: paymentResult.id,
