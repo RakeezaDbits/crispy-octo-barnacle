@@ -146,55 +146,149 @@ export default function Home() {
     <div className="min-h-screen bg-gray-50">
       <Navigation />
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white overflow-hidden">
-        <div className="absolute inset-0 bg-black/20"></div>
-        <div 
-          className="absolute inset-0 opacity-10"
-          style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=1920&h=1080&fit=crop')`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center'
-          }}
-        ></div>
+      <section className="relative min-h-[90vh] bg-gradient-to-br from-slate-900 via-blue-900 to-black text-white overflow-hidden">
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0">
+          <div className="absolute top-20 left-20 w-72 h-72 bg-yellow-500/10 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-20 right-20 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-white/5 rounded-full blur-3xl"></div>
+        </div>
         
-        <div className="relative container mx-auto px-4 py-24 lg:py-32">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="mb-6 text-center">
-              <div className="text-yellow-400 font-semibold mb-2">Licensed and Trained Security Guards</div>
-              <div className="text-yellow-400 font-semibold mb-2">Free Consultations</div>
-              <div className="text-yellow-400 font-semibold">50 Years of Combined Experience</div>
-            </div>
-            
-            <h1 className="text-4xl lg:text-6xl font-bold mb-6 leading-tight">
-              We Supply 
-              <span className="bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">Protection</span>
-            </h1>
-            
-            <p className="text-xl lg:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
-              Armed and Unarmed Security Officers, Free Security Consulting and Counseling, Free Price Quote
-            </p>
-            
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Button 
-                size="lg" 
-                className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-8 py-4 text-lg rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl group"
-                onClick={handleGetStarted}
-              >
-                {customer ? 'Go to Dashboard' : 'Book A Free Consultation'}
-                <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-              </Button>
-              
-              <Button 
-                variant="outline" 
-                size="lg"
-                className="border-white/30 text-white hover:bg-white/10 px-8 py-4 text-lg rounded-lg backdrop-blur-sm"
-                onClick={() => document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' })}
-              >
-                <Eye className="w-5 h-5 mr-2" />
-                View Services
-              </Button>
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          }}></div>
+        </div>
+
+        {/* Security Badge */}
+        <div className="absolute top-8 right-8 hidden lg:block">
+          <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
+            <div className="flex items-center space-x-3">
+              <div className="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center">
+                <Shield className="w-6 h-6 text-black" />
+              </div>
+              <div>
+                <div className="text-sm font-semibold text-yellow-400">Licensed & Certified</div>
+                <div className="text-xs text-gray-300">Professional Security</div>
+              </div>
             </div>
           </div>
+        </div>
+        
+        <div className="relative container mx-auto px-4 py-20 lg:py-32">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center min-h-[70vh]">
+            {/* Left Content */}
+            <div className="space-y-8">
+              {/* Trust Badges */}
+              <div className="flex flex-wrap gap-4 mb-8">
+                <div className="bg-yellow-500/20 text-yellow-400 px-4 py-2 rounded-full text-sm font-semibold border border-yellow-500/30">
+                  ✓ Licensed Guards
+                </div>
+                <div className="bg-blue-500/20 text-blue-400 px-4 py-2 rounded-full text-sm font-semibold border border-blue-500/30">
+                  ✓ Free Consultation
+                </div>
+                <div className="bg-green-500/20 text-green-400 px-4 py-2 rounded-full text-sm font-semibold border border-green-500/30">
+                  ✓ 50+ Years Experience
+                </div>
+              </div>
+              
+              <div>
+                <h1 className="text-5xl lg:text-7xl font-bold mb-6 leading-tight">
+                  We Supply
+                  <br />
+                  <span className="bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 bg-clip-text text-transparent">
+                    Protection
+                  </span>
+                </h1>
+                
+                <p className="text-xl lg:text-2xl text-gray-300 mb-8 leading-relaxed max-w-2xl">
+                  Professional Armed & Unarmed Security Officers. 
+                  <span className="text-yellow-400 font-semibold"> Get your FREE security consultation today!</span>
+                </p>
+              </div>
+              
+              {/* CTA Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button 
+                  size="lg" 
+                  className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-black font-bold px-8 py-4 text-lg rounded-xl transition-all duration-300 shadow-2xl hover:shadow-yellow-500/25 hover:scale-105 group"
+                  onClick={handleGetStarted}
+                >
+                  <Calendar className="w-6 h-6 mr-3" />
+                  {customer ? 'Go to Dashboard' : 'Book FREE Consultation'}
+                  <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                </Button>
+                
+                <Button 
+                  variant="outline" 
+                  size="lg"
+                  className="border-2 border-white/30 text-white hover:bg-white/10 px-8 py-4 text-lg rounded-xl backdrop-blur-sm hover:border-yellow-400/50 transition-all duration-300"
+                  onClick={() => document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' })}
+                >
+                  <Phone className="w-5 h-5 mr-2" />
+                  Call Now: 1-817-383-9098
+                </Button>
+              </div>
+
+              {/* Quick Stats */}
+              <div className="grid grid-cols-2 gap-6 pt-8">
+                <div className="text-center lg:text-left">
+                  <div className="text-3xl lg:text-4xl font-bold text-yellow-400">24/7</div>
+                  <div className="text-sm text-gray-400">Security Available</div>
+                </div>
+                <div className="text-center lg:text-left">
+                  <div className="text-3xl lg:text-4xl font-bold text-blue-400">50+</div>
+                  <div className="text-sm text-gray-400">States Covered</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Visual Element */}
+            <div className="relative hidden lg:block">
+              <div className="relative">
+                {/* Main Image Container */}
+                <div className="relative bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-md rounded-3xl p-8 border border-white/20">
+                  <img 
+                    src="https://images.unsplash.com/photo-1556157382-97eda2d62296?w=600&h=400&fit=crop"
+                    alt="Professional Security Team"
+                    className="w-full h-80 object-cover rounded-2xl shadow-2xl"
+                  />
+                  
+                  {/* Floating Cards */}
+                  <div className="absolute -top-4 -right-4 bg-white/90 backdrop-blur-md rounded-2xl p-4 shadow-2xl border border-white/20">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
+                        <CheckCircle className="w-5 h-5 text-white" />
+                      </div>
+                      <div>
+                        <div className="text-sm font-bold text-gray-900">Licensed</div>
+                        <div className="text-xs text-gray-600">Certified Guards</div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="absolute -bottom-4 -left-4 bg-yellow-500 rounded-2xl p-4 shadow-2xl">
+                    <div className="text-center">
+                      <div className="text-lg font-bold text-black">FREE</div>
+                      <div className="text-sm text-black">Quote</div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Decorative Elements */}
+                <div className="absolute top-8 left-8 w-4 h-4 bg-yellow-500 rounded-full animate-ping"></div>
+                <div className="absolute bottom-8 right-8 w-6 h-6 bg-blue-500 rounded-full animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Wave */}
+        <div className="absolute bottom-0 left-0 w-full">
+          <svg viewBox="0 0 1440 120" className="w-full h-auto">
+            <path fill="rgb(249, 250, 251)" d="M0,64L48,69.3C96,75,192,85,288,80C384,75,480,53,576,48C672,43,768,53,864,58.7C960,64,1056,64,1152,58.7C1248,53,1344,43,1392,37.3L1440,32L1440,120L1392,120C1344,120,1248,120,1152,120C1056,120,960,120,864,120C768,120,672,120,576,120C480,120,384,120,288,120C192,120,96,120,48,120L0,120Z"></path>
+          </svg>
         </div>
       </section>
 
