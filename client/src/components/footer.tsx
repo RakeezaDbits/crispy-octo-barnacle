@@ -4,7 +4,7 @@ import { Link } from "wouter";
 export default function Footer() {
   return (
     <footer className="bg-primary-900 text-white py-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid md:grid-cols-4 gap-8">
           <div className="md:col-span-2">
             <Link href="/" className="flex items-center space-x-3 mb-6" data-testid="link-footer-home">

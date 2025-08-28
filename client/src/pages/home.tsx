@@ -7,6 +7,7 @@ import BookingModal from "@/components/booking-modal";
 import Navigation from "@/components/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { useLocation } from "wouter";
+import Footer from "@/components/footer";
 import { 
   Shield, 
   CheckCircle, 
@@ -144,9 +145,13 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Header */}
       <Navigation />
-      {/* Hero Section */}
-      <section className="relative h-[70vh] bg-gray-800 text-white overflow-hidden">
+      
+      {/* Main Content Container with 1400px max width */}
+      <div className="w-full">
+        {/* Hero Section */}
+        <section className="relative h-[70vh] bg-gray-800 text-white overflow-hidden">
         {/* Background Image */}
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -158,7 +163,7 @@ export default function Home() {
         {/* Dark Overlay */}
         <div className="absolute inset-0 bg-black/60"></div>
         
-        <div className="relative container mx-auto px-4 h-full flex items-center">
+        <div className="relative max-w-[1400px] mx-auto px-4 h-full flex items-center">
           <div className="max-w-2xl">
             {/* Yellow Header Text */}
             <div className="mb-4">
@@ -204,7 +209,7 @@ export default function Home() {
 
       {/* Stats Section */}
       <section className="py-16 bg-white border-b">
-        <div className="container mx-auto px-4">
+        <div className="max-w-[1400px] mx-auto px-4">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
               <div key={index} className="text-center">
@@ -221,7 +226,7 @@ export default function Home() {
 
       {/* Features Section */}
       <section className="py-20 bg-gray-50">
-        <div className="container mx-auto px-4">
+        <div className="max-w-[1400px] mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
               What We Offer
@@ -251,7 +256,7 @@ export default function Home() {
 
       {/* Security Services Section */}
       <section id="services" className="py-20 bg-white">
-        <div className="container mx-auto px-4">
+        <div className="max-w-[1400px] mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
               Complete Security Guard Services
@@ -309,7 +314,7 @@ export default function Home() {
 
       {/* Professional Team Section */}
       <section className="py-20 bg-gray-900 text-white">
-        <div className="container mx-auto px-4">
+        <div className="max-w-[1400px] mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="text-3xl lg:text-4xl font-bold mb-6">
@@ -356,7 +361,7 @@ export default function Home() {
 
       {/* Testimonials Section */}
       <section className="py-20 bg-white">
-        <div className="container mx-auto px-4">
+        <div className="max-w-[1400px] mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
               What Our Clients Say
@@ -398,7 +403,7 @@ export default function Home() {
 
       {/* CTA Section */}
       <section className="py-20 bg-gradient-to-r from-gray-900 to-black text-white">
-        <div className="container mx-auto px-4 text-center">
+        <div className="max-w-[1400px] mx-auto px-4 text-center">
           <h2 className="text-3xl lg:text-4xl font-bold mb-4">
             Ready to Secure Your Business?
           </h2>
@@ -424,6 +429,11 @@ export default function Home() {
         </div>
       </section>
 
+      </div>
+      
+      {/* Footer */}
+      <Footer />
+      
       <BookingModal 
         isOpen={isBookingOpen} 
         onClose={() => setIsBookingOpen(false)} 
