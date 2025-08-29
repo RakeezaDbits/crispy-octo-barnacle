@@ -38,6 +38,7 @@ import {
 } from "@shared/schema";
 import { z } from "zod";
 import { apiRequest } from "@/lib/queryClient";
+import { authenticatedRequest } from "@/lib/auth";
 import { useToast } from "@/hooks/use-toast";
 import { SquarePaymentForm } from "@/components/square-payment-form";
 
@@ -94,7 +95,7 @@ export default function BookingModal({ isOpen, onClose, selectedPackage }: Booki
 
   const createAppointmentMutation = useMutation({
     mutationFn: async (data: InsertAppointment) => {
-      const response = await apiRequest("POST", "/api/appointments", data);
+      const response = await authenticatedRequest("POST", "/api/appointments", data);
       return response.json();
     },
     onSuccess: (appointment) => {
