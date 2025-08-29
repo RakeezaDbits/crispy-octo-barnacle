@@ -29,12 +29,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       console.log('Payment processed successfully:', paymentResult);
 
-      // Create appointment record
+      // Create appointment record with pending status initially
       const appointmentToInsert = {
         ...appointmentData,
         customerId: req.customer!.id,
         paymentStatus: 'paid',
-        status: 'confirmed',
+        status: 'pending', // Admin will confirm this later
         squarePaymentId: paymentResult.id,
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -179,6 +179,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const appointment = await storage.updateAppointment(req.params.id, updates);
       if (!appointment) {
         return res.status(404).json({ message: "Appointment not found" });
+      }
+
+      // If admin confirms the appointment, send reminder email for preferred date
+      if (status === 'confirmed' && appointment) {
+        try {
+          const appointmentDate = new Date(appointment.preferredDate);
+          const now = new Date();
+          const daysBetween = Math.ceil((appointmentDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+          
+          // If appointment is tomorrow or today, send reminder immediately
+          if (daysBetween <= 1) {
+            await emailService.sendReminderEmail(appointment);
+            console.log('✅ Reminder email sent for confirmed appointment');
+          } else {
+            // Schedule reminder for day before appointment
+            setTimeout(async () => {
+              try {
+                await emailService.sendReminderEmail(appointment);
+                console.log('✅ Scheduled reminder email sent');
+              } catch (error) {
+                console.error('❌ Failed to send scheduled reminder email:', error);
+              }
+            }, (daysBetween - 1) * 24 * 60 * 60 * 1000); // Send day before
+          }
+        } catch (error) {
+          console.error('❌ Failed to schedule reminder email:', error);
+        }
       }
 
       res.json(appointment);

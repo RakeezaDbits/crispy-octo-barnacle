@@ -305,6 +305,34 @@ export default function Admin() {
     });
   };
 
+  const handleConfirmAppointment = async (appointmentId: string) => {
+    try {
+      const response = await fetch(`/api/appointments/${appointmentId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: 'confirmed' }),
+      });
+
+      if (response.ok) {
+        refetch(); // Refresh the appointments list
+        toast({
+          title: "Appointment Confirmed",
+          description: "Customer will receive reminder email before appointment date",
+        });
+      } else {
+        throw new Error('Failed to confirm appointment');
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to confirm appointment",
+        variant: "destructive",
+      });
+    }
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "confirmed": return "bg-green-100 text-green-800 border-green-200";
@@ -735,6 +763,16 @@ export default function Admin() {
                                 <Button variant="outline" size="sm">
                                   <Eye className="h-4 w-4" />
                                 </Button>
+                                {appointment.status === 'pending' && (
+                                  <Button 
+                                    variant="default" 
+                                    size="sm"
+                                    onClick={() => handleConfirmAppointment(appointment.id)}
+                                    className="bg-green-600 hover:bg-green-700"
+                                  >
+                                    <CheckCircle className="h-4 w-4" />
+                                  </Button>
+                                )}
                                 <Button variant="outline" size="sm">
                                   <Edit className="h-4 w-4" />
                                 </Button>

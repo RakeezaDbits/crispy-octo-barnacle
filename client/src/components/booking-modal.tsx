@@ -118,12 +118,12 @@ export default function BookingModal({ isOpen, onClose, selectedPackage }: Booki
         },
         body: JSON.stringify(data),
       });
-      
+
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.message || 'Failed to create appointment');
       }
-      
+
       return response.json();
     },
     onSuccess: (appointment) => {
@@ -612,58 +612,20 @@ export default function BookingModal({ isOpen, onClose, selectedPackage }: Booki
         {/* Step 3: Confirmation */}
         {currentStep === 3 && (
           <div className="space-y-6 text-center">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <CheckCircle className="w-8 h-8 text-green-600" />
+            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <CheckCircle className="w-8 h-8 text-blue-600" />
             </div>
 
-            <div>
-              <h3 className="text-xl font-semibold text-green-600 mb-2">
-                Booking Confirmed!
-              </h3>
-              <p className="text-muted-foreground mb-4">
-                Your security audit appointment has been successfully booked.
-              </p>
-            </div>
+            <h3 className="text-xl font-semibold text-blue-600">
+              Appointment Submitted Successfully!
+            </h3>
 
-            {confirmedAppointment && (
-              <Card>
-                <CardContent className="p-4">
-                  <h4 className="font-semibold mb-3">Appointment Details</h4>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span>Name:</span>
-                      <span>{confirmedAppointment.fullName}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Email:</span>
-                      <span>{confirmedAppointment.email}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Phone:</span>
-                      <span>{confirmedAppointment.phone}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Date:</span>
-                      <span>{confirmedAppointment.preferredDate}</span>
-                    </div>
-                    {confirmedAppointment.preferredTime && (
-                      <div className="flex justify-between">
-                        <span>Time:</span>
-                        <span>{confirmedAppointment.preferredTime}</span>
-                      </div>
-                    )}
-                    <div className="flex justify-between font-semibold">
-                      <span>Total Paid:</span>
-                      <span className="text-green-600">${totalAmount.toFixed(2)}</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            <div className="text-sm text-muted-foreground">
-              <p>You will receive a confirmation email shortly with all the details.</p>
-              <p>Our team will contact you within 24 hours to finalize the appointment.</p>
+            <div className="text-sm text-muted-foreground space-y-2">
+              <p>✅ Payment processed successfully</p>
+              <p>📧 Confirmation email sent to your inbox</p>
+              <p>📝 Service agreement will be sent for digital signature</p>
+              <p>⏳ Our team will confirm your appointment within 24 hours</p>
+              <p>🔔 You'll receive a reminder email before your appointment date</p>
             </div>
 
             <Button onClick={handleClose} className="w-full">

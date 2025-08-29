@@ -263,7 +263,7 @@ class EmailService {
                 
                 <p>Dear <strong>${data.fullName}</strong>,</p>
                 
-                <p>Thank you for choosing Alpha Security Bureau for your home security audit. Your appointment has been successfully confirmed and our team is excited to protect your valuable assets.</p>
+                <p>Thank you for choosing Alpha Security Bureau for your home security audit. Your appointment has been successfully received and is currently pending confirmation from our team. We will confirm your appointment within 24 hours and provide you with all the details.</p>
 
                 <div class="appointment-card">
                   <h3>📅 Your Appointment Details</h3>
@@ -294,7 +294,7 @@ class EmailService {
                       <strong>Appointment ID:</strong> ${data.id}
                     </div>
                   </div>
-                  <span class="status-badge status-confirmed">✅ Confirmed</span>
+                  <span class="status-badge status-pending">⏳ Pending Confirmation</span>
                 </div>
 
                 <div class="checklist">
@@ -313,10 +313,11 @@ class EmailService {
                 <div class="contact-info">
                   <h3>📞 What Happens Next?</h3>
                   <ul>
-                    <li>📱 Our certified security officer will contact you 24 hours before your appointment</li>
-                    <li>🔒 You'll receive a text with our officer's photo and credentials for verification</li>
-                    <li>📋 We'll confirm the appointment time and answer any questions</li>
-                    <li>📧 A detailed report will be emailed within 48 hours after the audit</li>
+                    <li>✅ Our team will review and confirm your appointment within 24 hours</li>
+                    <li>📧 You'll receive a confirmation email once approved</li>
+                    <li>📝 A service agreement will be sent for your digital signature</li>
+                    <li>📱 Our certified security officer will contact you before your appointment</li>
+                    <li>📋 You'll receive a reminder email closer to your appointment date</li>
                   </ul>
                 </div>
 
