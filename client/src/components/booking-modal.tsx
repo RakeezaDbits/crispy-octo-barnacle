@@ -41,6 +41,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { authenticatedRequest } from "@/lib/auth";
 import { useToast } from "@/hooks/use-toast";
 import { SquarePaymentForm } from "@/components/square-payment-form";
+import { useAuth } from "@/lib/auth-context";
 
 interface BookingModalProps {
   isOpen: boolean;
@@ -81,6 +82,7 @@ export default function BookingModal({ isOpen, onClose, selectedPackage }: Booki
 
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { user, isLoggedIn } = useAuth();
 
   const form = useForm<FormData>({
     resolver: zodResolver(
@@ -244,6 +246,31 @@ export default function BookingModal({ isOpen, onClose, selectedPackage }: Booki
   // Don't render anything if not open
   if (!isOpen) return null;
 
+  // If user is not logged in, show a message and close the modal or redirect
+  if (!isLoggedIn) {
+    return (
+      <Dialog open={isOpen} onOpenChange={handleClose}>
+        <DialogContent
+          className="sm:max-w-2xl max-h-[90vh] overflow-y-auto"
+          aria-describedby="booking-dialog-description"
+        >
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Calendar className="h-5 w-5 text-primary-600" />
+              Authentication Required
+            </DialogTitle>
+          </DialogHeader>
+          <DialogDescription id="booking-dialog-description">
+            Please log in to book an appointment.
+          </DialogDescription>
+          <Button onClick={handleClose} className="w-full">
+            Close
+          </Button>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent
@@ -341,6 +368,7 @@ export default function BookingModal({ isOpen, onClose, selectedPackage }: Booki
                   {...form.register("fullName")}
                   placeholder="John Smith"
                   data-testid="input-full-name"
+                  defaultValue={user?.fullName || ""} // Pre-fill if user data is available
                 />
                 {form.formState.errors.fullName && (
                   <p className="text-sm text-red-600 mt-1">
@@ -356,6 +384,7 @@ export default function BookingModal({ isOpen, onClose, selectedPackage }: Booki
                   {...form.register("email")}
                   placeholder="john@example.com"
                   data-testid="input-email"
+                  defaultValue={user?.email || ""} // Pre-fill if user data is available
                 />
                 {form.formState.errors.email && (
                   <p className="text-sm text-red-600 mt-1">
@@ -374,6 +403,7 @@ export default function BookingModal({ isOpen, onClose, selectedPackage }: Booki
                   {...form.register("phone")}
                   placeholder="(555) 123-4567"
                   data-testid="input-phone"
+                  defaultValue={user?.phone || ""} // Pre-fill if user data is available
                 />
                 {form.formState.errors.phone && (
                   <p className="text-sm text-red-600 mt-1">
@@ -406,6 +436,7 @@ export default function BookingModal({ isOpen, onClose, selectedPackage }: Booki
                 {...form.register("address")}
                 placeholder="123 Main Street, City, State 12345"
                 data-testid="input-address"
+                defaultValue={user?.address || ""} // Pre-fill if user data is available
               />
               {form.formState.errors.address && (
                 <p className="text-sm text-red-600 mt-1">
