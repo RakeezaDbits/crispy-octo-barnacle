@@ -108,7 +108,7 @@ export default function BookingModal({ isOpen, onClose, selectedPackage }: Booki
 
   const createAppointmentMutation = useMutation({
     mutationFn: async (data: InsertAppointment) => {
-      const response = await apiRequest("POST", "/api/appointments", data);
+      const response = await authenticatedRequest("POST", "/api/auth/appointments", data);
       return response.json();
     },
     onSuccess: (appointment) => {
