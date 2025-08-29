@@ -409,7 +409,7 @@ export default function BookingModal({ isOpen, onClose, selectedPackage }: Booki
             <div className="flex items-center space-x-2">
               <Checkbox
                 id="titleProtection"
-                checked={form.watch("titleProtection")}
+                checked={!!form.watch("titleProtection")}
                 onCheckedChange={(checked) => form.setValue("titleProtection", !!checked)}
                 data-testid="checkbox-title-protection"
               />
@@ -421,7 +421,7 @@ export default function BookingModal({ isOpen, onClose, selectedPackage }: Booki
             <div className="flex items-center space-x-2">
               <Checkbox
                 id="readinessCheck"
-                checked={form.watch("readinessCheck")}
+                checked={!!form.watch("readinessCheck")}
                 onCheckedChange={(checked) => form.setValue("readinessCheck", !!checked)}
                 data-testid="checkbox-readiness"
               />
