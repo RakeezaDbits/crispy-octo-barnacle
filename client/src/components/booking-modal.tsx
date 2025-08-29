@@ -82,7 +82,7 @@ export default function BookingModal({ isOpen, onClose, selectedPackage }: Booki
 
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { user, isLoggedIn } = useAuth();
+  const { customer, token } = useAuth();
 
   const form = useForm<FormData>({
     resolver: zodResolver(
@@ -247,7 +247,7 @@ export default function BookingModal({ isOpen, onClose, selectedPackage }: Booki
   if (!isOpen) return null;
 
   // If user is not logged in, show a message and close the modal or redirect
-  if (!isLoggedIn) {
+  if (!customer || !token) {
     return (
       <Dialog open={isOpen} onOpenChange={handleClose}>
         <DialogContent
@@ -368,7 +368,7 @@ export default function BookingModal({ isOpen, onClose, selectedPackage }: Booki
                   {...form.register("fullName")}
                   placeholder="John Smith"
                   data-testid="input-full-name"
-                  defaultValue={user?.fullName || ""} // Pre-fill if user data is available
+                  defaultValue={customer?.fullName || ""} // Pre-fill if user data is available
                 />
                 {form.formState.errors.fullName && (
                   <p className="text-sm text-red-600 mt-1">
@@ -384,7 +384,7 @@ export default function BookingModal({ isOpen, onClose, selectedPackage }: Booki
                   {...form.register("email")}
                   placeholder="john@example.com"
                   data-testid="input-email"
-                  defaultValue={user?.email || ""} // Pre-fill if user data is available
+                  defaultValue={customer?.email || ""} // Pre-fill if user data is available
                 />
                 {form.formState.errors.email && (
                   <p className="text-sm text-red-600 mt-1">
@@ -403,7 +403,7 @@ export default function BookingModal({ isOpen, onClose, selectedPackage }: Booki
                   {...form.register("phone")}
                   placeholder="(555) 123-4567"
                   data-testid="input-phone"
-                  defaultValue={user?.phone || ""} // Pre-fill if user data is available
+                  defaultValue={customer?.phone || ""} // Pre-fill if user data is available
                 />
                 {form.formState.errors.phone && (
                   <p className="text-sm text-red-600 mt-1">
@@ -436,7 +436,7 @@ export default function BookingModal({ isOpen, onClose, selectedPackage }: Booki
                 {...form.register("address")}
                 placeholder="123 Main Street, City, State 12345"
                 data-testid="input-address"
-                defaultValue={user?.address || ""} // Pre-fill if user data is available
+                defaultValue={customer?.address || ""} // Pre-fill if user data is available
               />
               {form.formState.errors.address && (
                 <p className="text-sm text-red-600 mt-1">
