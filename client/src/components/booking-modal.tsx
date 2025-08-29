@@ -88,6 +88,7 @@ export default function BookingModal({ isOpen, onClose, selectedPackage }: Booki
       preferredTime: "",
       titleProtection: false,
       readinessCheck: false,
+      amount: "225.00",
     },
   });
 
@@ -169,8 +170,12 @@ export default function BookingModal({ isOpen, onClose, selectedPackage }: Booki
       return;
     }
 
+    // Calculate total amount based on title protection
+    const calculatedAmount = data.titleProtection ? "250.00" : "225.00";
+    
     console.log("Creating appointment...");
     const { readinessCheck, ...appointmentData } = data;
+    appointmentData.amount = calculatedAmount;
     createAppointmentMutation.mutate(appointmentData);
   };
 
