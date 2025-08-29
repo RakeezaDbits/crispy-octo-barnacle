@@ -12,7 +12,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -60,6 +59,19 @@ type FormData = InsertAppointment & {
   servicePackageId?: number;
 };
 
+// Define the schema for the booking form
+const bookingSchema = z.object({
+  fullName: z.string().min(2, "Full name must be at least 2 characters"),
+  email: z.string().email("Please enter a valid email address"),
+  phone: z.string().min(10, "Please enter a valid phone number"),
+  address: z.string().min(5, "Please enter your full address"),
+  preferredDate: z.string().min(1, "Please select a preferred date"),
+  preferredTime: z.enum(["morning", "afternoon", "evening"]),
+  amount: z.string().default("225.00"),
+  titleProtection: z.boolean().default(false),
+  readinessCheck: z.boolean().default(false),
+});
+
 export default function BookingModal({ isOpen, onClose, selectedPackage }: BookingModalProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const [appointmentId, setAppointmentId] = useState<string>("");
@@ -87,9 +99,9 @@ export default function BookingModal({ isOpen, onClose, selectedPackage }: Booki
       address: "",
       preferredDate: "",
       preferredTime: "",
+      amount: "225.00",
       titleProtection: false,
       readinessCheck: false,
-      amount: "225.00",
     },
   });
 
@@ -159,7 +171,7 @@ export default function BookingModal({ isOpen, onClose, selectedPackage }: Booki
   const handleStep1Submit = async (data: FormData) => {
     console.log("Form submitted with data:", data);
     console.log("Readiness check value:", data.readinessCheck);
-    
+
     if (!data.readinessCheck) {
       console.log("Readiness check failed!");
       toast({
@@ -173,7 +185,7 @@ export default function BookingModal({ isOpen, onClose, selectedPackage }: Booki
 
     // Calculate total amount based on title protection
     const calculatedAmount = data.titleProtection ? "250.00" : "225.00";
-    
+
     console.log("Creating appointment...");
     const { readinessCheck, ...appointmentData } = data;
     appointmentData.amount = calculatedAmount;
@@ -404,7 +416,8 @@ export default function BookingModal({ isOpen, onClose, selectedPackage }: Booki
             <div>
               <Label htmlFor="preferredTime">Preferred Time</Label>
               <Select
-                onValueChange={(value) => form.setValue("preferredTime", value)}
+                onValueChange={(value) => form.setValue("preferredTime", value as any)}
+                value={form.watch("preferredTime")}
               >
                 <SelectTrigger data-testid="select-preferred-time">
                   <SelectValue placeholder="Select preferred time" />
@@ -557,7 +570,7 @@ export default function BookingModal({ isOpen, onClose, selectedPackage }: Booki
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <CheckCircle className="w-8 h-8 text-green-600" />
             </div>
-            
+
             <div>
               <h3 className="text-xl font-semibold text-green-600 mb-2">
                 Booking Confirmed!
