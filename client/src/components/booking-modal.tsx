@@ -155,7 +155,11 @@ export default function BookingModal({ isOpen, onClose, selectedPackage }: Booki
   }, [form]);
 
   const handleStep1Submit = async (data: FormData) => {
+    console.log("Form submitted with data:", data);
+    console.log("Readiness check value:", data.readinessCheck);
+    
     if (!data.readinessCheck) {
+      console.log("Readiness check failed!");
       toast({
         title: "Confirmation Required",
         description:
@@ -165,6 +169,7 @@ export default function BookingModal({ isOpen, onClose, selectedPackage }: Booki
       return;
     }
 
+    console.log("Creating appointment...");
     const { readinessCheck, ...appointmentData } = data;
     createAppointmentMutation.mutate(appointmentData);
   };
@@ -475,6 +480,7 @@ export default function BookingModal({ isOpen, onClose, selectedPackage }: Booki
                 className="flex-1"
                 disabled={createAppointmentMutation.isPending}
                 data-testid="button-proceed-payment"
+                onClick={() => console.log("Button clicked!")}
               >
                 {createAppointmentMutation.isPending ? "Processing..." : "Proceed to Payment"}
               </Button>
