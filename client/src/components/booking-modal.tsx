@@ -476,11 +476,16 @@ export default function BookingModal({ isOpen, onClose, selectedPackage }: Booki
                 Cancel
               </Button>
               <Button
-                type="submit"
+                type="button"
                 className="flex-1"
                 disabled={createAppointmentMutation.isPending}
                 data-testid="button-proceed-payment"
-                onClick={() => console.log("Button clicked!")}
+                onClick={() => {
+                  console.log("Button clicked!");
+                  console.log("Form errors:", form.formState.errors);
+                  console.log("Form is valid:", form.formState.isValid);
+                  form.handleSubmit(handleStep1Submit)();
+                }}
               >
                 {createAppointmentMutation.isPending ? "Processing..." : "Proceed to Payment"}
               </Button>
