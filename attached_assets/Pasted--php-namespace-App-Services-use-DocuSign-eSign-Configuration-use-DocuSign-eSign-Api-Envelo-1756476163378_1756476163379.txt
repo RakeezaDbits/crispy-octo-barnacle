@@ -1,0 +1,105 @@
+<?php
+
+namespace App\Services;
+
+use DocuSign\eSign\Configuration;
+use DocuSign\eSign\Api\EnvelopesApi;
+use DocuSign\eSign\Client\ApiClient;
+use DocuSign\eSign\Model\EnvelopeDefinition;
+use DocuSign\eSign\Model\Document;
+use DocuSign\eSign\Model\Signer;
+use DocuSign\eSign\Model\SignHere;
+use DocuSign\eSign\Model\Tabs;
+use DocuSign\eSign\Model\Recipients;
+
+class DocuSignService
+{
+    private $config;
+    private $apiClient;
+
+    public function __construct()
+    {
+        $this->config = new Configuration();
+        $this->config->setHost(config('services.docusign.base_url'));
+        
+        $this->apiClient = new ApiClient($this->config);
+        $this->apiClient->getOAuth()->setOAuthBasePath(config('services.docusign.base_url'));
+    }
+
+    public function sendEnvelope($signerEmail, $signerName, $documentContent, $subject = 'Service Agreement')
+    {
+        // Get access token
+        $accessToken = $this->getAccessToken();
+        $this->config->setAccessToken($accessToken);
+
+        // Create envelope definition
+        $envelopeDefinition = new EnvelopeDefinition([
+            'email_subject' => $subject,
+            'status' => 'sent'
+        ]);
+
+        // Create document
+        $document = new Document([
+            'document_base64' => base64_encode($documentContent),
+            'name' => 'Service Agreement',
+            'file_extension' => 'pdf',
+            'document_id' => '1'
+        ]);
+
+        $envelopeDefinition->setDocuments([$document]);
+
+        // Create signer
+        $signer = new Signer([
+            'email' => $signerEmail,
+            'name' => $signerName,
+            'recipient_id' => '1',
+            'routing_order' => '1'
+        ]);
+
+        // Create sign here tab
+        $signHere = new SignHere([
+            'document_id' => '1',
+            'page_number' => '1',
+            'recipient_id' => '1',
+            'tab_label' => 'SignHereTab',
+            'x_position' => '195',
+            'y_position' => '147'
+        ]);
+
+        $tabs = new Tabs(['sign_here_tabs' => [$signHere]]);
+        $signer->setTabs($tabs);
+
+        // Set recipients
+        $recipients = new Recipients(['signers' => [$signer]]);
+        $envelopeDefinition->setRecipients($recipients);
+
+        // Send envelope
+        $envelopesApi = new EnvelopesApi($this->apiClient);
+        $results = $envelopesApi->createEnvelope(config('services.docusign.account_id'), $envelopeDefinition);
+
+        return $results;
+    }
+
+    private function getAccessToken()
+    {
+        // For JWT authentication
+        $privateKey = config('services.docusign.private_key');
+        $integrationKey = config('services.docusign.integration_key');
+        $userId = config('services.docusign.user_id');
+        
+        $jwtScope = 'signature';
+        
+        try {
+            $response = $this->apiClient->requestJWTUserToken(
+                $integrationKey,
+                $userId,
+                $privateKey,
+                $jwtScope
+            );
+            
+            return $response[0]->getAccessToken();
+        } catch (\Exception $e) {
+            throw new \Exception('DocuSign authentication failed: ' . $e->getMessage());
+        }
+    }
+}
